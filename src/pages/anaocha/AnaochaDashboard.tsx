@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const sidebarItems = [
-  { label: "My Profile", href: "/anaocha/dashboard", icon: <User className="h-4 w-4" /> },
+  { label: "My Profile", href: "/anaocha/profile", icon: <User className="h-4 w-4" /> },
   { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-4 w-4" /> },
   { label: "My Applications", href: "/anaocha/applications", icon: <BookOpen className="h-4 w-4" /> },
   { label: "Payments", href: "/anaocha/payments", icon: <CreditCard className="h-4 w-4" /> },
