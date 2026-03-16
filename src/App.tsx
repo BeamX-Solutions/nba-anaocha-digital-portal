@@ -50,6 +50,7 @@ const App = () => (
 
             {/* NBA Anaocha Module - Protected */}
             <Route path="/anaocha/dashboard" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
             <Route path="/anaocha/applications" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
             <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
