@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import nbaLogo from "@/assets/nba-logo.png";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -13,6 +16,11 @@ const Header = () => {
     { label: "Remuneration Portal", href: "/remuneration/dashboard" },
     { label: "Resources", href: "#" },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-primary shadow-md">
@@ -38,12 +46,27 @@ const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="hero-outline" size="sm" asChild>
-            <Link to="/signin">Sign In</Link>
-          </Button>
-          <Button variant="hero" size="sm" asChild>
-            <Link to="/signup">Sign Up</Link>
-          </Button>
+          {user ? (
+            <>
+              <Link to="/anaocha/dashboard" className="flex items-center gap-1 text-sm text-primary-foreground/85 hover:text-primary-foreground">
+                <User className="h-4 w-4" />
+                <span className="max-w-[120px] truncate">{user.email}</span>
+              </Link>
+              <Button variant="hero-outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-1" />
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="hero-outline" size="sm" asChild>
+                <Link to="/signin">Sign In</Link>
+              </Button>
+              <Button variant="hero" size="sm" asChild>
+                <Link to="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -68,12 +91,20 @@ const Header = () => {
               </Link>
             ))}
             <div className="flex gap-2 pt-2">
-              <Button variant="hero-outline" size="sm" asChild>
-                <Link to="/signin">Sign In</Link>
-              </Button>
-              <Button variant="hero" size="sm" asChild>
-                <Link to="/signup">Sign Up</Link>
-              </Button>
+              {user ? (
+                <Button variant="hero-outline" size="sm" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                  <LogOut className="h-4 w-4 mr-1" /> Sign Out
+                </Button>
+              ) : (
+                <>
+                  <Button variant="hero-outline" size="sm" asChild>
+                    <Link to="/signin" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                  </Button>
+                  <Button variant="hero" size="sm" asChild>
+                    <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </nav>
         </div>

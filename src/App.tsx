@@ -3,8 +3,16 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
+// Auth pages
+import SignIn from "./pages/auth/SignIn.tsx";
+import SignUp from "./pages/auth/SignUp.tsx";
+import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
+import ResetPassword from "./pages/auth/ResetPassword.tsx";
 
 // Anaocha pages
 import AnaochaDashboard from "./pages/anaocha/AnaochaDashboard.tsx";
@@ -29,31 +37,39 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
 
-          {/* NBA Anaocha Module */}
-          <Route path="/anaocha/dashboard" element={<AnaochaDashboard />} />
-          <Route path="/anaocha/apply" element={<ApplyForServices />} />
-          <Route path="/anaocha/applications" element={<AnaochaDashboard />} />
-          <Route path="/anaocha/payments" element={<AnaochaDashboard />} />
-          <Route path="/anaocha/about" element={<AboutBranch />} />
-          <Route path="/anaocha/committees" element={<Committees />} />
-          <Route path="/anaocha/members" element={<FindMember />} />
-          <Route path="/anaocha/notifications" element={<AnaochaDashboard />} />
-          <Route path="/anaocha/contact" element={<ContactUs />} />
+            {/* Auth routes */}
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Remuneration Module */}
-          <Route path="/remuneration/dashboard" element={<RemunerationDashboard />} />
-          <Route path="/remuneration/prepare" element={<PrepareDocument />} />
-          <Route path="/remuneration/documents" element={<MyDocuments />} />
-          <Route path="/remuneration/payments" element={<PaymentHistory />} />
-          <Route path="/remuneration/search" element={<FindDocument />} />
-          <Route path="/remuneration/apply" element={<RemunerationDashboard />} />
-          <Route path="/remuneration/notifications" element={<RemunerationDashboard />} />
+            {/* NBA Anaocha Module - Protected */}
+            <Route path="/anaocha/dashboard" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
+            <Route path="/anaocha/applications" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/about" element={<AboutBranch />} />
+            <Route path="/anaocha/committees" element={<Committees />} />
+            <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
+            <Route path="/anaocha/notifications" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/contact" element={<ContactUs />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* Remuneration Module - Protected */}
+            <Route path="/remuneration/dashboard" element={<ProtectedRoute><RemunerationDashboard /></ProtectedRoute>} />
+            <Route path="/remuneration/prepare" element={<ProtectedRoute><PrepareDocument /></ProtectedRoute>} />
+            <Route path="/remuneration/documents" element={<ProtectedRoute><MyDocuments /></ProtectedRoute>} />
+            <Route path="/remuneration/payments" element={<ProtectedRoute><PaymentHistory /></ProtectedRoute>} />
+            <Route path="/remuneration/search" element={<ProtectedRoute><FindDocument /></ProtectedRoute>} />
+            <Route path="/remuneration/apply" element={<ProtectedRoute><RemunerationDashboard /></ProtectedRoute>} />
+            <Route path="/remuneration/notifications" element={<ProtectedRoute><RemunerationDashboard /></ProtectedRoute>} />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
