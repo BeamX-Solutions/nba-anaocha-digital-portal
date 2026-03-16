@@ -68,4 +68,6 @@ const AnaochaDashboard = () => {
   </DashboardLayout>
 );
 
+};
+
 export default AnaochaDashboard;
