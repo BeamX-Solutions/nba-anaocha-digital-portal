@@ -23,28 +23,26 @@ const SignUp = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
-      options: { emailRedirectTo: window.location.origin },
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          surname: form.surname,
+          first_name: form.first_name,
+          middle_name: form.middle_name,
+          year_of_call: form.year_of_call,
+          phone: form.phone,
+          office_address: form.office_address,
+        },
+      },
     });
 
     if (error) {
       setLoading(false);
       toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
       return;
-    }
-
-    // Update profile with additional fields
-    if (data.user) {
-      await supabase.from("profiles").update({
-        surname: form.surname,
-        first_name: form.first_name,
-        middle_name: form.middle_name,
-        year_of_call: form.year_of_call,
-        phone: form.phone,
-        office_address: form.office_address,
-      }).eq("user_id", data.user.id);
     }
 
     setLoading(false);

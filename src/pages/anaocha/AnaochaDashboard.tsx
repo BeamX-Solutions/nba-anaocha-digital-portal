@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
 import { User, FileText, Bell, CreditCard, Info, Users, Phone, BookOpen } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const sidebarItems = [
   { label: "My Profile", href: "/anaocha/profile", icon: <User className="h-4 w-4" /> },
@@ -23,11 +26,23 @@ const serviceCards = [
   { title: "Stamp & Seal", description: "Request your official NBA Stamp & Seal for document authentication.", icon: "🔏", action: "Request" },
 ];
 
-const AnaochaDashboard = () => (
+const AnaochaDashboard = () => {
+  const { user } = useAuth();
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("first_name").eq("user_id", user.id).single()
+      .then(({ data }) => {
+        if (data?.first_name) setFirstName(data.first_name);
+      });
+  }, [user]);
+
+  return (
   <DashboardLayout title="NBA Anaocha" sidebarItems={sidebarItems}>
     <div className="space-y-8">
       <div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">Welcome, Member</h1>
+        <h1 className="font-heading text-3xl font-bold text-foreground">Welcome, {firstName || "Member"}</h1>
         <p className="text-muted-foreground mt-1">Manage your NBA Anaocha membership and services.</p>
       </div>
 
@@ -51,6 +66,7 @@ const AnaochaDashboard = () => (
       </div>
     </div>
   </DashboardLayout>
-);
+  );
+};
 
 export default AnaochaDashboard;
