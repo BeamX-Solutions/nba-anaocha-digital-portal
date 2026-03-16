@@ -19,6 +19,7 @@ import AnaochaDashboard from "./pages/anaocha/AnaochaDashboard.tsx";
 import ApplyForServices from "./pages/anaocha/ApplyForServices.tsx";
 import Committees from "./pages/anaocha/Committees.tsx";
 import FindMember from "./pages/anaocha/FindMember.tsx";
+import MyProfile from "./pages/anaocha/MyProfile.tsx";
 import AboutBranch from "./pages/anaocha/AboutBranch.tsx";
 import ContactUs from "./pages/anaocha/ContactUs.tsx";
 
