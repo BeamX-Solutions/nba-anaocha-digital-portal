@@ -59,7 +59,7 @@ const App = () => (
             <Route path="/anaocha/about" element={<AboutBranch />} />
             <Route path="/anaocha/committees" element={<Committees />} />
             <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
-            <Route path="/anaocha/notifications" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />
 
             {/* Remuneration Module - Protected */}
