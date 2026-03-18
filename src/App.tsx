@@ -17,11 +17,13 @@ import ResetPassword from "./pages/auth/ResetPassword.tsx";
 // Anaocha pages
 import AnaochaDashboard from "./pages/anaocha/AnaochaDashboard.tsx";
 import ApplyForServices from "./pages/anaocha/ApplyForServices.tsx";
+import MyApplications from "./pages/anaocha/MyApplications.tsx";
 import Committees from "./pages/anaocha/Committees.tsx";
 import FindMember from "./pages/anaocha/FindMember.tsx";
 import MyProfile from "./pages/anaocha/MyProfile.tsx";
 import AboutBranch from "./pages/anaocha/AboutBranch.tsx";
 import ContactUs from "./pages/anaocha/ContactUs.tsx";
+import Notifications from "./pages/anaocha/Notifications.tsx";
 
 // Remuneration pages
 import RemunerationDashboard from "./pages/remuneration/RemunerationDashboard.tsx";
@@ -52,12 +54,12 @@ const App = () => (
             <Route path="/anaocha/dashboard" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
             <Route path="/anaocha/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
-            <Route path="/anaocha/applications" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
             <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
             <Route path="/anaocha/about" element={<AboutBranch />} />
             <Route path="/anaocha/committees" element={<Committees />} />
             <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
-            <Route path="/anaocha/notifications" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />
 
             {/* Remuneration Module - Protected */}

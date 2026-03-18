@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { User, FileText, Bell, CreditCard, Info, Users, Phone, BookOpen, Save } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { User, FileText, Bell, CreditCard, Info, Users, Phone, BookOpen, Save, Camera, Upload } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,8 +33,11 @@ const profileSchema = z.object({
 const MyProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [form, setForm] = useState({
     surname: "", first_name: "", middle_name: "", year_of_call: "",
     phone: "", office_address: "", branch: "Anaocha", email: "",
@@ -55,10 +58,40 @@ const MyProfile = () => {
             branch: data.branch ?? "Anaocha",
             email: data.email ?? user.email ?? "",
           });
+          if (data.avatar_url) setAvatarUrl(data.avatar_url);
         }
         setLoading(false);
       });
   }, [user]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Max 2MB allowed.", variant: "destructive" });
+      return;
+    }
+
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (uploadError) {
+      toast({ title: "Upload failed", description: uploadError.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+    const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+    await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", user.id);
+    setAvatarUrl(publicUrl);
+    setUploading(false);
+    toast({ title: "Profile photo updated!" });
+  };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -120,7 +153,52 @@ const MyProfile = () => {
 
         <Card className="shadow-card">
           <CardContent className="p-6">
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="space-y-6">
+              {/* Avatar Section */}
+              <div className="flex items-center gap-6 pb-6 border-b border-border">
+                <div className="relative group">
+                  <div className="h-24 w-24 rounded-full bg-muted border-2 border-accent overflow-hidden flex items-center justify-center">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                    ) : (
+                      <User className="h-10 w-10 text-muted-foreground" />
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="absolute inset-0 rounded-full bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                  >
+                    {uploading ? (
+                      <Upload className="h-5 w-5 text-background animate-pulse" />
+                    ) : (
+                      <Camera className="h-5 w-5 text-background" />
+                    )}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-heading text-lg font-semibold text-foreground">
+                    {form.first_name} {form.surname}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{form.email}</p>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-xs text-accent hover:underline mt-1"
+                  >
+                    {uploading ? "Uploading..." : "Change Photo"}
+                  </button>
+                </div>
+              </div>
+
               {/* Email (read-only) */}
               <div>
                 <label className="text-sm font-medium text-foreground">Email</label>
