@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      documents: {
+        Row: {
+          content: string | null
+          created_at: string
+          document_type: string
+          form_data: Json | null
+          id: string
+          reference_number: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          document_type: string
+          form_data?: Json | null
+          id?: string
+          reference_number?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          document_type?: string
+          form_data?: Json | null
+          id?: string
+          reference_number?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -59,6 +128,39 @@ export type Database = {
           updated_at?: string
           user_id?: string
           year_of_call?: string | null
+        }
+        Relationships: []
+      }
+      service_applications: {
+        Row: {
+          created_at: string
+          file_urls: string[] | null
+          form_data: Json
+          id: string
+          service_type: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_urls?: string[] | null
+          form_data?: Json
+          id?: string
+          service_type: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_urls?: string[] | null
+          form_data?: Json
+          id?: string
+          service_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
