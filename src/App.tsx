@@ -17,11 +17,13 @@ import ResetPassword from "./pages/auth/ResetPassword.tsx";
 // Anaocha pages
 import AnaochaDashboard from "./pages/anaocha/AnaochaDashboard.tsx";
 import ApplyForServices from "./pages/anaocha/ApplyForServices.tsx";
+import MyApplications from "./pages/anaocha/MyApplications.tsx";
 import Committees from "./pages/anaocha/Committees.tsx";
 import FindMember from "./pages/anaocha/FindMember.tsx";
 import MyProfile from "./pages/anaocha/MyProfile.tsx";
 import AboutBranch from "./pages/anaocha/AboutBranch.tsx";
 import ContactUs from "./pages/anaocha/ContactUs.tsx";
+import Notifications from "./pages/anaocha/Notifications.tsx";
 
 // Remuneration pages
 import RemunerationDashboard from "./pages/remuneration/RemunerationDashboard.tsx";
