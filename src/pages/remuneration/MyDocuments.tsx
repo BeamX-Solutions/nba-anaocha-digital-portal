@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Home, FileText, FolderOpen, CreditCard, Search, Bell, File } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,7 +35,7 @@ const MyDocuments = () => {
   }, [user]);
 
   return (
-    <DashboardLayout title="Remuneration Portal" sidebarItems={sidebarItems}>
+    <RemunerationLayout sidebarItems={sidebarItems}>
       <div className="space-y-6">
         <div>
           <h1 className="font-heading text-3xl font-bold text-foreground">My Documents</h1>
@@ -75,7 +75,7 @@ const MyDocuments = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </RemunerationLayout>
   );
 };
 

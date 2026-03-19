@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r -i \"lovable\\\\|loveable\\\\|gpt.engineer\" /c/Users/user/Documents/nba-anaocha-digital-portal --include=*.tsx --include=*.ts --include=*.jsx --include=*.js --include=*.html --include=*.json --include=*.css --include=*.config.*)"
+    ]
+  }
+}

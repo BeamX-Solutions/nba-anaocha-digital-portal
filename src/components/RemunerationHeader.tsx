@@ -5,17 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import nbaLogo from "@/assets/nba-logo.png";
 
-const Header = () => {
+const RemunerationHeader = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "NBA Anaocha", href: "/anaocha/dashboard" },
-    { label: "Remuneration Portal", href: "/remuneration/dashboard" },
-    { label: "Resources", href: "/resources" },
-    { label: "Blog/Updates", href: "/blog" },
+    { label: "Home", href: "/remuneration/dashboard" },
+    { label: "About Us", href: "/remuneration/about" },
   ];
 
   const handleSignOut = async () => {
@@ -24,13 +21,13 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-primary shadow-md">
+    <header className="sticky top-0 z-50 bg-accent shadow-md">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-10 w-10" />
+        <Link to="/remuneration/dashboard" className="flex items-center gap-2">
+          <img src={nbaLogo} alt="NBA Remuneration Portal" className="h-10 w-10" />
           <div className="flex flex-col leading-tight">
-            <span className="font-heading text-lg font-bold text-primary-foreground">NBA Anaocha</span>
-            <span className="text-xs text-primary-foreground/70">Anambra State, Nigeria</span>
+            <span className="font-heading text-lg font-bold text-primary">NBA Remuneration</span>
+            <span className="text-xs text-primary/70">Remuneration Order 2023</span>
           </div>
         </Link>
 
@@ -39,7 +36,7 @@ const Header = () => {
             <Link
               key={link.label}
               to={link.href}
-              className="text-sm font-medium text-primary-foreground/85 hover:text-primary-foreground transition-colors"
+              className="text-sm font-medium text-primary/85 hover:text-primary transition-colors"
             >
               {link.label}
             </Link>
@@ -49,21 +46,21 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
-              <Link to="/anaocha/dashboard" className="flex items-center gap-1 text-sm text-primary-foreground/85 hover:text-primary-foreground">
+              <Link to="/remuneration/dashboard" className="flex items-center gap-1 text-sm text-primary/85 hover:text-primary">
                 <User className="h-4 w-4" />
                 <span className="max-w-[120px] truncate">{user.email}</span>
               </Link>
-              <Button variant="hero-outline" size="sm" onClick={handleSignOut}>
+              <Button size="sm" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-1" />
                 Sign Out
               </Button>
             </>
           ) : (
             <>
-              <Button variant="hero-outline" size="sm" asChild>
-                <Link to="/signin">Sign In</Link>
+              <Button size="sm" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
+                <Link to="/signin">Log In</Link>
               </Button>
-              <Button variant="hero" size="sm" asChild>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
                 <Link to="/signup">Sign Up</Link>
               </Button>
             </>
@@ -71,7 +68,7 @@ const Header = () => {
         </div>
 
         <button
-          className="md:hidden text-primary-foreground"
+          className="md:hidden text-primary"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -79,13 +76,13 @@ const Header = () => {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-primary border-t border-sidebar-border pb-4">
+        <div className="md:hidden bg-accent border-t border-primary/20 pb-4">
           <nav className="container flex flex-col gap-2 pt-2">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.href}
-                className="text-sm font-medium text-primary-foreground/85 hover:text-primary-foreground py-2"
+                className="text-sm font-medium text-primary/85 hover:text-primary py-2"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
@@ -93,15 +90,15 @@ const Header = () => {
             ))}
             <div className="flex gap-2 pt-2">
               {user ? (
-                <Button variant="hero-outline" size="sm" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                <Button size="sm" variant="outline" className="border-primary text-primary" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                   <LogOut className="h-4 w-4 mr-1" /> Sign Out
                 </Button>
               ) : (
                 <>
-                  <Button variant="hero-outline" size="sm" asChild>
-                    <Link to="/signin" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                  <Button size="sm" variant="outline" className="border-primary text-primary" asChild>
+                    <Link to="/signin" onClick={() => setMobileOpen(false)}>Log In</Link>
                   </Button>
-                  <Button variant="hero" size="sm" asChild>
+                  <Button size="sm" className="bg-primary text-primary-foreground" asChild>
                     <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
                   </Button>
                 </>
@@ -114,4 +111,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default RemunerationHeader;

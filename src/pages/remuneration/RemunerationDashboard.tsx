@@ -1,5 +1,5 @@
 import { Home, FileText, FolderOpen, CreditCard, Search, Bell, File } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ const sidebarItems = [
 ];
 
 const RemunerationDashboard = () => (
-  <DashboardLayout title="Remuneration Portal" sidebarItems={sidebarItems}>
+  <RemunerationLayout sidebarItems={sidebarItems}>
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-3xl font-bold text-foreground">Remuneration Dashboard</h1>
@@ -65,7 +65,7 @@ const RemunerationDashboard = () => (
         </Card>
       </div>
     </div>
-  </DashboardLayout>
+  </RemunerationLayout>
 );
 
 export default RemunerationDashboard;

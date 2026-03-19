@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 const SignUp = () => {
   const [form, setForm] = useState({
     email: "", password: "", surname: "", first_name: "", middle_name: "",
-    year_of_call: "", phone: "", office_address: "",
+    year_of_call: "", phone: "", office_address: "", branch: "",
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,6 +35,7 @@ const SignUp = () => {
           year_of_call: form.year_of_call,
           phone: form.phone,
           office_address: form.office_address,
+          branch: form.branch,
         },
       },
     });
@@ -57,6 +58,7 @@ const SignUp = () => {
     { key: "year_of_call", label: "Year of Call", type: "text", required: false },
     { key: "phone", label: "Phone Number", type: "tel", required: true },
     { key: "office_address", label: "Office Address", type: "text", required: false },
+    { key: "branch", label: "Branch", type: "text", required: false },
     { key: "email", label: "Email", type: "email", required: true },
     { key: "password", label: "Password", type: "password", required: true },
   ];

@@ -78,13 +78,23 @@ const services: ServiceConfig[] = [
     icon: "🔏",
     textFields: [],
     fileFields: [
-      { key: "title_document", label: "Title Document Front Page", accept: "image/*,.pdf" },
       { key: "practicing_fee_receipt", label: "Practicing Fee Receipt", accept: "image/*,.pdf" },
       { key: "branch_dues_receipt", label: "Branch Dues Receipt", accept: "image/*,.pdf" },
       { key: "stamp_seal_receipt", label: "Stamp & Seal Payment Receipt", accept: "image/*,.pdf" },
     ],
     action: "Request",
     serviceType: "stamp_seal",
+  },
+  {
+    title: "Title Document Front Page",
+    description: "Apply for the NBA-endorsed front page for your title documents. Upload proof of payment to proceed.",
+    icon: "📄",
+    textFields: [],
+    fileFields: [
+      { key: "payment_receipt", label: "Receipt of Payment", accept: "image/*,.pdf" },
+    ],
+    action: "Upload Receipt",
+    serviceType: "title_document_front_page",
   },
 ];
 
