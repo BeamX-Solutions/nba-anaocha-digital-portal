@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Home, FileText, FolderOpen, CreditCard, Search, Bell, File, Loader2 } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +41,7 @@ const FindDocument = () => {
   };
 
   return (
-    <DashboardLayout title="Remuneration Portal" sidebarItems={sidebarItems}>
+    <RemunerationLayout sidebarItems={sidebarItems}>
       <div className="space-y-6">
         <div>
           <h1 className="font-heading text-3xl font-bold text-foreground">Find a Document</h1>
@@ -97,7 +97,7 @@ const FindDocument = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </RemunerationLayout>
   );
 };
 

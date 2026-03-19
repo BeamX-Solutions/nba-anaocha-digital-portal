@@ -1,5 +1,5 @@
 import { Home, FileText, FolderOpen, CreditCard, Search, Bell, File } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 
 const sidebarItems = [
@@ -13,7 +13,7 @@ const sidebarItems = [
 ];
 
 const PaymentHistory = () => (
-  <DashboardLayout title="Remuneration Portal" sidebarItems={sidebarItems}>
+  <RemunerationLayout sidebarItems={sidebarItems}>
     <div className="space-y-6">
       <div>
         <h1 className="font-heading text-3xl font-bold text-foreground">Payment History</h1>
@@ -26,7 +26,7 @@ const PaymentHistory = () => (
         </CardContent>
       </Card>
     </div>
-  </DashboardLayout>
+  </RemunerationLayout>
 );
 
 export default PaymentHistory;
