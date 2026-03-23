@@ -13,6 +13,7 @@ const RemunerationHeader = () => {
   const navLinks = [
     { label: "Home", href: "/remuneration/dashboard" },
     { label: "About Us", href: "/remuneration/about" },
+    { label: "← NBA Anaocha Portal", href: "/" },
   ];
 
   const handleSignOut = async () => {
@@ -36,7 +37,7 @@ const RemunerationHeader = () => {
             <Link
               key={link.label}
               to={link.href}
-              className="text-sm font-medium text-primary/85 hover:text-primary transition-colors"
+              className="text-sm font-medium text-primary/85 hover:text-primary transition-colors duration-200 relative after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
             >
               {link.label}
             </Link>

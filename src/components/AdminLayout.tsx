@@ -68,7 +68,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Main content */}
       <main className="flex-1 bg-muted/30 overflow-auto">
-        <div className="p-8">{children}</div>
+        <div className="p-8 animate-fade-in">{children}</div>
       </main>
     </div>
   );

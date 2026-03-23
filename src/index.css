@@ -108,4 +108,22 @@
   .shadow-card {
     box-shadow: 0 4px 20px -4px hsl(var(--primary) / 0.08);
   }
+  /* Card hover lift */
+  .card-hover {
+    @apply transition-all duration-250 ease-out;
+  }
+  .card-hover:hover {
+    @apply -translate-y-1 shadow-lg;
+  }
+}
+
+@layer base {
+  /* Smooth default transitions on all interactive elements */
+  a, button {
+    @apply transition-all duration-200;
+  }
+  /* Consistent focus ring */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2;
+  }
 }

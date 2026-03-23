@@ -11,19 +11,19 @@ const featureCards = [
     icon: <Users className="h-8 w-8" />,
     title: "Membership Services",
     description: "Manage your profile, apply for ID cards, stamps, seals, and more.",
-    link: "/anaocha/apply",
+    link: "/anaocha/about",
   },
   {
     icon: <Scale className="h-8 w-8" />,
     title: "Remuneration Compliance",
     description: "Prepare documents and comply with Remuneration Order 2023.",
-    link: "/remuneration/prepare",
+    link: "/remuneration/about",
   },
   {
     icon: <BookOpen className="h-8 w-8" />,
     title: "Resources & Updates",
     description: "Access branch resources, publications, and stay updated.",
-    link: "#",
+    link: "/resources",
   },
 ];
 
@@ -52,13 +52,13 @@ const Index = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/anaocha/dashboard">
+                <Link to="/signup">
                   Join NBA Anaocha
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="hero-outline" size="lg" asChild>
-                <Link to="/remuneration/dashboard">Enter Remuneration Portal</Link>
+                <Link to="/remuneration/about">Enter Remuneration Portal</Link>
               </Button>
             </div>
           </div>
@@ -71,7 +71,7 @@ const Index = () => {
           {featureCards.map((card) => (
             <Card
               key={card.title}
-              className="shadow-card hover:shadow-lg transition-shadow border-t-4 border-t-accent bg-card"
+              className="shadow-card hover:shadow-xl hover:-translate-y-1 transition-all duration-250 border-t-4 border-t-accent bg-card"
             >
               <CardContent className="p-6">
                 <div className="text-primary mb-4">{card.icon}</div>
@@ -101,7 +101,7 @@ const Index = () => {
             The NBA Anaocha Branch Portal and Remuneration Portal work together to serve our members efficiently.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="shadow-card border-l-4 border-l-primary">
+            <Card className="shadow-card hover:shadow-xl hover:-translate-y-1 transition-all duration-250 border-l-4 border-l-primary">
               <CardContent className="p-6 text-left">
                 <FileText className="h-8 w-8 text-primary mb-3" />
                 <h3 className="font-heading text-lg font-semibold mb-2">NBA Anaocha Portal</h3>
@@ -109,11 +109,11 @@ const Index = () => {
                   Apply for NBA Diary, ID Card, Bar Identification Number, Stamp & Seal, and manage your membership.
                 </p>
                 <Button variant="default" size="sm" asChild>
-                  <Link to="/anaocha/dashboard">Enter Portal</Link>
+                  <Link to="/anaocha/about">Learn More</Link>
                 </Button>
               </CardContent>
             </Card>
-            <Card className="shadow-card border-l-4 border-l-accent">
+            <Card className="shadow-card hover:shadow-xl hover:-translate-y-1 transition-all duration-250 border-l-4 border-l-accent">
               <CardContent className="p-6 text-left">
                 <Scale className="h-8 w-8 text-accent mb-3" />
                 <h3 className="font-heading text-lg font-semibold mb-2">Remuneration Portal</h3>
@@ -121,7 +121,7 @@ const Index = () => {
                   Prepare legal documents, ensure compliance with Remuneration Order 2023, and manage payments.
                 </p>
                 <Button variant="accent" size="sm" asChild>
-                  <Link to="/remuneration/dashboard">Enter Portal</Link>
+                  <Link to="/remuneration/about">Learn More</Link>
                 </Button>
               </CardContent>
             </Card>

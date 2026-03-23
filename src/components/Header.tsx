@@ -12,8 +12,8 @@ const Header = () => {
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "NBA Anaocha", href: "/anaocha/dashboard" },
-    { label: "Remuneration Portal", href: "/remuneration/dashboard" },
+    { label: "NBA Anaocha", href: "/anaocha/about" },
+    { label: "Remuneration Portal", href: "/remuneration/about" },
     { label: "Resources", href: "/resources" },
     { label: "Blog/Updates", href: "/blog" },
   ];
@@ -39,7 +39,7 @@ const Header = () => {
             <Link
               key={link.label}
               to={link.href}
-              className="text-sm font-medium text-primary-foreground/85 hover:text-primary-foreground transition-colors"
+              className="text-sm font-medium text-primary-foreground/85 hover:text-primary-foreground transition-colors duration-200 relative after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-accent after:transition-all after:duration-300 hover:after:w-full"
             >
               {link.label}
             </Link>
