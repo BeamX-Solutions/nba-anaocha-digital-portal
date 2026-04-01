@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_messages: {
+        Row: {
+          id: string
+          full_name: string
+          email: string
+          message: string
+          user_id: string | null
+          read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          full_name: string
+          email: string
+          message: string
+          user_id?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          full_name?: string
+          email?: string
+          message?: string
+          user_id?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           content: string | null
@@ -94,6 +124,7 @@ export type Database = {
           middle_name: string | null
           office_address: string | null
           phone: string | null
+          status: string
           surname: string | null
           updated_at: string
           user_id: string
@@ -109,6 +140,7 @@ export type Database = {
           middle_name?: string | null
           office_address?: string | null
           phone?: string | null
+          status?: string
           surname?: string | null
           updated_at?: string
           user_id: string
@@ -124,6 +156,7 @@ export type Database = {
           middle_name?: string | null
           office_address?: string | null
           phone?: string | null
+          status?: string
           surname?: string | null
           updated_at?: string
           user_id?: string

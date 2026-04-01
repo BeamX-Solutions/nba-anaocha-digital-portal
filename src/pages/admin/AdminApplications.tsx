@@ -24,7 +24,7 @@ const AdminApplications = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<StatusFilter>("all");
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [updating, setUpdating] = useState<string | null>(null);
+  const [updating, setUpdating] = useState<{ id: string; action: string } | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -53,7 +53,7 @@ const AdminApplications = () => {
   }, []);
 
   const updateStatus = async (appId: string, userId: string, status: "approved" | "rejected", serviceType: string) => {
-    setUpdating(appId);
+    setUpdating({ id: appId, action: status });
     const { error } = await supabase
       .from("service_applications")
       .update({ status })
@@ -65,18 +65,35 @@ const AdminApplications = () => {
       return;
     }
 
-    // Send notification to the member
+    const profile = profiles[userId];
+    const serviceLabel = SERVICE_LABELS[serviceType] || serviceType;
+    const memberName = [profile?.surname, profile?.first_name].filter(Boolean).join(" ") || "Member";
+
+    // In-app notification
     await supabase.from("notifications").insert({
       user_id: userId,
-      title: `Application ${status === "approved" ? "Approved" : "Rejected"} — ${SERVICE_LABELS[serviceType] || serviceType}`,
+      title: `Application ${status === "approved" ? "Approved" : "Rejected"} — ${serviceLabel}`,
       message: status === "approved"
-        ? `Your application for ${SERVICE_LABELS[serviceType] || serviceType} has been approved by the branch secretariat. Please collect at the branch office.`
-        : `Your application for ${SERVICE_LABELS[serviceType] || serviceType} has been reviewed and could not be approved at this time. Please contact the branch secretariat for details.`,
+        ? `Your application for ${serviceLabel} has been approved by the branch secretariat. Please collect at the branch office.`
+        : `Your application for ${serviceLabel} has been reviewed and could not be approved at this time. Please contact the branch secretariat for details.`,
       type: "application_update",
     });
 
+    // Email notification
+    if (profile?.email) {
+      await supabase.functions.invoke("send-email", {
+        body: {
+          type: status === "approved" ? "application_approved" : "application_rejected",
+          to: profile.email,
+          name: memberName,
+          service_type: serviceLabel,
+        },
+      });
+    }
+
     setApplications((prev) => prev.map((a) => a.id === appId ? { ...a, status } : a));
     setUpdating(null);
+
     toast({ title: `Application ${status}`, description: `The applicant has been notified.` });
   };
 
@@ -93,7 +110,7 @@ const AdminApplications = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">Applications</h1>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Applications</h1>
           <p className="text-muted-foreground mt-1">Review, approve, or reject member service applications.</p>
         </div>
 
@@ -216,19 +233,19 @@ const AdminApplications = () => {
                             <Button
                               size="sm"
                               className="bg-green-600 hover:bg-green-700 text-white"
-                              disabled={updating === app.id}
+                              disabled={updating?.id === app.id}
                               onClick={() => updateStatus(app.id, app.user_id, "approved", app.service_type)}
                             >
-                              {updating === app.id ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <CheckCircle className="h-4 w-4 mr-1" />}
+                              {updating?.id === app.id && updating.action === "approved" ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <CheckCircle className="h-4 w-4 mr-1" />}
                               Approve
                             </Button>
                             <Button
                               size="sm"
                               variant="destructive"
-                              disabled={updating === app.id}
+                              disabled={updating?.id === app.id}
                               onClick={() => updateStatus(app.id, app.user_id, "rejected", app.service_type)}
                             >
-                              {updating === app.id ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
+                              {updating?.id === app.id && updating.action === "rejected" ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
                               Reject
                             </Button>
                           </div>
@@ -240,20 +257,22 @@ const AdminApplications = () => {
                               <Button
                                 size="sm"
                                 variant="destructive"
-                                disabled={updating === app.id}
+                                disabled={updating?.id === app.id}
                                 onClick={() => updateStatus(app.id, app.user_id, "rejected", app.service_type)}
                               >
-                                <XCircle className="h-4 w-4 mr-1" /> Mark Rejected
+                                {updating?.id === app.id && updating.action === "rejected" ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
+                                Mark Rejected
                               </Button>
                             )}
                             {app.status === "rejected" && (
                               <Button
                                 size="sm"
                                 className="bg-green-600 hover:bg-green-700 text-white"
-                                disabled={updating === app.id}
+                                disabled={updating?.id === app.id}
                                 onClick={() => updateStatus(app.id, app.user_id, "approved", app.service_type)}
                               >
-                                <CheckCircle className="h-4 w-4 mr-1" /> Mark Approved
+                                {updating?.id === app.id && updating.action === "approved" ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <CheckCircle className="h-4 w-4 mr-1" />}
+                                Mark Approved
                               </Button>
                             )}
                           </div>

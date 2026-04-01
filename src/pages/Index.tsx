@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Scale, FileText, Users, BookOpen, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const featureCards = [
@@ -28,6 +29,11 @@ const featureCards = [
 ];
 
 const Index = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (user) return <Navigate to="/anaocha/dashboard" replace />;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

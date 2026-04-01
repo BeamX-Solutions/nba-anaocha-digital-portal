@@ -9,21 +9,21 @@ import AdminRoute from "@/components/AdminRoute";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Resources from "./pages/Resources.tsx";
-import Blog from "./pages/Blog.tsx";
 
 // Auth pages
 import SignIn from "./pages/auth/SignIn.tsx";
 import SignUp from "./pages/auth/SignUp.tsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
 import ResetPassword from "./pages/auth/ResetPassword.tsx";
+import CompleteProfile from "./pages/auth/CompleteProfile.tsx";
 
 // Anaocha pages
 import AnaochaDashboard from "./pages/anaocha/AnaochaDashboard.tsx";
 import ApplyForServices from "./pages/anaocha/ApplyForServices.tsx";
 import MyApplications from "./pages/anaocha/MyApplications.tsx";
-import Committees from "./pages/anaocha/Committees.tsx";
 import FindMember from "./pages/anaocha/FindMember.tsx";
 import MyProfile from "./pages/anaocha/MyProfile.tsx";
+import Settings from "./pages/anaocha/Settings.tsx";
 import AboutBranch from "./pages/anaocha/AboutBranch.tsx";
 import ContactUs from "./pages/anaocha/ContactUs.tsx";
 import Notifications from "./pages/anaocha/Notifications.tsx";
@@ -44,6 +44,7 @@ import AdminApplications from "./pages/admin/AdminApplications.tsx";
 import AdminMembers from "./pages/admin/AdminMembers.tsx";
 import AdminDocuments from "./pages/admin/AdminDocuments.tsx";
 import AdminNotify from "./pages/admin/AdminNotify.tsx";
+import AdminContacts from "./pages/admin/AdminContacts.tsx";
 
 const queryClient = new QueryClient();
 
@@ -57,22 +58,22 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/resources" element={<Resources />} />
-            <Route path="/blog" element={<Blog />} />
 
             {/* Auth routes */}
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
 
             {/* NBA Anaocha Module - Protected */}
             <Route path="/anaocha/dashboard" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
             <Route path="/anaocha/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+            <Route path="/anaocha/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
             <Route path="/anaocha/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
             <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaPayments /></ProtectedRoute>} />
             <Route path="/anaocha/about" element={<AboutBranch />} />
-            <Route path="/anaocha/committees" element={<Committees />} />
             <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
             <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />
@@ -92,6 +93,7 @@ const App = () => (
             <Route path="/admin/applications" element={<AdminRoute><AdminApplications /></AdminRoute>} />
             <Route path="/admin/members" element={<AdminRoute><AdminMembers /></AdminRoute>} />
             <Route path="/admin/documents" element={<AdminRoute><AdminDocuments /></AdminRoute>} />
+            <Route path="/admin/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
             <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
 
             <Route path="*" element={<NotFound />} />

@@ -80,8 +80,8 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
           <div className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-card">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Menu className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="h-10 w-10">
+                  <Menu className="h-7 w-7" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>

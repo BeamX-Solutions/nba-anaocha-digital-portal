@@ -77,7 +77,7 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">Admin Dashboard</h1>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground mt-1">Overview of NBA Anaocha Portal activity.</p>
         </div>
 

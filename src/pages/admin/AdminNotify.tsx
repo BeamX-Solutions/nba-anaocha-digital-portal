@@ -75,7 +75,7 @@ const AdminNotify = () => {
     <AdminLayout>
       <div className="space-y-6 max-w-2xl">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">Send Notification</h1>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Send Notification</h1>
           <p className="text-muted-foreground mt-1">Send an announcement or message to one or all members.</p>
         </div>
 

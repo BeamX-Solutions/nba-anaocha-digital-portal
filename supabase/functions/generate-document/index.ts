@@ -1,11 +1,9 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const LOVABLE_API_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-
 Deno.serve(async (req) => {
   try {
     const { formData, precedentText, method } = await req.json();
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
 
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "API key not configured" }), {
@@ -37,16 +35,17 @@ ${precedentText}
 Output the reformatted, compliant document.`;
     }
 
-    const response = await fetch(LOVABLE_API_URL, {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [{ role: "user", content: prompt }],
+        model: "claude-opus-4-6",
         max_tokens: 4000,
+        messages: [{ role: "user", content: prompt }],
       }),
     });
 
@@ -59,7 +58,7 @@ Output the reformatted, compliant document.`;
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || "";
+    const content = data.content?.[0]?.text || "";
 
     return new Response(JSON.stringify({ content }), {
       headers: { "Content-Type": "application/json" },

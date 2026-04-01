@@ -2,9 +2,9 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, profileComplete } = useAuth();
 
-  if (loading) {
+  if (loading || (user && profileComplete === null)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -15,9 +15,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/signin" replace />;
-  }
+  if (!user) return <Navigate to="/signin" replace />;
+
+  if (profileComplete === false) return <Navigate to="/complete-profile" replace />;
 
   return <>{children}</>;
 };

@@ -1,22 +1,13 @@
-import { Home, FileText, FolderOpen, CreditCard, Search, Bell, File } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
-
-const sidebarItems = [
-  { label: "Home", href: "/remuneration/dashboard", icon: <Home className="h-4 w-4" /> },
-  { label: "Prepare a Document", href: "/remuneration/prepare", icon: <FileText className="h-4 w-4" /> },
-  { label: "My Documents", href: "/remuneration/documents", icon: <FolderOpen className="h-4 w-4" /> },
-  { label: "Payment History", href: "/remuneration/payments", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "Find a Document", href: "/remuneration/search", icon: <Search className="h-4 w-4" /> },
-  { label: "Apply", href: "/remuneration/apply", icon: <File className="h-4 w-4" /> },
-  { label: "Notifications", href: "/remuneration/notifications", icon: <Bell className="h-4 w-4" /> },
-];
+import { remunerationSidebarItems } from "@/lib/sidebarItems";
 
 const PaymentHistory = () => (
-  <RemunerationLayout sidebarItems={sidebarItems}>
+  <RemunerationLayout sidebarItems={remunerationSidebarItems}>
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-3xl font-bold text-foreground">Payment History</h1>
+        <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Payment History</h1>
         <p className="text-muted-foreground mt-1">Track your remuneration payments and download receipts.</p>
       </div>
       <Card className="shadow-card">

@@ -25,7 +25,7 @@ const RemunerationLayout = ({ children, sidebarItems }: RemunerationLayoutProps)
   const SidebarContent = () => (
     <>
       <div className="p-5 border-b border-sidebar-border space-y-3">
-        <h2 className="font-heading text-lg font-bold text-accent">Remuneration Portal</h2>
+        <h2 className="font-heading text-lg font-bold text-sidebar-primary">Remuneration Portal</h2>
         <div className="flex gap-1.5">
           <Link
             to="/anaocha/dashboard"
@@ -88,7 +88,7 @@ const RemunerationLayout = ({ children, sidebarItems }: RemunerationLayoutProps)
                 <SidebarContent />
               </SheetContent>
             </Sheet>
-            <span className="font-heading font-semibold text-sm text-accent">Remuneration Portal</span>
+            <span className="font-heading font-semibold text-sm text-foreground">Remuneration Portal</span>
           </div>
           <div className="p-6 lg:p-8 animate-fade-in">{children}</div>
         </main>

@@ -1,23 +1,12 @@
 import { useState } from "react";
-import { User, FileText, Bell, CreditCard, Info, Users, Phone, BookOpen, Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-const sidebarItems = [
-  { label: "My Profile", href: "/anaocha/profile", icon: <User className="h-4 w-4" /> },
-  { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-4 w-4" /> },
-  { label: "My Applications", href: "/anaocha/applications", icon: <BookOpen className="h-4 w-4" /> },
-  { label: "Payments", href: "/anaocha/payments", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "About Branch", href: "/anaocha/about", icon: <Info className="h-4 w-4" /> },
-  { label: "Committees", href: "/anaocha/committees", icon: <Users className="h-4 w-4" /> },
-  { label: "Find a Member", href: "/anaocha/members", icon: <Users className="h-4 w-4" /> },
-  { label: "Notifications", href: "/anaocha/notifications", icon: <Bell className="h-4 w-4" /> },
-  { label: "Contact Us", href: "/anaocha/contact", icon: <Phone className="h-4 w-4" /> },
-];
+import { anaochaSidebarItems } from "@/lib/sidebarItems";
 
 const ContactUs = () => {
   const { user } = useAuth();
@@ -38,7 +27,30 @@ const ContactUs = () => {
 
     setSubmitting(true);
 
-    // If user is logged in, send a confirmation notification to their inbox
+    const { error } = await supabase.from("contact_messages").insert({
+      full_name: form.full_name,
+      email: form.email,
+      message: form.message,
+      user_id: user?.id ?? null,
+    });
+
+    if (error) {
+      setSubmitting(false);
+      toast({ title: "Failed to send", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    // Email the secretariat
+    await supabase.functions.invoke("send-email", {
+      body: {
+        type: "contact_message",
+        name: form.full_name,
+        email: form.email,
+        message: form.message,
+      },
+    });
+
+    // Send confirmation notification if user is logged in
     if (user) {
       await supabase.from("notifications").insert({
         user_id: user.id,
@@ -54,10 +66,10 @@ const ContactUs = () => {
   };
 
   return (
-    <DashboardLayout title="NBA Anaocha" sidebarItems={sidebarItems}>
+    <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
       <div className="space-y-6">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">Contact Us</h1>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Contact Us</h1>
           <p className="text-muted-foreground mt-1">Get in touch with NBA Anaocha Branch secretariat.</p>
         </div>
 

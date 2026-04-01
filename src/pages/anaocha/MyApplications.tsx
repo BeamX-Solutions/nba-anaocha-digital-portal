@@ -1,22 +1,11 @@
 import { useState, useEffect } from "react";
-import { User, FileText, Bell, CreditCard, Info, Users, Phone, BookOpen, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Clock, CheckCircle, XCircle, BookOpen } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-
-const sidebarItems = [
-  { label: "My Profile", href: "/anaocha/profile", icon: <User className="h-4 w-4" /> },
-  { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-4 w-4" /> },
-  { label: "My Applications", href: "/anaocha/applications", icon: <BookOpen className="h-4 w-4" /> },
-  { label: "Payments", href: "/anaocha/payments", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "About Branch", href: "/anaocha/about", icon: <Info className="h-4 w-4" /> },
-  { label: "Committees", href: "/anaocha/committees", icon: <Users className="h-4 w-4" /> },
-  { label: "Find a Member", href: "/anaocha/members", icon: <Users className="h-4 w-4" /> },
-  { label: "Notifications", href: "/anaocha/notifications", icon: <Bell className="h-4 w-4" /> },
-  { label: "Contact Us", href: "/anaocha/contact", icon: <Phone className="h-4 w-4" /> },
-];
+import { anaochaSidebarItems } from "@/lib/sidebarItems";
 
 const serviceTypeLabels: Record<string, { label: string; icon: string }> = {
   nba_diary: { label: "NBA Diary", icon: "📘" },
@@ -50,10 +39,10 @@ const MyApplications = () => {
   }, [user]);
 
   return (
-    <DashboardLayout title="NBA Anaocha" sidebarItems={sidebarItems}>
+    <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
       <div className="space-y-6">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground">My Applications</h1>
+          <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">My Applications</h1>
           <p className="text-muted-foreground mt-1">Track the status of your submitted service applications.</p>
         </div>
 

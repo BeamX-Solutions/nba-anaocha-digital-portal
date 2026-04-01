@@ -1,22 +1,11 @@
 import { useState, useEffect } from "react";
-import { User, FileText, Bell, CreditCard, Info, Users, Phone, BookOpen, CheckCheck, Circle } from "lucide-react";
+import { CheckCheck, Circle, Bell } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-
-const sidebarItems = [
-  { label: "My Profile", href: "/anaocha/profile", icon: <User className="h-4 w-4" /> },
-  { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-4 w-4" /> },
-  { label: "My Applications", href: "/anaocha/applications", icon: <BookOpen className="h-4 w-4" /> },
-  { label: "Payments", href: "/anaocha/payments", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "About Branch", href: "/anaocha/about", icon: <Info className="h-4 w-4" /> },
-  { label: "Committees", href: "/anaocha/committees", icon: <Users className="h-4 w-4" /> },
-  { label: "Find a Member", href: "/anaocha/members", icon: <Users className="h-4 w-4" /> },
-  { label: "Notifications", href: "/anaocha/notifications", icon: <Bell className="h-4 w-4" /> },
-  { label: "Contact Us", href: "/anaocha/contact", icon: <Phone className="h-4 w-4" /> },
-];
+import { anaochaSidebarItems } from "@/lib/sidebarItems";
 
 const Notifications = () => {
   const { user } = useAuth();
@@ -52,11 +41,11 @@ const Notifications = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <DashboardLayout title="NBA Anaocha" sidebarItems={sidebarItems}>
+    <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-heading text-3xl font-bold text-foreground">Notifications</h1>
+            <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Notifications</h1>
             <p className="text-muted-foreground mt-1">
               {unreadCount > 0 ? `You have ${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}.` : 'You\'re all caught up.'}
             </p>

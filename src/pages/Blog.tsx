@@ -1,8 +1,7 @@
 import { Calendar, Tag } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { anaochaSidebarItems } from "@/lib/sidebarItems";
 
 const posts = [
   {
@@ -51,46 +50,42 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const Blog = () => (
-  <div className="min-h-screen flex flex-col">
-    <Header />
-    <main className="flex-1 bg-muted/30">
-      <div className="container py-12 space-y-8">
-        <div>
-          <h1 className="font-heading text-4xl font-bold text-foreground">Blog & Updates</h1>
-          <p className="text-muted-foreground mt-2 text-lg">
-            News, announcements, and legal updates from NBA Anaocha Branch.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <Card key={post.title} className="shadow-card hover:shadow-lg transition-shadow flex flex-col">
-              <CardContent className="p-6 flex flex-col h-full">
-                <div className="flex items-center justify-between mb-3">
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${CATEGORY_COLORS[post.category] || "bg-muted text-muted-foreground"}`}>
-                    <Tag className="inline h-3 w-3 mr-1" />{post.category}
-                  </span>
-                </div>
-                <h3 className="font-heading text-base font-semibold text-card-foreground mb-2 leading-snug flex-1">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.summary}</p>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-auto">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>
-                    {new Date(post.date).toLocaleDateString("en-NG", {
-                      day: "numeric", month: "long", year: "numeric",
-                    })}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+  <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
+    <div className="space-y-8">
+      <div>
+        <h1 className="font-heading text-4xl font-bold text-foreground">Blog & Updates</h1>
+        <p className="text-muted-foreground mt-2 text-lg">
+          News, announcements, and legal updates from NBA Anaocha Branch.
+        </p>
       </div>
-    </main>
-    <Footer />
-  </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <Card key={post.title} className="shadow-card hover:shadow-lg transition-shadow flex flex-col">
+            <CardContent className="p-6 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-3">
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${CATEGORY_COLORS[post.category] || "bg-muted text-muted-foreground"}`}>
+                  <Tag className="inline h-3 w-3 mr-1" />{post.category}
+                </span>
+              </div>
+              <h3 className="font-heading text-base font-semibold text-card-foreground mb-2 leading-snug flex-1">
+                {post.title}
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.summary}</p>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-auto">
+                <Calendar className="h-3.5 w-3.5" />
+                <span>
+                  {new Date(post.date).toLocaleDateString("en-NG", {
+                    day: "numeric", month: "long", year: "numeric",
+                  })}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </DashboardLayout>
 );
 
 export default Blog;

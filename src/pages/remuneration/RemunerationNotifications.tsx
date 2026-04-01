@@ -1,20 +1,11 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, FolderOpen, CreditCard, Search, Bell, File, CheckCheck, Circle } from "lucide-react";
+import { CheckCheck, Circle, Bell } from "lucide-react";
 import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-
-const sidebarItems = [
-  { label: "Home", href: "/remuneration/dashboard", icon: <Home className="h-4 w-4" /> },
-  { label: "Prepare a Document", href: "/remuneration/prepare", icon: <FileText className="h-4 w-4" /> },
-  { label: "My Documents", href: "/remuneration/documents", icon: <FolderOpen className="h-4 w-4" /> },
-  { label: "Payment History", href: "/remuneration/payments", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "Find a Document", href: "/remuneration/search", icon: <Search className="h-4 w-4" /> },
-  { label: "Apply", href: "/remuneration/apply", icon: <File className="h-4 w-4" /> },
-  { label: "Notifications", href: "/remuneration/notifications", icon: <Bell className="h-4 w-4" /> },
-];
+import { remunerationSidebarItems } from "@/lib/sidebarItems";
 
 const RemunerationNotifications = () => {
   const { user } = useAuth();
@@ -50,11 +41,11 @@ const RemunerationNotifications = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <RemunerationLayout sidebarItems={sidebarItems}>
+    <RemunerationLayout sidebarItems={remunerationSidebarItems}>
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-heading text-3xl font-bold text-foreground">Notifications</h1>
+            <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Notifications</h1>
             <p className="text-muted-foreground mt-1">
               {unreadCount > 0
                 ? `You have ${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}.`
