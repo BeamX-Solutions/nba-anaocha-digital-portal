@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,18 @@ import NotificationBell from "@/components/NotificationBell";
 import ProfileDropdown from "@/components/ProfileDropdown";
 import nbaLogo from "@/assets/nba-logo.png";
 
+const navLinks = [
+  { label: "Home", to: "/" },
+  { label: "About Branch", to: "/anaocha/about" },
+  { label: "Remuneration Portal", to: "/remuneration/about" },
+  { label: "Resources", to: "/resources" },
+];
+
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -36,12 +44,24 @@ const Header = () => {
             </>
           ) : (
             <>
-              <div className="hidden md:flex items-center gap-4">
-                <Button variant="hero-outline" size="sm" asChild>
-                  <Link to="/signin">Sign In</Link>
-                </Button>
+              <nav className="hidden md:flex items-center gap-6 mr-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`text-sm font-medium transition-colors ${
+                      location.pathname === link.to
+                        ? "text-accent"
+                        : "text-primary-foreground/80 hover:text-primary-foreground"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="hidden md:block">
                 <Button variant="hero" size="sm" asChild>
-                  <Link to="/signup">Sign Up</Link>
+                  <Link to="/signin">Log In</Link>
                 </Button>
               </div>
               <button
@@ -58,11 +78,25 @@ const Header = () => {
       {mobileOpen && !user && (
         <div className="md:hidden bg-primary border-t border-sidebar-border pb-4">
           <nav className="container flex flex-col gap-2 pt-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`text-sm py-2 font-medium ${
+                  location.pathname === link.to
+                    ? "text-accent"
+                    : "text-primary-foreground/80"
+                }`}
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
             <div className="flex gap-2 pt-2">
-              <Button variant="hero-outline" size="sm" asChild>
-                <Link to="/signin" onClick={() => setMobileOpen(false)}>Sign In</Link>
-              </Button>
               <Button variant="hero" size="sm" asChild>
+                <Link to="/signin" onClick={() => setMobileOpen(false)}>Log In</Link>
+              </Button>
+              <Button variant="hero-outline" size="sm" asChild>
                 <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
               </Button>
             </div>

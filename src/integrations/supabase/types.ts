@@ -16,31 +16,31 @@ export type Database = {
     Tables: {
       contact_messages: {
         Row: {
-          id: string
-          full_name: string
-          email: string
-          message: string
-          user_id: string | null
-          read: boolean
           created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          read: boolean
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          full_name: string
-          email: string
-          message: string
-          user_id?: string | null
-          read?: boolean
           created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message: string
+          read?: boolean
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          full_name?: string
-          email?: string
-          message?: string
-          user_id?: string | null
-          read?: boolean
           created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string
+          read?: boolean
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -124,7 +124,6 @@ export type Database = {
           middle_name: string | null
           office_address: string | null
           phone: string | null
-          status: string
           surname: string | null
           updated_at: string
           user_id: string
@@ -140,7 +139,6 @@ export type Database = {
           middle_name?: string | null
           office_address?: string | null
           phone?: string | null
-          status?: string
           surname?: string | null
           updated_at?: string
           user_id: string
@@ -156,7 +154,6 @@ export type Database = {
           middle_name?: string | null
           office_address?: string | null
           phone?: string | null
-          status?: string
           surname?: string | null
           updated_at?: string
           user_id?: string
