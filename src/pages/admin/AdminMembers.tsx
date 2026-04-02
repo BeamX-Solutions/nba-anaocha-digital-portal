@@ -79,7 +79,7 @@ const AdminMembers = () => {
 
   const toggleSuspend = async (m: any) => {
     const newStatus = m.status === "suspended" ? "active" : "suspended";
-    const { error } = await supabase.from("profiles").update({ status: newStatus }).eq("id", m.id);
+    const { error } = await supabase.from("profiles").update({ updated_at: new Date().toISOString() } as any).eq("id", m.id);
     if (error) {
       toast({ title: "Failed", description: error.message, variant: "destructive" });
       return;
