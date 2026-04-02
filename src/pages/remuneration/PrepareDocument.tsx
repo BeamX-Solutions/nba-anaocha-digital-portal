@@ -144,6 +144,7 @@ const PrepareDocument = () => {
       setGeneratedContent(content);
       setCurrentStep(2);
     } catch {
+      toast({ title: "AI unavailable", description: "Using standard template. You can edit it before saving.", variant: "default" });
       setGeneratedContent(generateFallbackDocument(docType, formData));
       setCurrentStep(2);
     }
@@ -166,6 +167,7 @@ const PrepareDocument = () => {
       setGeneratedContent(response.data?.content || precedentText);
       setCurrentStep(2);
     } catch {
+      toast({ title: "AI unavailable", description: "Using your original text. You can edit it before saving.", variant: "default" });
       setGeneratedContent(precedentText);
       setCurrentStep(2);
     }
@@ -192,6 +194,16 @@ const PrepareDocument = () => {
     } else {
       toast({ title: "Document saved!", description: `Reference: ${refNum}` });
       setCurrentStep(4);
+    }
+  };
+
+  const handleFieldChange = (key: string, label: string, value: string) => {
+    if (label.includes("(₦)")) {
+      const digits = value.replace(/[^0-9]/g, "");
+      const formatted = digits ? parseInt(digits, 10).toLocaleString("en-NG") : "";
+      setFormData((prev) => ({ ...prev, [key]: formatted }));
+    } else {
+      setFormData((prev) => ({ ...prev, [key]: value }));
     }
   };
 
@@ -275,9 +287,10 @@ const PrepareDocument = () => {
                         </label>
                         <input
                           type="text"
+                          inputMode={field.label.includes("(₦)") ? "numeric" : "text"}
                           value={formData[field.key] || ""}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                          placeholder={field.label}
+                          onChange={(e) => handleFieldChange(field.key, field.label, e.target.value)}
+                          placeholder={field.label.includes("(₦)") ? "0" : field.label}
                           className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                         />
                       </div>

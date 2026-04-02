@@ -35,7 +35,9 @@ const MyProfile = () => {
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("*").eq("user_id", user.id).single()
-      .then(({ data }) => {
+      .then(({ data, error: err }) => {
+        // PGRST116 = no rows found — not a real error, just a new user with no profile yet
+        if (err && err.code !== "PGRST116") { setLoading(false); return; }
         if (data) {
           setForm({
             surname: data.surname ?? "",

@@ -86,7 +86,6 @@ const App = () => (
             <Route path="/remuneration/search" element={<ProtectedRoute><FindDocument /></ProtectedRoute>} />
             <Route path="/remuneration/about" element={<RemunerationAbout />} />
             <Route path="/remuneration/notifications" element={<ProtectedRoute><RemunerationNotifications /></ProtectedRoute>} />
-            <Route path="/remuneration/apply" element={<ProtectedRoute><RemunerationDashboard /></ProtectedRoute>} />
 
             {/* Admin Module */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

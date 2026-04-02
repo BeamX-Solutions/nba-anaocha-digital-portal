@@ -16,6 +16,7 @@ const AdminMembers = () => {
   const [editing, setEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<any>({});
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -23,7 +24,8 @@ const AdminMembers = () => {
       .from("profiles")
       .select("*")
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
         setMembers(data || []);
         setFiltered(data || []);
         setLoading(false);
@@ -149,6 +151,8 @@ const AdminMembers = () => {
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <Card className="shadow-card"><CardContent className="p-8 text-center"><p className="text-sm text-destructive">{error}</p></CardContent></Card>
         ) : filtered.length === 0 ? (
           <Card className="shadow-card">
             <CardContent className="p-8 text-center">
@@ -234,7 +238,7 @@ const AdminMembers = () => {
 
                       {editing !== m.id && (
                         <div className="flex gap-2 pt-1">
-                          <Button size="sm" variant="outline" onClick={() => startEdit(m)}>
+                          <Button size="sm" variant="outline" onClick={() => startEdit(m)} disabled={m.status === "suspended"} title={m.status === "suspended" ? "Reinstate member before editing" : undefined}>
                             <Edit2 className="h-4 w-4 mr-1" />Edit Profile
                           </Button>
                           <Button

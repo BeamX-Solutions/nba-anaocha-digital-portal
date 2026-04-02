@@ -32,7 +32,7 @@ const FindDocument = () => {
       .from("documents")
       .select("id, title, document_type, reference_number, status, created_at")
       .eq("status", "completed")
-      .or(`title.ilike.%${query}%,reference_number.ilike.%${query}%,document_type.ilike.%${query}%`)
+      .ilike("reference_number", `%${query.trim()}%`)
       .order("created_at", { ascending: false });
 
     setResults(data || []);
@@ -45,7 +45,7 @@ const FindDocument = () => {
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Document Registry</h1>
           <p className="text-muted-foreground mt-1">
-            Search completed legal documents by title, reference number, or document type.
+            Look up a completed document by its reference number (e.g. <span className="font-mono text-xs">REM-ABC123</span>). Share your reference number with co-counsel or other parties who need to verify your document.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ const FindDocument = () => {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by title, reference number, or document type..."
+                placeholder="Enter reference number (e.g. REM-ABC123)..."
                 className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring min-w-0"
               />
               <Button type="submit" disabled={searching} className="flex-shrink-0">
@@ -70,8 +70,8 @@ const FindDocument = () => {
           <Card className="shadow-card">
             <CardContent className="p-8 text-center">
               <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="font-medium text-foreground mb-1">Search the Document Registry</p>
-              <p className="text-sm text-muted-foreground">Only completed and verified documents appear here.</p>
+              <p className="font-medium text-foreground mb-1">Enter a Reference Number</p>
+              <p className="text-sm text-muted-foreground">Only completed, verified documents appear here. You must know the reference number to look up a document.</p>
             </CardContent>
           </Card>
         ) : results.length === 0 ? (

@@ -5,14 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
-
-const SERVICE_LABELS: Record<string, string> = {
-  nba_diary: "NBA Diary",
-  nba_id_card: "NBA ID Card",
-  bain: "Bar Identification Number",
-  stamp_seal: "Stamp & Seal",
-  title_document_front_page: "Title Document Front Page",
-};
+import { SERVICE_LABELS } from "@/lib/constants";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -24,6 +17,7 @@ const AnaochaPayments = () => {
   const { user } = useAuth();
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -33,7 +27,8 @@ const AnaochaPayments = () => {
       .eq("user_id", user.id)
       .not("file_urls", "is", null)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
         setApplications(data || []);
         setLoading(false);
       });
@@ -53,6 +48,8 @@ const AnaochaPayments = () => {
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <Card className="shadow-card"><CardContent className="p-8 text-center"><p className="text-sm text-destructive">{error}</p></CardContent></Card>
         ) : applications.length === 0 ? (
           <Card className="shadow-card">
             <CardContent className="p-8 text-center">

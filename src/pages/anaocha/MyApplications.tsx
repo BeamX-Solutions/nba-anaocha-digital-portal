@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { SERVICE_LABELS } from "@/lib/constants";
 
-const serviceTypeLabels: Record<string, { label: string; icon: string }> = {
-  nba_diary: { label: "NBA Diary", icon: "📘" },
-  nba_id_card: { label: "NBA ID Card", icon: "🪪" },
-  bain: { label: "Bar Identification Number", icon: "🔖" },
-  stamp_seal: { label: "Stamp & Seal", icon: "🔏" },
+const SERVICE_ICONS: Record<string, string> = {
+  nba_diary: "📘",
+  nba_id_card: "🪪",
+  bain: "🔖",
+  stamp_seal: "🔏",
+  title_document_front_page: "📄",
 };
 
 const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }> = {
@@ -24,6 +26,7 @@ const MyApplications = () => {
   const { user } = useAuth();
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -32,7 +35,8 @@ const MyApplications = () => {
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
         setApplications(data || []);
         setLoading(false);
       });
@@ -50,6 +54,8 @@ const MyApplications = () => {
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <Card className="shadow-card"><CardContent className="p-8 text-center"><p className="text-sm text-destructive">{error}</p></CardContent></Card>
         ) : applications.length === 0 ? (
           <Card className="shadow-card">
             <CardContent className="p-8 text-center">
@@ -63,7 +69,7 @@ const MyApplications = () => {
         ) : (
           <div className="space-y-4">
             {applications.map((app) => {
-              const svc = serviceTypeLabels[app.service_type] || { label: app.service_type, icon: "📄" };
+              const svc = { label: SERVICE_LABELS[app.service_type] || app.service_type, icon: SERVICE_ICONS[app.service_type] || "📄" };
               const status = statusConfig[app.status] || statusConfig.pending;
               return (
                 <Card key={app.id} className="shadow-card">

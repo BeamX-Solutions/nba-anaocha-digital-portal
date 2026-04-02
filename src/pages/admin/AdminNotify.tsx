@@ -22,7 +22,7 @@ const AdminNotify = () => {
       .from("profiles")
       .select("user_id, first_name, surname, email")
       .order("surname")
-      .then(({ data }) => setMembers(data || []));
+      .then(({ data, error: err }) => { if (!err) setMembers(data || []); });
   }, []);
 
   const handleSend = async (e: React.FormEvent) => {

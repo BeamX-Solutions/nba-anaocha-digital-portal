@@ -11,6 +11,7 @@ const RemunerationNotifications = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -19,7 +20,8 @@ const RemunerationNotifications = () => {
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
         setNotifications(data || []);
         setLoading(false);
       });
@@ -63,6 +65,8 @@ const RemunerationNotifications = () => {
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <Card className="shadow-card"><CardContent className="p-8 text-center"><p className="text-sm text-destructive">{error}</p></CardContent></Card>
         ) : notifications.length === 0 ? (
           <Card className="shadow-card">
             <CardContent className="p-8 text-center">

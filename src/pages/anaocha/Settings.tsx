@@ -22,6 +22,10 @@ const Settings = () => {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentPassword) {
+      toast({ title: "Current password required", variant: "destructive" });
+      return;
+    }
     if (newPassword !== confirmPassword) {
       toast({ title: "Passwords do not match", variant: "destructive" });
       return;
@@ -30,7 +34,21 @@ const Settings = () => {
       toast({ title: "Password must be at least 8 characters", variant: "destructive" });
       return;
     }
+
     setPasswordLoading(true);
+
+    // Verify current password by re-authenticating
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user?.email ?? "",
+      password: currentPassword,
+    });
+
+    if (signInError) {
+      setPasswordLoading(false);
+      toast({ title: "Current password is incorrect", variant: "destructive" });
+      return;
+    }
+
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     setPasswordLoading(false);
     if (error) {
@@ -73,6 +91,22 @@ const Settings = () => {
               <h2 className="font-heading text-lg font-semibold text-foreground">Change Password</h2>
             </div>
             <form onSubmit={handleChangePassword} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-foreground">Current Password</label>
+                <div className="relative mt-1">
+                  <input
+                    type={showCurrent ? "text" : "password"}
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Your current password"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
               <div>
                 <label className="text-sm font-medium text-foreground">New Password</label>
                 <div className="relative mt-1">

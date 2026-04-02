@@ -7,16 +7,10 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { SERVICE_LABELS } from "@/lib/constants";
 import {
   FileText, Scale, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked,
 } from "lucide-react";
-
-const SERVICE_LABELS: Record<string, string> = {
-  nba_diary: "NBA Diary",
-  id_card: "NBA ID Card",
-  bain: "Bar Identification Number",
-  stamp_seal: "Stamp & Seal",
-};
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   pending: "secondary",

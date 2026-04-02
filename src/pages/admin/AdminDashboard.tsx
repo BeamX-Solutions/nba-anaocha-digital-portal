@@ -4,6 +4,7 @@ import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import { SERVICE_LABELS } from "@/lib/constants";
 
 interface Stats {
   totalMembers: number;
@@ -14,13 +15,6 @@ interface Stats {
   totalDocuments: number;
 }
 
-const SERVICE_LABELS: Record<string, string> = {
-  nba_diary: "NBA Diary",
-  nba_id_card: "NBA ID Card",
-  bain: "Bar ID Number",
-  stamp_seal: "Stamp & Seal",
-  title_document_front_page: "Title Document",
-};
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({
@@ -33,33 +27,44 @@ const AdminDashboard = () => {
   });
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
-      const [members, applications, documents] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("service_applications").select("id, status, service_type, created_at"),
-        supabase.from("documents").select("id", { count: "exact", head: true }),
-      ]);
+      try {
+        const [members, applications, documents] = await Promise.all([
+          supabase.from("profiles").select("id", { count: "exact", head: true }),
+          supabase.from("service_applications").select("id, status, service_type, created_at"),
+          supabase.from("documents").select("id", { count: "exact", head: true }),
+        ]);
 
-      const apps = applications.data || [];
-      setStats({
-        totalMembers: members.count || 0,
-        totalApplications: apps.length,
-        pendingApplications: apps.filter((a) => a.status === "pending").length,
-        approvedApplications: apps.filter((a) => a.status === "approved").length,
-        rejectedApplications: apps.filter((a) => a.status === "rejected").length,
-        totalDocuments: documents.count || 0,
-      });
+        if (members.error || applications.error || documents.error) {
+          setError("Failed to load dashboard data. Please refresh.");
+          setLoading(false);
+          return;
+        }
 
-      // Most recent 5 applications
-      const { data: recent } = await supabase
-        .from("service_applications")
-        .select("id, service_type, status, created_at, user_id")
-        .order("created_at", { ascending: false })
-        .limit(5);
-      setRecentApplications(recent || []);
-      setLoading(false);
+        const apps = applications.data || [];
+        setStats({
+          totalMembers: members.count || 0,
+          totalApplications: apps.length,
+          pendingApplications: apps.filter((a) => a.status === "pending").length,
+          approvedApplications: apps.filter((a) => a.status === "approved").length,
+          rejectedApplications: apps.filter((a) => a.status === "rejected").length,
+          totalDocuments: documents.count || 0,
+        });
+
+        const { data: recent } = await supabase
+          .from("service_applications")
+          .select("id, service_type, status, created_at, user_id")
+          .order("created_at", { ascending: false })
+          .limit(5);
+        setRecentApplications(recent || []);
+        setLoading(false);
+      } catch {
+        setError("Failed to load dashboard data. Please refresh.");
+        setLoading(false);
+      }
     };
     load();
   }, []);
@@ -85,6 +90,8 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <Card className="shadow-card"><CardContent className="p-8 text-center"><p className="text-sm text-destructive">{error}</p></CardContent></Card>
         ) : (
           <>
             {/* Stat cards */}

@@ -11,6 +11,7 @@ const AdminContacts = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -18,7 +19,8 @@ const AdminContacts = () => {
       .from("contact_messages")
       .select("*")
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
         setMessages(data || []);
         setLoading(false);
       });
@@ -63,6 +65,8 @@ const AdminContacts = () => {
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <Card className="shadow-card"><CardContent className="p-8 text-center"><p className="text-sm text-destructive">{error}</p></CardContent></Card>
         ) : messages.length === 0 ? (
           <Card className="shadow-card">
             <CardContent className="p-8 text-center">
