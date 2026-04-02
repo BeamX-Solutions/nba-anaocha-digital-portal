@@ -158,23 +158,23 @@ const Index = () => {
       </section>
 
       {/* Access Dashboard CTA */}
-      <section className="bg-primary">
+      <section className="bg-accent/10 border-y border-accent/20">
         <div className="container py-14">
           <div className="flex flex-col md:flex-row items-center gap-6">
             <img src={nbaLogo} alt="NBA Anaocha" className="h-16 w-16" />
             <div className="flex-1 text-center md:text-left">
-              <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground mb-2">
+              <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-2">
                 Access Your Dashboard
               </h2>
-              <p className="text-primary-foreground/70">
+              <p className="text-muted-foreground">
                 Register to access your dashboard, apply for services, manage your membership, and more.
               </p>
             </div>
             <div className="flex gap-3">
-              <Button variant="hero" size="lg" asChild>
+              <Button variant="default" size="lg" asChild>
                 <Link to="/signin">Sign In</Link>
               </Button>
-              <Button variant="hero-outline" size="lg" asChild>
+              <Button variant="outline" size="lg" asChild>
                 <Link to="/signup">Sign Up</Link>
               </Button>
             </div>
