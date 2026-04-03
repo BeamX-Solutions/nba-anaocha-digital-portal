@@ -29,11 +29,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profileComplete, setProfileComplete] = useState<boolean | null>(null);
 
   const checkProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .select("first_name, surname")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
+    if (error) return; // don't override profileComplete on transient/RLS errors
     setProfileComplete(!!(data?.first_name && data?.surname));
   }, []);
 

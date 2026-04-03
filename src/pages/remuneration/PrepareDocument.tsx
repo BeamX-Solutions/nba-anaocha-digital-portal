@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Sparkles, Loader2, ChevronDown, BookOpen, FolderOpen } from "lucide-react";
 import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -330,8 +331,8 @@ const PrepareDocument = () => {
           <Card className="shadow-card">
             <CardContent className="p-6 space-y-4">
               <h3 className="font-heading text-xl font-semibold">Document Preview</h3>
-              <div className="border border-border rounded-md p-6 bg-background min-h-[300px] whitespace-pre-wrap text-sm text-foreground font-mono leading-relaxed">
-                {generatedContent}
+              <div className="border border-border rounded-md p-6 bg-background min-h-[300px] prose prose-sm max-w-none text-foreground">
+                <ReactMarkdown>{generatedContent}</ReactMarkdown>
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setCurrentStep(1)}>← Edit</Button>

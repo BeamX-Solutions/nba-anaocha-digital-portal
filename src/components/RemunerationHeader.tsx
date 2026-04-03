@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Bell, LogOut, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,13 +9,7 @@ import nbaLogo from "@/assets/nba-logo.png";
 
 const RemunerationHeader = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
+  const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 bg-primary shadow-md">
@@ -28,7 +22,7 @@ const RemunerationHeader = () => {
           </div>
         </Link>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="flex items-center gap-4">
           {user ? (
             <>
               <NotificationBell viewAllHref="/remuneration/notifications" />
@@ -36,60 +30,36 @@ const RemunerationHeader = () => {
             </>
           ) : (
             <>
-              <Button variant="hero-outline" size="sm" asChild>
-                <Link to="/signin">Log In</Link>
-              </Button>
-              <Button variant="hero" size="sm" asChild>
-                <Link to="/signup">Sign Up</Link>
-              </Button>
+              <div className="hidden md:flex items-center gap-4">
+                <Button variant="hero-outline" size="sm" asChild>
+                  <Link to="/signin">Log In</Link>
+                </Button>
+                <Button variant="hero" size="sm" asChild>
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+              </div>
+              <button
+                className="md:hidden text-primary-foreground"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
             </>
           )}
         </div>
-
-        <button
-          className="md:hidden text-primary-foreground"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </div>
 
-      {mobileOpen && (
+      {mobileOpen && !user && (
         <div className="md:hidden bg-primary border-t border-sidebar-border pb-4">
           <nav className="container flex flex-col gap-2 pt-2">
-            {user ? (
-              <div className="flex flex-col gap-1 pt-2">
-                <Link
-                  to="/remuneration/notifications"
-                  className="flex items-center gap-2 text-sm text-primary-foreground/85 hover:text-primary-foreground py-2"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <Bell className="h-4 w-4" /> Notifications
-                </Link>
-                <Link
-                  to="/anaocha/profile"
-                  className="flex items-center gap-2 text-sm text-primary-foreground/85 hover:text-primary-foreground py-2"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <User className="h-4 w-4" /> My Profile
-                </Link>
-                <button
-                  className="flex items-center gap-2 text-sm text-primary-foreground/85 hover:text-primary-foreground py-2 text-left"
-                  onClick={() => { handleSignOut(); setMobileOpen(false); }}
-                >
-                  <LogOut className="h-4 w-4" /> Sign Out
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2 pt-2">
-                <Button variant="hero-outline" size="sm" asChild>
-                  <Link to="/signin" onClick={() => setMobileOpen(false)}>Log In</Link>
-                </Button>
-                <Button variant="hero" size="sm" asChild>
-                  <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
-                </Button>
-              </div>
-            )}
+            <div className="flex gap-2 pt-2">
+              <Button variant="hero-outline" size="sm" asChild>
+                <Link to="/signin" onClick={() => setMobileOpen(false)}>Log In</Link>
+              </Button>
+              <Button variant="hero" size="sm" asChild>
+                <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
+              </Button>
+            </div>
           </nav>
         </div>
       )}
