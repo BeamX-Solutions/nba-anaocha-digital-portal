@@ -11,7 +11,7 @@ const highlights = [
   },
   {
     icon: <ShieldCheck className="h-7 w-7 text-accent" />,
-    title: "BAIN — Bar Identification Number",
+    title: "BAIN: Bar Identification Number",
     body: "All finalized documents receive a unique Bar Identification Number (BAIN) at the footer, serving as proof of compliance and enabling verification by any party.",
   },
   {
@@ -39,7 +39,7 @@ const RemunerationAbout = () => (
             The NBA Anaocha Remuneration Portal was established by the NBA Anaocha Branch Remuneration Committee to bring
             structure, transparency and accountability to legal document preparation and remuneration compliance in
             Anambra State. The portal enables every legal practitioner to generate court-ready, compliant legal documents
-            from any location — quickly, accurately and in accordance with the law.
+            from any location, quickly, accurately and in accordance with the law.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             The portal is powered by the <strong>Legal Practitioners' Remuneration Order 2023</strong> and is the

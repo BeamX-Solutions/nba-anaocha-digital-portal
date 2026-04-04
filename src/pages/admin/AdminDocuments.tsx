@@ -88,7 +88,7 @@ const AdminDocuments = () => {
     // In-app notification
     await supabase.from("notifications").insert({
       user_id: doc.user_id,
-      title: `Document Ready — ${docTypeLabel}`,
+      title: `Document Ready: ${docTypeLabel}`,
       message: `Your document "${doc.title}" (Ref: ${doc.reference_number || "N/A"}) has been reviewed and marked as completed by the branch secretariat.`,
       type: "document_update",
     });
@@ -169,7 +169,7 @@ const AdminDocuments = () => {
                         <h3 className="text-sm font-semibold text-card-foreground truncate">{doc.title}</h3>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {DOC_TYPE_LABELS[doc.document_type] || doc.document_type}
-                          {" · "}Ref: {doc.reference_number || "—"}
+                          {" · "}Ref: {doc.reference_number || "-"}
                           {" · "}
                           {new Date(doc.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                         </p>

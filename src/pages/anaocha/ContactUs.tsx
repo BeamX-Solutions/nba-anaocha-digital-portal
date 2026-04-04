@@ -54,7 +54,7 @@ const ContactUs = () => {
     if (user) {
       await supabase.from("notifications").insert({
         user_id: user.id,
-        title: "Message Received — NBA Anaocha",
+        title: "Message Received - NBA Anaocha",
         message: `Thank you, ${form.full_name}. Your message has been received and will be attended to shortly by the branch secretariat.`,
         type: "contact",
       });

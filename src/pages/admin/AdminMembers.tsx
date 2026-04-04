@@ -79,7 +79,7 @@ const AdminMembers = () => {
 
   const toggleSuspend = async (m: any) => {
     const newStatus = m.status === "suspended" ? "active" : "suspended";
-    const { error } = await supabase.from("profiles").update({ updated_at: new Date().toISOString() } as any).eq("id", m.id);
+    const { error } = await supabase.from("profiles").update({ status: newStatus }).eq("id", m.id);
     if (error) {
       toast({ title: "Failed", description: error.message, variant: "destructive" });
       return;
@@ -173,7 +173,7 @@ const AdminMembers = () => {
                     <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-1">
                       <div>
                         <p className="font-semibold text-card-foreground text-sm">
-                          {[m.surname, m.first_name, m.middle_name].filter(Boolean).join(" ") || "—"}
+                          {[m.surname, m.first_name, m.middle_name].filter(Boolean).join(" ") || "-"}
                         </p>
                         <p className="text-xs text-muted-foreground">{m.email || "No email"}</p>
                       </div>
@@ -229,10 +229,10 @@ const AdminMembers = () => {
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                          <div><span className="text-muted-foreground">Branch:</span> {m.branch || "—"}</div>
-                          <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "—"}</div>
-                          <div><span className="text-muted-foreground">Phone:</span> {m.phone || "—"}</div>
-                          <div><span className="text-muted-foreground">Office:</span> {m.office_address || "—"}</div>
+                          <div><span className="text-muted-foreground">Branch:</span> {m.branch || "-"}</div>
+                          <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "-"}</div>
+                          <div><span className="text-muted-foreground">Phone:</span> {m.phone || "-"}</div>
+                          <div><span className="text-muted-foreground">Office:</span> {m.office_address || "-"}</div>
                         </div>
                       )}
 

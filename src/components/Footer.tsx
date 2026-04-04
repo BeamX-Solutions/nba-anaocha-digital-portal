@@ -12,7 +12,7 @@ const Footer = () => (
             <span className="font-heading text-lg font-bold">NBA Anaocha Branch</span>
           </div>
           <p className="text-sm text-primary-foreground/70">
-            We are the Nigerian Bar Association, Anaocha Branch — promoting the rule of law, upholding professional ethics, and advancing justice within Anaocha and beyond.
+            We are the Nigerian Bar Association, Anaocha Branch, promoting the rule of law, upholding professional ethics, and advancing justice within Anaocha and beyond.
           </p>
         </div>
 

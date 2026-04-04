@@ -181,7 +181,7 @@ const PrepareDocument = () => {
     const { error } = await supabase.from("documents").insert({
       user_id: user.id,
       title: method === "ai"
-        ? `${selectedDoc.label} — ${formData.donee_name || formData.donor_name || "Draft"}`
+        ? `${selectedDoc.label} - ${formData.donee_name || formData.donor_name || "Draft"}`
         : "Precedent Document",
       document_type: method === "ai" ? docType : "precedent",
       content: generatedContent,

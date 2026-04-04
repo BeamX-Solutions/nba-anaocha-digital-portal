@@ -24,7 +24,7 @@ interface ServiceConfig {
 const services: ServiceConfig[] = [
   {
     title: "NBA Diary",
-    description: "Order your NBA Diary — a comprehensive resource with member details, court schedules, and branch information.",
+    description: "Order your NBA Diary, a comprehensive resource with member details, court schedules, and branch information.",
     icon: <BookOpen className="h-6 w-6" />,
     color: "text-blue-600 bg-blue-50 border-blue-100",
     textFields: [
@@ -153,9 +153,43 @@ const ApplyForServices = () => {
     setSubmitting(false);
     if (error) {
       toast({ title: "Submission failed", description: error.message, variant: "destructive" });
-    } else {
-      setSubmitted(true);
+      return;
     }
+
+    // Notify all admins
+    const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
+      .split(",")
+      .map((e: string) => e.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (adminEmails.length > 0) {
+      const { data: adminProfiles } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .in("email", adminEmails);
+
+      if (adminProfiles && adminProfiles.length > 0) {
+        const memberProfile = await supabase
+          .from("profiles")
+          .select("first_name, surname")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        const memberName = [memberProfile.data?.surname, memberProfile.data?.first_name]
+          .filter(Boolean).join(" ") || user.email;
+
+        await supabase.from("notifications").insert(
+          adminProfiles.map((p) => ({
+            user_id: p.user_id,
+            title: `New Application: ${openService.title}`,
+            message: `${memberName} has submitted a new application for ${openService.title}. Review it in the Applications section.`,
+            type: "application_update",
+          }))
+        );
+      }
+    }
+
+    setSubmitted(true);
   };
 
   const totalRequired = openService

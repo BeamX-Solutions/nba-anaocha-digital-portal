@@ -72,7 +72,7 @@ const AdminApplications = () => {
     // In-app notification
     await supabase.from("notifications").insert({
       user_id: userId,
-      title: `Application ${status === "approved" ? "Approved" : "Rejected"} — ${serviceLabel}`,
+      title: `Application ${status === "approved" ? "Approved" : "Rejected"}: ${serviceLabel}`,
       message: status === "approved"
         ? `Your application for ${serviceLabel} has been approved by the branch secretariat. Please collect at the branch office.`
         : `Your application for ${serviceLabel} has been reviewed and could not be approved at this time. Please contact the branch secretariat for details.`,
@@ -80,8 +80,9 @@ const AdminApplications = () => {
     });
 
     // Email notification
+    let emailFailed = false;
     if (profile?.email) {
-      await supabase.functions.invoke("send-email", {
+      const { error: emailError } = await supabase.functions.invoke("send-email", {
         body: {
           type: status === "approved" ? "application_approved" : "application_rejected",
           to: profile.email,
@@ -89,12 +90,19 @@ const AdminApplications = () => {
           service_type: serviceLabel,
         },
       });
+      if (emailError) emailFailed = true;
     }
 
     setApplications((prev) => prev.map((a) => a.id === appId ? { ...a, status } : a));
     setUpdating(null);
 
-    toast({ title: `Application ${status}`, description: `The applicant has been notified.` });
+    toast({
+      title: `Application ${status}`,
+      description: emailFailed
+        ? "Status updated. In-app notification sent, but email delivery failed."
+        : "The applicant has been notified.",
+      variant: emailFailed ? "destructive" : "default",
+    });
   };
 
   const filtered = filter === "all" ? applications : applications.filter((a) => a.status === filter);
