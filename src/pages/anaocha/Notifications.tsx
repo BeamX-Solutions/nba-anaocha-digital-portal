@@ -28,7 +28,8 @@ const Notifications = () => {
   }, [user]);
 
   const markAsRead = async (id: string) => {
-    await supabase.from("notifications").update({ read: true }).eq("id", id);
+    const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+    if (error) return;
     setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n));
   };
 
@@ -36,7 +37,8 @@ const Notifications = () => {
     if (!user) return;
     const unreadIds = notifications.filter((n) => !n.read).map((n) => n.id);
     if (unreadIds.length === 0) return;
-    await supabase.from("notifications").update({ read: true }).in("id", unreadIds);
+    const { error } = await supabase.from("notifications").update({ read: true }).in("id", unreadIds);
+    if (error) return;
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 

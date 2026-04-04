@@ -90,7 +90,7 @@ const AnaochaDashboard = () => {
                   <ClipboardList className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{loading ? "—" : stats.applications}</p>
+                  <p className="text-2xl font-bold text-foreground">{loading ? "-" :stats.applications}</p>
                   <p className="text-sm text-muted-foreground">Application{stats.applications !== 1 ? "s" : ""}</p>
                 </div>
               </CardContent>
@@ -103,7 +103,7 @@ const AnaochaDashboard = () => {
                   <FileText className="h-6 w-6 text-accent" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{loading ? "—" : stats.documents}</p>
+                  <p className="text-2xl font-bold text-foreground">{loading ? "-" :stats.documents}</p>
                   <p className="text-sm text-muted-foreground">Document{stats.documents !== 1 ? "s" : ""} Prepared</p>
                 </div>
               </CardContent>
@@ -116,7 +116,7 @@ const AnaochaDashboard = () => {
                   <Bell className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{loading ? "—" : stats.unread}</p>
+                  <p className="text-2xl font-bold text-foreground">{loading ? "-" :stats.unread}</p>
                   <p className="text-sm text-muted-foreground">Unread Notification{stats.unread !== 1 ? "s" : ""}</p>
                 </div>
               </CardContent>

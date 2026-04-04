@@ -33,8 +33,10 @@ const AdminContacts = () => {
     }
     setExpanded(msg.id);
     if (!msg.read) {
-      await supabase.from("contact_messages").update({ read: true }).eq("id", msg.id);
-      setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, read: true } : m));
+      const { error } = await supabase.from("contact_messages").update({ read: true }).eq("id", msg.id);
+      if (!error) {
+        setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, read: true } : m));
+      }
     }
   };
 

@@ -26,7 +26,7 @@ const posts = [
       "The NBA Anaocha Branch is pleased to announce the launch of the NBA Remuneration Portal at nbabranchremuneration.org.ng. Legal practitioners can now generate compliant documents and process payments online.",
   },
   {
-    title: "Bar Identification Number (BAIN) — Application Process",
+    title: "Bar Identification Number (BAIN): Application Process",
     date: "2025-07-15",
     category: "Guides",
     summary:

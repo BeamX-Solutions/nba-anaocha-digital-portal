@@ -6,11 +6,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import lawyersCollage from "@/assets/lawyers-collage.jpg";
-import aboutBranch from "@/assets/about-branch.jpg";
+import aboutBranch from "@/assets/about-branch.png";
 import newsTraining from "@/assets/news-training.jpg";
 import newsLegal from "@/assets/news-legal.jpg";
 import newsRights from "@/assets/news-rights.jpg";
-import nbaLogo from "@/assets/nba-logo.png";
 
 const newsArticles = [
   {
@@ -106,7 +105,7 @@ const Index = () => {
             Remuneration Portal
           </h2>
           <p className="text-primary-foreground/80 max-w-3xl mx-auto mb-8 font-body">
-            Due to the surge in traffic, the portal has been reconfigured and simplified to ensure members have a seamless experience. You can now pay your Bar Practising Fee directly — no login required. Official Remuneration Portal of the Nigerian Bar Association (NBA) — manage property transactions, verify fee compliance, and track professional remuneration.
+            Due to the surge in traffic, the portal has been reconfigured and simplified to ensure members have a seamless experience. You can now pay your Bar Practising Fee directly with no login required. Official Remuneration Portal of the Nigerian Bar Association (NBA): manage property transactions, verify fee compliance, and track professional remuneration.
           </p>
           <Button variant="hero" size="lg" asChild>
             <Link to="/remuneration/about">
@@ -157,32 +156,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Access Dashboard CTA */}
-      <section className="bg-accent/10 border-y border-accent/20">
-        <div className="container py-14">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <img src={nbaLogo} alt="NBA Anaocha" className="h-16 w-16" />
-            <div className="flex-1 text-center md:text-left">
-              <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-2">
-                Access Your Dashboard
-              </h2>
-              <p className="text-muted-foreground">
-                Register to access your dashboard, apply for services, manage your membership, and more.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="default" size="lg" asChild>
-                <Link to="/signin">Sign In</Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/signup">Sign Up</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <Footer />
+<Footer />
     </div>
   );
 };
