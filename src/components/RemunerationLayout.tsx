@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import RemunerationHeader from "@/components/RemunerationHeader";
-import Footer from "@/components/Footer";
 import { Scale, Users, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -93,7 +92,6 @@ const RemunerationLayout = ({ children, sidebarItems }: RemunerationLayoutProps)
           <div className="p-6 lg:p-8 animate-fade-in">{children}</div>
         </main>
       </div>
-      <Footer />
     </div>
   );
 };

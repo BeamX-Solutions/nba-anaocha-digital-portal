@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Scale, Users, Menu, X } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -94,7 +93,6 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
           <div className="p-6 lg:p-8 animate-fade-in">{children}</div>
         </main>
       </div>
-      <Footer />
     </div>
   );
 };
