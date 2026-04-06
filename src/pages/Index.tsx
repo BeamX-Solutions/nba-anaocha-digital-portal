@@ -66,34 +66,53 @@ const Index = () => {
       </section>
 
       {/* About Us */}
-      <section className="container py-16 md:py-24">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-10 text-center">
-          About Us
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="space-y-5 text-muted-foreground leading-relaxed">
-            <p>
-              The Nigerian Bar Association Anaocha Branch, popularly known as the "Family Bar," is one of the youngest yet most dynamic branches of the Nigerian Bar Association, officially inaugurated in May 2014.
-            </p>
-            <p>
-              Since its establishment, the branch has grown into a vibrant community of legal practitioners committed to promoting the rule of law, upholding professional ethics, and advancing justice within Anaocha and beyond. As part of the broader NBA network, the branch provides a platform for collaboration, knowledge sharing, and the continuous development of its members.
-            </p>
-            <p>
-              Driven by a culture of inclusiveness and excellence, the NBA Anaocha Branch actively engages in legal advocacy, capacity-building programmes, and community-focused initiatives. The branch regularly organizes trainings, sensitisation programmes, and professional development activities to keep members aligned with evolving legal standards and practices.
-            </p>
-            <p>
-              With a strong emphasis on member welfare, unity, and service, the branch continues to position itself as a progressive force dedicated to strengthening the legal profession and contributing meaningfully to society.
-            </p>
-          </div>
-          <div>
-            <img
-              src={aboutBranch}
-              alt="NBA Anaocha Branch members at a meeting"
-              className="rounded-lg shadow-lg w-full object-cover"
-              loading="lazy"
-              width={800}
-              height={600}
-            />
+      <section className="py-16 md:py-24 overflow-hidden">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Image */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-accent/10 rounded-2xl -z-10" />
+              <img
+                src={aboutBranch}
+                alt="NBA Anaocha Branch"
+                className="w-full rounded-xl shadow-xl"
+                loading="lazy"
+              />
+            </div>
+
+            {/* Text */}
+            <div>
+              <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">Who We Are</p>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
+                The Family Bar
+              </h2>
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  The Nigerian Bar Association Anaocha Branch, popularly known as the <span className="text-foreground font-medium">"Family Bar,"</span> is one of the youngest yet most dynamic branches of the Nigerian Bar Association, officially inaugurated in <span className="text-foreground font-medium">May 2014.</span>
+                </p>
+                <p>
+                  Since its establishment, the branch has grown into a vibrant community of legal practitioners committed to promoting the rule of law, upholding professional ethics, and advancing justice within Anaocha and beyond.
+                </p>
+                <p>
+                  Driven by a culture of inclusiveness and excellence, the branch actively engages in legal advocacy, capacity-building programmes, and community-focused initiatives — regularly organizing trainings and professional development activities to keep members aligned with evolving legal standards.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-8">
+                <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
+                  <p className="font-heading text-2xl font-bold text-primary">2014</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Year Founded</p>
+                </div>
+                <div className="bg-accent/5 border border-accent/10 rounded-xl p-4">
+                  <p className="font-heading text-2xl font-bold text-accent">11</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Active Committees</p>
+                </div>
+              </div>
+
+              <Button className="mt-8" asChild>
+                <Link to="/signin">Join the Branch <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
