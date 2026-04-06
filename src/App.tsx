@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import SplashScreen from "@/components/SplashScreen";
 import { useEffect } from "react";
 
 const ScrollToTop = () => {
@@ -63,6 +64,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <AuthProvider>
+          <SplashScreen>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/resources" element={<Resources />} />
@@ -105,6 +107,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </SplashScreen>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
