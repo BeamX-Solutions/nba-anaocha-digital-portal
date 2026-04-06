@@ -98,6 +98,34 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Committees */}
+      <section className="bg-muted/40 border-y border-border py-16">
+        <div className="container">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2 text-center">Our Committees</h2>
+          <p className="text-muted-foreground text-center mb-10">Standing committees of the NBA Anaocha Branch</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-4xl mx-auto">
+            {[
+              "Human Rights Committee",
+              "ICT Committee",
+              "Young Lawyers Forum",
+              "Women Forum",
+              "Disciplinary Committee",
+              "Remuneration Committee",
+              "Journal Committee",
+              "Welfare Committee",
+              "Publicity Committee",
+              "Sports Committee",
+              "Bar Center Committee",
+            ].map((committee) => (
+              <div key={committee} className="flex items-center gap-3 bg-background border border-border rounded-lg px-4 py-3 shadow-sm">
+                <div className="h-2 w-2 rounded-full bg-accent shrink-0" />
+                <span className="text-sm font-medium text-foreground">NBA Anaocha {committee}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Remuneration Portal Banner */}
       <section className="bg-primary">
         <div className="container py-14 text-center">
@@ -105,13 +133,16 @@ const Index = () => {
             Remuneration Portal
           </h2>
           <p className="text-primary-foreground/80 max-w-3xl mx-auto mb-8 font-body">
-            Due to the surge in traffic, the portal has been reconfigured and simplified to ensure members have a seamless experience. You can now pay your Bar Practising Fee directly with no login required. Official Remuneration Portal of the Nigerian Bar Association (NBA): manage property transactions, verify fee compliance, and track professional remuneration.
+            The Official Remuneration Portal of the Nigerian Bar Association, Anaocha Branch. Manage property transactions, generate compliant legal documents, verify fee compliance, and track professional remuneration — all in one place.
           </p>
-          <Button variant="hero" size="lg" asChild>
-            <Link to="/remuneration/about">
-              Enter Portal <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button variant="hero" size="lg" asChild>
+              <Link to="/signin">Sign In <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button variant="outline" size="lg" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
+              <Link to="/signup">Create Account</Link>
+            </Button>
+          </div>
         </div>
       </section>
 
