@@ -22,6 +22,8 @@ const Footer = () => (
             <li><Link to="/" className="hover:text-primary-foreground">Home</Link></li>
             <li><Link to="/anaocha/about" className="hover:text-primary-foreground">About Branch</Link></li>
             <li><Link to="/remuneration/about" className="hover:text-primary-foreground">Remuneration Portal</Link></li>
+            <li><Link to="/anaocha/find-member" className="hover:text-primary-foreground">Find a Member</Link></li>
+            <li><Link to="/anaocha/apply" className="hover:text-primary-foreground">Apply for Services</Link></li>
             <li><Link to="/anaocha/contact" className="hover:text-primary-foreground">Contact Us</Link></li>
           </ul>
         </div>
