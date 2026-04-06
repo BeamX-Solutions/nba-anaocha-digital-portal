@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Search, Scale, Users } from "lucide-react";
+import { Search, Scale, Users, MapPin, Calendar, Phone, X } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
@@ -15,6 +16,9 @@ interface MemberResult {
   year_of_call: string | null;
   office_address: string | null;
   branch: string | null;
+  phone: string | null;
+  email: string | null;
+  avatar_url: string | null;
 }
 
 const FindMember = () => {
@@ -23,6 +27,7 @@ const FindMember = () => {
   const [results, setResults] = useState<MemberResult[]>([]);
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<MemberResult | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +41,7 @@ const FindMember = () => {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, first_name, surname, middle_name, year_of_call, office_address, branch")
+      .select("id, first_name, surname, middle_name, year_of_call, office_address, branch, phone, email, avatar_url")
       .or(`first_name.ilike.${term},surname.ilike.${term},middle_name.ilike.${term},year_of_call.ilike.${term}`)
       .limit(20);
 
@@ -49,6 +54,12 @@ const FindMember = () => {
     }
     setResults(data || []);
   };
+
+  const fullName = (m: MemberResult) =>
+    [m.surname, m.first_name, m.middle_name].filter(Boolean).join(" ");
+
+  const initials = (m: MemberResult) =>
+    [m.first_name, m.surname].filter(Boolean).map((n) => n![0]).join("").toUpperCase() || "?";
 
   return (
     <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
@@ -88,21 +99,27 @@ const FindMember = () => {
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">{results.length} result{results.length !== 1 ? "s" : ""} found</p>
               {results.map((member) => (
-                <Card key={member.id} className="shadow-card hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4 flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Scale className="h-5 w-5 text-primary" />
+                <Card
+                  key={member.id}
+                  className="shadow-card hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer"
+                  onClick={() => setSelected(member)}
+                >
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {member.avatar_url ? (
+                        <img src={member.avatar_url} alt={fullName(member)} className="h-full w-full object-cover" />
+                      ) : (
+                        <span className="text-sm font-semibold text-primary">{initials(member)}</span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-card-foreground">
-                        {[member.surname, member.first_name, member.middle_name].filter(Boolean).join(" ")}
-                      </h4>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
-                        {member.year_of_call && <span>Called to Bar: {member.year_of_call}</span>}
-                        {member.branch && <span>Branch: {member.branch}</span>}
-                        {member.office_address && <span className="truncate max-w-xs">{member.office_address}</span>}
+                      <h4 className="font-semibold text-card-foreground">{fullName(member)}</h4>
+                      <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-0.5 text-xs text-muted-foreground">
+                        {member.year_of_call && <span>Called: {member.year_of_call}</span>}
+                        {member.branch && <span>{member.branch} Branch</span>}
                       </div>
                     </div>
+                    <span className="text-xs text-primary font-medium shrink-0">View Profile</span>
                   </CardContent>
                 </Card>
               ))}
@@ -110,6 +127,76 @@ const FindMember = () => {
           )
         )}
       </div>
+
+      {/* Member Profile Dialog */}
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-md">
+          {selected && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="sr-only">Member Profile</DialogTitle>
+              </DialogHeader>
+
+              {/* Avatar + name */}
+              <div className="flex flex-col items-center text-center pt-2 pb-4">
+                <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden mb-3 ring-4 ring-primary/10">
+                  {selected.avatar_url ? (
+                    <img src={selected.avatar_url} alt={fullName(selected)} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-bold text-primary">{initials(selected)}</span>
+                  )}
+                </div>
+                <h2 className="font-heading text-lg font-bold text-foreground">{fullName(selected)}</h2>
+                <p className="text-sm text-muted-foreground">NBA Anaocha Branch Member</p>
+              </div>
+
+              {/* Details */}
+              <div className="space-y-3 border-t pt-4">
+                {selected.year_of_call && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Year of Call</p>
+                      <p className="font-medium text-foreground">{selected.year_of_call}</p>
+                    </div>
+                  </div>
+                )}
+                {selected.branch && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Scale className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Branch</p>
+                      <p className="font-medium text-foreground">{selected.branch}</p>
+                    </div>
+                  </div>
+                )}
+                {selected.office_address && (
+                  <div className="flex items-start gap-3 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Office Address</p>
+                      <p className="font-medium text-foreground">{selected.office_address}</p>
+                    </div>
+                  </div>
+                )}
+                {selected.phone && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Phone</p>
+                      <a href={`tel:${selected.phone}`} className="font-medium text-primary hover:underline">{selected.phone}</a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Button variant="outline" className="w-full mt-2" onClick={() => setSelected(null)}>
+                Close
+              </Button>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };
