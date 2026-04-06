@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Lock, Bell, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Lock, Bell, Eye, EyeOff, ShieldCheck, Users } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,47 @@ const Settings = () => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [visibility, setVisibility] = useState({
+    show_phone: false,
+    show_email: false,
+    show_office_address: true,
+  });
+  const [visibilityLoading, setVisibilityLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("profiles")
+      .select("show_phone, show_email, show_office_address")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) return;
+        setVisibility({
+          show_phone: data.show_phone ?? false,
+          show_email: data.show_email ?? false,
+          show_office_address: data.show_office_address ?? true,
+        });
+      });
+  }, [user]);
+
+  const handleVisibilityToggle = async (key: keyof typeof visibility) => {
+    const updated = { ...visibility, [key]: !visibility[key] };
+    setVisibility(updated);
+    setVisibilityLoading(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update(updated)
+      .eq("user_id", user!.id);
+    setVisibilityLoading(false);
+    if (error) {
+      toast({ title: "Failed to save visibility settings", variant: "destructive" });
+      setVisibility(visibility); // revert
+    } else {
+      toast({ title: "Privacy settings updated" });
+    }
+  };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,6 +184,46 @@ const Settings = () => {
                 {passwordLoading ? "Updating..." : "Update Password"}
               </Button>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Privacy / Directory Visibility */}
+        <Card className="shadow-card">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Users className="h-5 w-5 text-primary" />
+              <h2 className="font-heading text-lg font-semibold text-foreground">Directory Visibility</h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-5">
+              Control what other members can see when they find you in the member directory.
+            </p>
+            <div className="space-y-4">
+              {[
+                { key: "show_phone" as const, label: "Phone Number", desc: "Allow other members to see your phone number" },
+                { key: "show_email" as const, label: "Email Address", desc: "Allow other members to see your email address" },
+                { key: "show_office_address" as const, label: "Office Address", desc: "Allow other members to see your office address" },
+              ].map(({ key, label, desc }) => (
+                <div key={key} className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <button
+                    onClick={() => handleVisibilityToggle(key)}
+                    disabled={visibilityLoading}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                      visibility[key] ? "bg-primary" : "bg-muted-foreground/30"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                        visibility[key] ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 

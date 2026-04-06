@@ -19,6 +19,9 @@ interface MemberResult {
   phone: string | null;
   email: string | null;
   avatar_url: string | null;
+  show_phone: boolean | null;
+  show_email: boolean | null;
+  show_office_address: boolean | null;
 }
 
 const FindMember = () => {
@@ -41,7 +44,7 @@ const FindMember = () => {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, first_name, surname, middle_name, year_of_call, office_address, branch, phone, email, avatar_url")
+      .select("id, first_name, surname, middle_name, year_of_call, office_address, branch, phone, email, avatar_url, show_phone, show_email, show_office_address")
       .or(`first_name.ilike.${term},surname.ilike.${term},middle_name.ilike.${term},year_of_call.ilike.${term}`)
       .limit(20);
 
@@ -170,7 +173,7 @@ const FindMember = () => {
                     </div>
                   </div>
                 )}
-                {selected.office_address && (
+                {selected.show_office_address && selected.office_address && (
                   <div className="flex items-start gap-3 text-sm">
                     <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                     <div>
@@ -179,7 +182,7 @@ const FindMember = () => {
                     </div>
                   </div>
                 )}
-                {selected.phone && (
+                {selected.show_phone && selected.phone && (
                   <div className="flex items-center gap-3 text-sm">
                     <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                     <div>
