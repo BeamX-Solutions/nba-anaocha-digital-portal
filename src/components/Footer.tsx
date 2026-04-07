@@ -20,7 +20,7 @@ const Footer = () => (
           <h4 className="font-heading font-semibold mb-3 text-accent">Links</h4>
           <ul className="space-y-2 text-sm text-primary-foreground/70">
             <li><Link to="/" className="hover:text-primary-foreground">Home</Link></li>
-            <li><Link to="/anaocha/about" className="hover:text-primary-foreground">About Branch</Link></li>
+            <li><Link to="/" className="hover:text-primary-foreground">About Branch</Link></li>
             <li><Link to="/remuneration/about" className="hover:text-primary-foreground">Remuneration Portal</Link></li>
             <li><Link to="/anaocha/find-member" className="hover:text-primary-foreground">Find a Member</Link></li>
             <li><Link to="/anaocha/apply" className="hover:text-primary-foreground">Apply for Services</Link></li>

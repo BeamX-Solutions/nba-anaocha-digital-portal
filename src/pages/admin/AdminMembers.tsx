@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, User, Scale, ChevronDown, ChevronUp, Edit2, Check, X, Ban, CheckCircle } from "lucide-react";
+import { Search, User, Scale, ChevronDown, ChevronUp, Edit2, Check, X, Ban, CheckCircle, UserCheck } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +75,30 @@ const AdminMembers = () => {
     setFiltered(updated);
     setEditing(null);
     toast({ title: "Profile updated" });
+  };
+
+  const approveAccount = async (m: any) => {
+    const { error } = await supabase.from("profiles").update({ status: "active" }).eq("id", m.id);
+    if (error) {
+      toast({ title: "Failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
+    await supabase.from("notifications").insert({
+      user_id: m.user_id,
+      title: "Account Approved",
+      message: "Your NBA Anaocha portal account has been approved. You can now access all member features.",
+      type: "account",
+    });
+    if (m.email) {
+      await supabase.functions.invoke("send-email", {
+        body: { type: "account_approved", to: m.email, name: memberName },
+      });
+    }
+    const updated = members.map((mem) => mem.id === m.id ? { ...mem, status: "active" } : mem);
+    setMembers(updated);
+    setFiltered(updated);
+    toast({ title: "Account approved", description: `${memberName} can now access the portal.` });
   };
 
   const toggleSuspend = async (m: any) => {
@@ -163,7 +187,7 @@ const AdminMembers = () => {
         ) : (
           <div className="space-y-2">
             {filtered.map((m) => (
-              <Card key={m.id} className={`shadow-card transition-shadow ${m.status === "suspended" ? "opacity-60" : ""}`}>
+              <Card key={m.id} className={`shadow-card transition-shadow ${m.status === "suspended" ? "opacity-60" : ""} ${m.status === "pending" ? "border-amber-300" : ""}`}>
                 <CardContent className="p-4">
                   {/* Header row */}
                   <div className="flex items-center gap-4 cursor-pointer" onClick={() => toggleExpand(m.id)}>
@@ -182,6 +206,7 @@ const AdminMembers = () => {
                         {m.phone && <p>Phone: {m.phone}</p>}
                       </div>
                       <div className="flex items-center gap-2">
+                        {m.status === "pending" && <Badge className="bg-amber-100 text-amber-700 border-amber-300">Pending Approval</Badge>}
                         {m.status === "suspended" && <Badge variant="destructive">Suspended</Badge>}
                         <p className="text-xs text-muted-foreground ml-auto">
                           Joined: {new Date(m.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
@@ -237,19 +262,27 @@ const AdminMembers = () => {
                       )}
 
                       {editing !== m.id && (
-                        <div className="flex gap-2 pt-1">
-                          <Button size="sm" variant="outline" onClick={() => startEdit(m)} disabled={m.status === "suspended"} title={m.status === "suspended" ? "Reinstate member before editing" : undefined}>
-                            <Edit2 className="h-4 w-4 mr-1" />Edit Profile
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant={m.status === "suspended" ? "default" : "destructive"}
-                            onClick={() => toggleSuspend(m)}
-                          >
-                            {m.status === "suspended"
-                              ? <><CheckCircle className="h-4 w-4 mr-1" />Reinstate</>
-                              : <><Ban className="h-4 w-4 mr-1" />Suspend</>}
-                          </Button>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {m.status === "pending" ? (
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => approveAccount(m)}>
+                              <UserCheck className="h-4 w-4 mr-1" />Approve Account
+                            </Button>
+                          ) : (
+                            <>
+                              <Button size="sm" variant="outline" onClick={() => startEdit(m)} disabled={m.status === "suspended"} title={m.status === "suspended" ? "Reinstate member before editing" : undefined}>
+                                <Edit2 className="h-4 w-4 mr-1" />Edit Profile
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant={m.status === "suspended" ? "default" : "destructive"}
+                                onClick={() => toggleSuspend(m)}
+                              >
+                                {m.status === "suspended"
+                                  ? <><CheckCircle className="h-4 w-4 mr-1" />Reinstate</>
+                                  : <><Ban className="h-4 w-4 mr-1" />Suspend</>}
+                              </Button>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>

@@ -9,7 +9,7 @@ import nbaLogo from "@/assets/nba-logo.png";
 
 const navLinks = [
   { label: "Home", to: "/" },
-  { label: "About Branch", to: "/anaocha/about" },
+  { label: "About Branch", to: "/#about" },
   { label: "Remuneration Portal", to: "/remuneration/about" },
   { label: "Resources", to: "/resources" },
 ];

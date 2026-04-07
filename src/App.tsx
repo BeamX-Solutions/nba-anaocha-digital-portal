@@ -32,7 +32,6 @@ import MyApplications from "./pages/anaocha/MyApplications.tsx";
 import FindMember from "./pages/anaocha/FindMember.tsx";
 import MyProfile from "./pages/anaocha/MyProfile.tsx";
 import Settings from "./pages/anaocha/Settings.tsx";
-import AboutBranch from "./pages/anaocha/AboutBranch.tsx";
 import ContactUs from "./pages/anaocha/ContactUs.tsx";
 import Notifications from "./pages/anaocha/Notifications.tsx";
 import AnaochaPayments from "./pages/anaocha/AnaochaPayments.tsx";
@@ -83,7 +82,6 @@ const App = () => (
             <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
             <Route path="/anaocha/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
             <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaPayments /></ProtectedRoute>} />
-            <Route path="/anaocha/about" element={<AboutBranch />} />
             <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
             <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />

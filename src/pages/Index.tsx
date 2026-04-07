@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
-import lawyersCollage from "@/assets/lawyers-collage.jpg";
+import heroBg from "@/assets/hero-bg.jpg";
 import aboutBranch from "@/assets/about-branch.png";
 import newsTraining from "@/assets/news-training.jpg";
 import newsLegal from "@/assets/news-legal.jpg";
@@ -43,30 +43,39 @@ const Index = () => {
       <Header />
 
       {/* Hero */}
-      <section className="relative bg-primary overflow-hidden">
-        <div className="container py-12 md:py-20">
-          <p className="text-center text-primary-foreground/70 tracking-[0.25em] uppercase text-sm mb-4 font-body">
+      <section className="relative overflow-hidden min-h-[520px] md:min-h-[620px] flex items-center">
+        <img
+          src={heroBg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-primary/75" />
+        <div className="relative container py-20 md:py-32 flex flex-col items-center text-center">
+          <p className="text-primary-foreground/70 tracking-[0.25em] uppercase text-xs md:text-sm mb-5 font-body">
             Promoting the Rule of Law
           </p>
-          <h1 className="font-heading text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground text-center leading-tight mb-8">
+          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6 max-w-4xl">
             Nigerian Bar Association
             <br />
             <span className="text-gradient-gold">Anaocha Branch</span>
           </h1>
-          <div className="max-w-3xl mx-auto">
-            <img
-              src={lawyersCollage}
-              alt="NBA Anaocha Branch lawyers and legal events"
-              className="w-full rounded-lg shadow-xl"
-              width={1200}
-              height={512}
-            />
+          <p className="text-primary-foreground/70 text-base md:text-lg max-w-2xl mb-10 font-body leading-relaxed">
+            A vibrant community of legal practitioners committed to justice, professional excellence, and the rule of law in Anaocha and beyond.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button variant="hero" size="lg" asChild>
+              <Link to="/signin">Access Portal <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button size="lg" className="bg-white/10 text-white border border-white/30 hover:bg-white/20" asChild>
+              <a href="#about">Learn More</a>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* About Us */}
-      <section className="py-16 md:py-24 overflow-hidden">
+      <section id="about" className="py-16 md:py-24 overflow-hidden">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Image */}

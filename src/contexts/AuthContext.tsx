@@ -7,6 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   profileComplete: boolean | null;
+  profileStatus: string | null;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   profileComplete: null,
+  profileStatus: null,
   refreshProfile: async () => {},
   signOut: async () => {},
 });
@@ -27,15 +29,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profileComplete, setProfileComplete] = useState<boolean | null>(null);
+  const [profileStatus, setProfileStatus] = useState<string | null>(null);
 
   const checkProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("first_name, surname")
+      .select("first_name, surname, status")
       .eq("user_id", userId)
       .maybeSingle();
-    if (error) return; // don't override profileComplete on transient/RLS errors
+    if (error) return;
     setProfileComplete(!!(data?.first_name && data?.surname));
+    setProfileStatus(data?.status ?? null);
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -72,10 +76,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfileComplete(null);
+    setProfileStatus(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, profileComplete, refreshProfile, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, profileComplete, profileStatus, refreshProfile, signOut }}>
       {children}
     </AuthContext.Provider>
   );

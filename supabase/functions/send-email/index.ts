@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SECRETARIAT_EMAIL = Deno.env.get("SECRETARIAT_EMAIL") || "";
-const FROM = "NBA Anaocha Portal <onboarding@resend.dev>";
+const FROM = "NBA Anaocha <noreply@beamxsolutions.com>";
 
 const templates: Record<string, (data: any) => { subject: string; html: string }> = {
   application_approved: ({ name, service_type }) => ({
@@ -38,6 +38,18 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
         <p>Your NBA Anaocha portal account has been <strong style="color:#dc2626">suspended</strong>.</p>
         <p>Please contact the branch secretariat for assistance and to resolve any outstanding matters.</p>
         <p style="margin-top:32px;color:#666;font-size:13px">NBA Anaocha Branch Secretariat<br/>Nnewi, Anambra State, Nigeria</p>
+      </div>`,
+  }),
+
+  account_approved: ({ name }) => ({
+    subject: "Your NBA Anaocha Portal Account Has Been Approved",
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+        <h2 style="color:#1a3a5c">NBA Anaocha Branch Portal</h2>
+        <p>Dear ${name},</p>
+        <p>Your NBA Anaocha portal account has been <strong style="color:#1a5c38">approved</strong>. You can now sign in and access all member features.</p>
+        <p>Visit the portal to get started.</p>
+        <p style="margin-top:32px;color:#666;font-size:13px">NBA Anaocha Branch Secretariat<br/>Anambra State, Nigeria</p>
       </div>`,
   }),
 

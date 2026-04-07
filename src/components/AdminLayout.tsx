@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardList, Users, FileText, Bell, LogOut, ShieldCheck, Mail, Menu } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Users, FileText, Bell, LogOut, Crown, Mail, Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -30,7 +30,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
     <>
       <div className="p-6 border-b border-primary-foreground/20">
         <div className="flex items-center gap-2 mb-1">
-          <ShieldCheck className="h-5 w-5 text-accent" />
+          <Crown className="h-5 w-5 text-accent" />
           <h2 className="font-heading text-lg font-bold text-accent">Admin Panel</h2>
         </div>
         <p className="text-xs text-primary-foreground/60 truncate">{user?.email}</p>
@@ -92,7 +92,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
             </SheetContent>
           </Sheet>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-accent" />
+            <Crown className="h-4 w-4 text-accent" />
             <span className="font-heading font-semibold text-sm text-accent">Admin Panel</span>
           </div>
         </div>
