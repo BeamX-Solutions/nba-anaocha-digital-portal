@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
 import { SERVICE_LABELS } from "@/lib/constants";
 import {
-  FileText, Scale, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked,
+  FileText, Scale, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone,
 } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
@@ -33,19 +33,22 @@ const AnaochaDashboard = () => {
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
   const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) return;
 
     const load = async () => {
-      const [profileRes, appsRes, docsRes, notifsRes] = await Promise.all([
+      const [profileRes, appsRes, docsRes, notifsRes, announcementsRes] = await Promise.all([
         supabase.from("profiles").select("first_name, surname, year_of_call, branch").eq("user_id", user.id).single(),
         supabase.from("service_applications").select("id, service_type, status, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("documents").select("id", { count: "exact" }).eq("user_id", user.id),
         supabase.from("notifications").select("id, title, message, read, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
+        supabase.from("announcements").select("id, title, content, created_at").or("portal.eq.anaocha,portal.eq.both").eq("published", true).order("created_at", { ascending: false }).limit(3),
       ]);
 
       setProfile(profileRes.data);
+      setAnnouncements(announcementsRes.data || []);
       const apps = appsRes.data || [];
       setStats({
         applications: apps.length,
@@ -145,6 +148,28 @@ const AnaochaDashboard = () => {
             ))}
           </div>
         </div>
+
+        {/* Announcements */}
+        {announcements.length > 0 && (
+          <div>
+            <h2 className="font-heading text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Megaphone className="h-5 w-5 text-accent" /> Announcements
+            </h2>
+            <div className="space-y-3">
+              {announcements.map((a) => (
+                <Card key={a.id} className="shadow-card border-l-4 border-l-accent">
+                  <CardContent className="p-4">
+                    <p className="font-semibold text-sm text-card-foreground">{a.title}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{a.content}</p>
+                    <p className="text-xs text-muted-foreground/70 mt-2">
+                      {new Date(a.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Bottom row: recent applications + recent notifications */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

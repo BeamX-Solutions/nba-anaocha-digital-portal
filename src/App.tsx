@@ -53,6 +53,9 @@ import AdminMembers from "./pages/admin/AdminMembers.tsx";
 import AdminDocuments from "./pages/admin/AdminDocuments.tsx";
 import AdminNotify from "./pages/admin/AdminNotify.tsx";
 import AdminContacts from "./pages/admin/AdminContacts.tsx";
+import AdminAnnouncements from "./pages/admin/AdminAnnouncements.tsx";
+import AdminResources from "./pages/admin/AdminResources.tsx";
+import AdminRemunerationMembers from "./pages/admin/AdminRemunerationMembers.tsx";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +107,9 @@ const App = () => (
             <Route path="/admin/documents" element={<AdminRoute><AdminDocuments /></AdminRoute>} />
             <Route path="/admin/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
             <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
+            <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
+            <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
+            <Route path="/admin/remuneration-members" element={<AdminRoute><AdminRemunerationMembers /></AdminRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
