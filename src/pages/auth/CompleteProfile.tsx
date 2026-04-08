@@ -7,14 +7,23 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import nbaLogo from "@/assets/nba-logo.png";
 
-const fields = [
+const anaochaFields = [
   { key: "surname", label: "Surname", required: true },
   { key: "first_name", label: "First Name", required: true },
   { key: "middle_name", label: "Middle Name", required: false },
   { key: "year_of_call", label: "Year of Call", required: false, placeholder: "e.g. 2018" },
   { key: "phone", label: "Phone Number", required: true },
   { key: "office_address", label: "Office Address", required: false, fullWidth: true },
-  { key: "branch", label: "Branch", required: false, defaultValue: "Anaocha" },
+];
+
+const remunerationFields = [
+  { key: "surname", label: "Surname", required: true },
+  { key: "first_name", label: "First Name", required: true },
+  { key: "middle_name", label: "Middle Name", required: false },
+  { key: "year_of_call", label: "Year of Call", required: false, placeholder: "e.g. 2018" },
+  { key: "phone", label: "Phone Number", required: true },
+  { key: "branch", label: "NBA Branch", required: true, placeholder: "e.g. Lagos", fullWidth: false },
+  { key: "office_address", label: "Office Address", required: false, fullWidth: true },
 ];
 
 const CompleteProfile = () => {
@@ -22,9 +31,13 @@ const CompleteProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const portalAccess = user?.user_metadata?.portal_access ?? "anaocha";
+  const isRemuneration = portalAccess === "remuneration";
+  const fields = isRemuneration ? remunerationFields : anaochaFields;
+
   const [form, setForm] = useState({
     surname: "", first_name: "", middle_name: "",
-    year_of_call: "", phone: "", office_address: "", branch: "Anaocha",
+    year_of_call: "", phone: "", office_address: "", branch: isRemuneration ? "" : "Anaocha",
   });
 
   useEffect(() => {
@@ -32,7 +45,6 @@ const CompleteProfile = () => {
       navigate("/signin", { replace: true });
       return;
     }
-    // Pre-fill from user metadata if coming from Google OAuth
     const meta = user.user_metadata ?? {};
     setForm((prev) => ({
       ...prev,
@@ -80,7 +92,7 @@ const CompleteProfile = () => {
       <div className="flex items-center gap-3 mb-8">
         <img src={nbaLogo} alt="NBA Anaocha" className="h-12 w-12" />
         <div>
-          <h1 className="font-heading text-xl font-bold text-foreground">NBA Anaocha</h1>
+          <h1 className="font-heading text-xl font-bold text-foreground">NBA {isRemuneration ? "Remuneration Portal" : "Anaocha"}</h1>
           <p className="text-xs text-muted-foreground">Complete your member profile</p>
         </div>
       </div>
