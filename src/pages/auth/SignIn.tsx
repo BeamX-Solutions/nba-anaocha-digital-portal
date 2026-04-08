@@ -11,12 +11,12 @@ const SignIn = () => {
   const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  if (user) return <Navigate to="/dashboard" replace />;
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  if (user) return <Navigate to="/dashboard" replace />;
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

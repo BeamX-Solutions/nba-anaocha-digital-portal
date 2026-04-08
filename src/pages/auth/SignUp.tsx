@@ -69,12 +69,10 @@ const SignUp = () => {
   const handleGoogle = async () => {
     if (!portalAccess) return;
     setGoogleLoading(true);
+    localStorage.setItem("pending_portal_access", portalAccess);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-        queryParams: { portal_access: portalAccess },
-      },
+      options: { redirectTo: `${window.location.origin}/dashboard` },
     });
     if (error) {
       setGoogleLoading(false);
