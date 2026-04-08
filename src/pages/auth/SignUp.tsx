@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Scale, ArrowRight } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 const portalOptions = [
   {
@@ -24,7 +25,10 @@ const portalOptions = [
 ];
 
 const SignUp = () => {
+  const { user } = useAuth();
   const [step, setStep] = useState<"portal" | "account">("portal");
+
+  if (user) return <Navigate to="/dashboard" replace />;
   const [portalAccess, setPortalAccess] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

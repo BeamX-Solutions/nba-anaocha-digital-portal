@@ -1,32 +1,43 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clock } from "lucide-react";
+import { Clock, LogOut } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
+import { Button } from "@/components/ui/button";
 
 const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "").split(",").map((e: string) => e.trim().toLowerCase());
 
-const PendingApproval = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
-    <div className="max-w-md w-full text-center space-y-6">
-      <img src={nbaLogo} alt="NBA Anaocha" className="h-16 w-16 mx-auto" />
-      <div className="bg-card border border-border rounded-xl p-8 shadow-card space-y-4">
-        <div className="h-14 w-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto">
-          <Clock className="h-7 w-7 text-amber-600" />
+const PendingApproval = () => {
+  const { signOut } = useAuth();
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <div className="p-4">
+        <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground">
+          <LogOut className="h-4 w-4 mr-2" /> Sign Out
+        </Button>
+      </div>
+      <div className="flex-1 flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center space-y-6">
+          <img src={nbaLogo} alt="NBA Anaocha" className="h-16 w-16 mx-auto" />
+          <div className="bg-card border border-border rounded-xl p-8 shadow-card space-y-4">
+            <div className="h-14 w-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto">
+              <Clock className="h-7 w-7 text-amber-600" />
+            </div>
+            <h1 className="font-heading text-xl font-bold text-foreground">Account Pending Approval</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Your account is awaiting approval by the NBA Anaocha secretariat. You will be notified once your account has been activated.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              For enquiries, contact{" "}
+              <a href="mailto:support@nbaanaocha.org.ng" className="text-primary hover:underline">
+                support@nbaanaocha.org.ng
+              </a>
+            </p>
+          </div>
         </div>
-        <h1 className="font-heading text-xl font-bold text-foreground">Account Pending Approval</h1>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          Your account is awaiting approval by the NBA Anaocha secretariat. You will be notified once your account has been activated.
-        </p>
-        <p className="text-xs text-muted-foreground">
-          For enquiries, contact{" "}
-          <a href="mailto:support@nbaanaocha.org.ng" className="text-primary hover:underline">
-            support@nbaanaocha.org.ng
-          </a>
-        </p>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, profileComplete, profileStatus } = useAuth();
