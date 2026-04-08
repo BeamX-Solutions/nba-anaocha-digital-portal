@@ -27,8 +27,6 @@ const portalOptions = [
 const SignUp = () => {
   const { user } = useAuth();
   const [step, setStep] = useState<"portal" | "account">("portal");
-
-  if (user) return <Navigate to="/dashboard" replace />;
   const [portalAccess, setPortalAccess] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +34,8 @@ const SignUp = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  if (user) return <Navigate to="/dashboard" replace />;
 
   const handlePortalSelect = (value: string) => {
     setPortalAccess(value);
