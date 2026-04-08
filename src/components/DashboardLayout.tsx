@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { Scale, Users, Menu, X } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SidebarItem {
   label: string;
@@ -21,27 +22,39 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { portalAccess } = useAuth();
+  const isRemunerationOnly = portalAccess === "remuneration";
 
   const SidebarContent = () => (
     <>
       <div className="p-5 border-b border-sidebar-border space-y-3">
         <h2 className="font-heading text-lg font-bold text-sidebar-primary">{title}</h2>
-        <div className="flex gap-1.5">
-          <Link
-            to="/anaocha/dashboard"
-            onClick={() => setMobileOpen(false)}
-            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs font-semibold bg-sidebar-accent text-accent border border-accent/30"
-          >
-            <Users className="h-3 w-3" /> Anaocha
-          </Link>
-          <Link
-            to="/remuneration/dashboard"
-            onClick={() => setMobileOpen(false)}
-            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs font-medium text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors duration-200"
-          >
-            <Scale className="h-3 w-3" /> Remuneration
-          </Link>
-        </div>
+        {!isRemunerationOnly && (
+          <div className="flex gap-1.5">
+            <Link
+              to="/anaocha/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs font-semibold transition-colors duration-200 ${
+                location.pathname.startsWith("/anaocha")
+                  ? "bg-sidebar-accent text-accent border border-accent/30"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              }`}
+            >
+              <Users className="h-3 w-3" /> Anaocha
+            </Link>
+            <Link
+              to="/remuneration/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs font-semibold transition-colors duration-200 ${
+                location.pathname.startsWith("/remuneration")
+                  ? "bg-sidebar-accent text-accent border border-accent/30"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              }`}
+            >
+              <Scale className="h-3 w-3" /> Remuneration
+            </Link>
+          </div>
+        )}
       </div>
       <nav className="flex-1 p-4 space-y-1">
         {sidebarItems.map((item) => (

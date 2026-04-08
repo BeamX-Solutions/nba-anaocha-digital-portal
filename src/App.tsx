@@ -15,6 +15,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
 import Index from "./pages/Index.tsx";
+import DashboardRedirect from "./pages/DashboardRedirect.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Resources from "./pages/Resources.tsx";
 
@@ -66,6 +67,7 @@ const App = () => (
           <SplashScreen>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<DashboardRedirect />} />
             <Route path="/resources" element={<Resources />} />
 
             {/* Auth routes */}

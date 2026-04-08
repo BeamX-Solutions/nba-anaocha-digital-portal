@@ -54,7 +54,6 @@ const AdminMembers = () => {
       surname: m.surname || "",
       first_name: m.first_name || "",
       middle_name: m.middle_name || "",
-      year_of_call: m.year_of_call || "",
       phone: m.phone || "",
       office_address: m.office_address || "",
       branch: m.branch || "Anaocha",
@@ -141,7 +140,6 @@ const AdminMembers = () => {
     { key: "surname", label: "Surname" },
     { key: "first_name", label: "First Name" },
     { key: "middle_name", label: "Middle Name" },
-    { key: "year_of_call", label: "Year of Call" },
     { key: "phone", label: "Phone" },
     { key: "branch", label: "Branch" },
   ];

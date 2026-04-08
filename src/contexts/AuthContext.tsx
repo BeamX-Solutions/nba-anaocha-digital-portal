@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   profileComplete: boolean | null;
   profileStatus: string | null;
+  portalAccess: string | null;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   profileComplete: null,
   profileStatus: null,
+  portalAccess: null,
   refreshProfile: async () => {},
   signOut: async () => {},
 });
@@ -30,16 +32,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [profileComplete, setProfileComplete] = useState<boolean | null>(null);
   const [profileStatus, setProfileStatus] = useState<string | null>(null);
+  const [portalAccess, setPortalAccess] = useState<string | null>(null);
 
   const checkProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("first_name, surname, status")
+      .select("first_name, surname, status, portal_access")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) return;
     setProfileComplete(!!(data?.first_name && data?.surname));
     setProfileStatus(data?.status ?? null);
+    setPortalAccess(data?.portal_access ?? "anaocha");
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -77,10 +81,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
     setProfileComplete(null);
     setProfileStatus(null);
+    setPortalAccess(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, profileComplete, profileStatus, refreshProfile, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, profileComplete, profileStatus, portalAccess, refreshProfile, signOut }}>
       {children}
     </AuthContext.Provider>
   );
