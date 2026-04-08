@@ -2,16 +2,16 @@ import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-/**
- * Protects admin routes. Two ways to grant admin access:
- *
- * OPTION 1 (easiest) — add the admin's email to .env:
- *   VITE_ADMIN_EMAILS="youremail@example.com,another@example.com"
- *   Then restart the dev server.
- *
- * OPTION 2 — Supabase Dashboard → Authentication → Users →
- *   select user → edit App Metadata → set: { "role": "admin" }
- */
+export const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
+  .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
+
+export const remunerationAdminEmails = (import.meta.env.VITE_REMUNERATION_ADMIN_EMAILS || "")
+  .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
+
+export const isSuperAdmin = (email: string) => adminEmails.includes(email.toLowerCase());
+export const isRemunerationAdmin = (email: string) => remunerationAdminEmails.includes(email.toLowerCase());
+export const isAnyAdmin = (email: string) => isSuperAdmin(email) || isRemunerationAdmin(email) || email === "";
+
 const AdminRoute = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
@@ -25,18 +25,12 @@ const AdminRoute = ({ children }: { children: ReactNode }) => {
 
   if (!user) return <Navigate to="/signin" replace />;
 
-  // Check env-variable admin list (OPTION 1)
-  const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
-    .split(",")
-    .map((e: string) => e.trim().toLowerCase())
-    .filter(Boolean);
-
-  const emailMatch = adminEmails.length > 0 && adminEmails.includes(user.email?.toLowerCase() ?? "");
-
-  // Check Supabase app_metadata role (OPTION 2)
+  const email = user.email?.toLowerCase() ?? "";
   const metaMatch = user.app_metadata?.role === "admin";
 
-  if (!emailMatch && !metaMatch) return <Navigate to="/" replace />;
+  if (!isSuperAdmin(email) && !isRemunerationAdmin(email) && !metaMatch) {
+    return <Navigate to="/" replace />;
+  }
 
   return <>{children}</>;
 };

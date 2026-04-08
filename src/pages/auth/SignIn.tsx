@@ -22,7 +22,7 @@ const SignIn = () => {
     if (error) {
       toast({ title: "Sign in failed", description: error.message, variant: "destructive" });
     } else {
-      navigate("/anaocha/dashboard");
+      navigate("/dashboard");
     }
   };
 
@@ -30,7 +30,7 @@ const SignIn = () => {
     setGoogleLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/anaocha/dashboard` },
+      options: { redirectTo: `${window.location.origin}/dashboard` },
     });
     if (error) {
       setGoogleLoading(false);
@@ -45,7 +45,7 @@ const SignIn = () => {
         <Card className="w-full max-w-md shadow-card">
           <CardContent className="p-8">
             <h1 className="font-heading text-2xl font-bold text-foreground mb-2">Sign In</h1>
-            <p className="text-sm text-muted-foreground mb-6">Access your NBA Anaocha account</p>
+            <p className="text-sm text-muted-foreground mb-6">Access your NBA portal account</p>
 
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>

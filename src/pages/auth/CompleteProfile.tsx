@@ -71,8 +71,8 @@ const CompleteProfile = () => {
     }
 
     await refreshProfile();
-    toast({ title: "Welcome to NBA Anaocha!", description: "Your profile has been set up." });
-    navigate("/anaocha/dashboard", { replace: true });
+    toast({ title: "Profile complete!", description: "Your account is pending admin approval." });
+    navigate("/dashboard", { replace: true });
   };
 
   return (
