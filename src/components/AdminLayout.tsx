@@ -5,15 +5,15 @@ import { LayoutDashboard, ClipboardList, Users, FileText, Bell, LogOut, Crown, M
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { isSuperAdmin, isRemunerationAdmin } from "@/components/AdminRoute";
+import { getAdminRole } from "@/components/AdminRoute";
 
 const allSidebarItems = [
-  { label: "Dashboard", href: "/admin", icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "remuneration"] },
-  { label: "Applications", href: "/admin/applications", icon: <ClipboardList className="h-4 w-4" />, roles: ["super"] },
-  { label: "Members", href: "/admin/members", icon: <Users className="h-4 w-4" />, roles: ["super"] },
-  { label: "Documents", href: "/admin/documents", icon: <FileText className="h-4 w-4" />, roles: ["super", "remuneration"] },
-  { label: "Contact Messages", href: "/admin/contacts", icon: <Mail className="h-4 w-4" />, roles: ["super"] },
-  { label: "Send Notification", href: "/admin/notify", icon: <Bell className="h-4 w-4" />, roles: ["super", "remuneration"] },
+  { label: "Dashboard",        href: "/admin",               icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "anaocha", "remuneration"] },
+  { label: "Members",          href: "/admin/members",        icon: <Users className="h-4 w-4" />,          roles: ["super", "anaocha"] },
+  { label: "Applications",     href: "/admin/applications",   icon: <ClipboardList className="h-4 w-4" />,  roles: ["super", "anaocha"] },
+  { label: "Documents",        href: "/admin/documents",      icon: <FileText className="h-4 w-4" />,       roles: ["super", "remuneration"] },
+  { label: "Contact Messages", href: "/admin/contacts",       icon: <Mail className="h-4 w-4" />,           roles: ["super", "anaocha"] },
+  { label: "Send Notification",href: "/admin/notify",         icon: <Bell className="h-4 w-4" />,           roles: ["super", "anaocha", "remuneration"] },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
@@ -23,7 +23,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const email = user?.email?.toLowerCase() ?? "";
-  const role = isSuperAdmin(email) ? "super" : isRemunerationAdmin(email) ? "remuneration" : "super";
+  const role = getAdminRole(email) ?? "super";
   const sidebarItems = allSidebarItems.filter((item) => item.roles.includes(role));
 
   const handleSignOut = async () => {

@@ -2,15 +2,25 @@ import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-export const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
+export const superAdminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
+  .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
+
+export const anaochaAdminEmails = (import.meta.env.VITE_ANAOCHA_ADMIN_EMAILS || "")
   .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
 
 export const remunerationAdminEmails = (import.meta.env.VITE_REMUNERATION_ADMIN_EMAILS || "")
   .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
 
-export const isSuperAdmin = (email: string) => adminEmails.includes(email.toLowerCase());
+export const isSuperAdmin = (email: string) => superAdminEmails.includes(email.toLowerCase());
+export const isAnaochaAdmin = (email: string) => anaochaAdminEmails.includes(email.toLowerCase());
 export const isRemunerationAdmin = (email: string) => remunerationAdminEmails.includes(email.toLowerCase());
-export const isAnyAdmin = (email: string) => isSuperAdmin(email) || isRemunerationAdmin(email) || email === "";
+
+export const getAdminRole = (email: string): "super" | "anaocha" | "remuneration" | null => {
+  if (isSuperAdmin(email)) return "super";
+  if (isAnaochaAdmin(email)) return "anaocha";
+  if (isRemunerationAdmin(email)) return "remuneration";
+  return null;
+};
 
 const AdminRoute = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
@@ -28,7 +38,7 @@ const AdminRoute = ({ children }: { children: ReactNode }) => {
   const email = user.email?.toLowerCase() ?? "";
   const metaMatch = user.app_metadata?.role === "admin";
 
-  if (!isSuperAdmin(email) && !isRemunerationAdmin(email) && !metaMatch) {
+  if (!getAdminRole(email) && !metaMatch) {
     return <Navigate to="/" replace />;
   }
 

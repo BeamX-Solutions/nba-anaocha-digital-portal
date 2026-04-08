@@ -1,8 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "").split(",").map((e: string) => e.trim().toLowerCase());
-const remunerationAdminEmails = (import.meta.env.VITE_REMUNERATION_ADMIN_EMAILS || "").split(",").map((e: string) => e.trim().toLowerCase());
+import { getAdminRole } from "@/components/AdminRoute";
 
 const DashboardRedirect = () => {
   const { user, loading, profileComplete, portalAccess } = useAuth();
@@ -20,8 +19,7 @@ const DashboardRedirect = () => {
 
   const email = user.email?.toLowerCase() ?? "";
 
-  if (adminEmails.includes(email)) return <Navigate to="/admin" replace />;
-  if (remunerationAdminEmails.includes(email)) return <Navigate to="/admin" replace />;
+  if (getAdminRole(email)) return <Navigate to="/admin" replace />;
   if (portalAccess === "remuneration") return <Navigate to="/remuneration/dashboard" replace />;
   return <Navigate to="/anaocha/dashboard" replace />;
 };
