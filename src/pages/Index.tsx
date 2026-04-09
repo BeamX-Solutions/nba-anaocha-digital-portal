@@ -1,33 +1,78 @@
 import { Link, Navigate } from "react-router-dom";
-import { Scale, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import Header from "@/components/Header";
+import { ArrowRight, Scale, Monitor, Users, GraduationCap, Gavel, ShieldCheck } from "lucide-react";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
-import heroBg from "@/assets/hero-bg.jpg";
-import aboutBranch from "@/assets/about-branch.png";
+import aboutBranch from "@/assets/about-branch.jpg";
 import newsTraining from "@/assets/news-training.jpg";
 import newsLegal from "@/assets/news-legal.jpg";
 import newsRights from "@/assets/news-rights.jpg";
 
+const committees = [
+  {
+    icon: <ShieldCheck className="h-5 w-5" />,
+    name: "Human Rights",
+    desc: "Dedicated to legal aid and protecting fundamental liberties within our jurisdiction.",
+    featured: false,
+  },
+  {
+    icon: <Monitor className="h-5 w-5" />,
+    name: "ICT & Tech",
+    desc: "Driving digital transformation and innovation in legal practice.",
+    featured: true,
+  },
+  {
+    icon: <Users className="h-5 w-5" />,
+    name: "Women Forum",
+    desc: "Promoting the interests of female practitioners and gender equity in law.",
+    featured: false,
+  },
+  {
+    icon: <GraduationCap className="h-5 w-5" />,
+    name: "Young Lawyers",
+    desc: "Empowering new entrants through mentorship and professional workshops.",
+    featured: false,
+  },
+  {
+    icon: <Scale className="h-5 w-5" />,
+    name: "Remuneration",
+    desc: "Ensuring fair compensation standards and financial compliance for all members.",
+    featured: false,
+  },
+  {
+    icon: <Gavel className="h-5 w-5" />,
+    name: "Disciplinary",
+    desc: "Upholding the highest standards of professional ethics.",
+    featured: false,
+  },
+];
+
 const newsArticles = [
   {
-    title: "Anaocha Lawyers Gather for Insightful Training on Employees Compensation Act",
+    tag: "Training",
+    tagColor: "bg-orange-100 text-orange-700",
+    title: "Employees Compensation Act Training",
     excerpt:
-      "The training, held at the Charles & N. Osondu Bar Centre, brought together distinguished members and experts to discuss practical implementation of workplace safety laws and social protection mechanisms.",
+      "A comprehensive workshop for legal practitioners on the nuances of the recent amendments to the ECA.",
+    date: "October 25, 2024",
     image: newsTraining,
   },
   {
-    title: "NBA Anaocha Branch Advances Professional Development Through Specialized Legal Training",
+    tag: "Development",
+    tagColor: "bg-blue-100 text-blue-700",
+    title: "CLE: Professional Ethics Series",
     excerpt:
-      "NBA Anaocha Branch continues to demonstrate leadership in professional development through impactful programmes, including mentorship and training initiatives that promote excellence.",
+      "The upcoming continuing legal education series will focus on cross-border litigation and ethical practice.",
+    date: "September 10, 2024",
     image: newsLegal,
   },
   {
-    title: "Family Bar Hosts High-Impact Training Focused on Workplace Rights Awareness",
+    tag: "Announcement",
+    tagColor: "bg-green-100 text-green-700",
+    title: "Branch Meeting & New Inductees",
     excerpt:
-      "The branch also contributes to national NBA initiatives, participating in key policy engagements and compliance activities that strengthen the legal profession and uphold standards across Nigeria's legal community.",
+      "Join us as we welcome our newest members to the Family Bar and discuss the 2025 roadmap.",
+    date: "August 29, 2024",
     image: newsRights,
   },
 ];
@@ -42,112 +87,125 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden min-h-[520px] md:min-h-[620px] flex items-center">
-        <img
-          src={heroBg}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover object-center"
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-primary/75" />
-        <div className="relative container py-20 md:py-32 flex flex-col items-center text-center">
-          <p className="text-primary-foreground/70 tracking-[0.25em] uppercase text-xs md:text-sm mb-5 font-body">
-            Promoting the Rule of Law
+      {/* Hero — split layout */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[560px] md:min-h-[620px]">
+        {/* Left: text */}
+        <div className="flex flex-col justify-center py-20 px-8 md:px-12 lg:px-16 xl:px-20">
+          <p className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase mb-5">
+            Institutional Excellence
           </p>
-          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6 max-w-4xl">
+          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-[1.08] mb-4">
             Nigerian Bar Association
             <br />
-            <span className="text-gradient-gold">Anaocha Branch</span>
+            <em className="not-italic italic font-heading text-primary">Anaocha Branch</em>
           </h1>
-          <p className="text-primary-foreground/70 text-base md:text-lg max-w-2xl mb-10 font-body leading-relaxed">
-            A vibrant community of legal practitioners committed to justice, professional excellence, and the rule of law in Anaocha and beyond.
+          <p className="text-muted-foreground italic text-base md:text-lg max-w-md mb-10 leading-relaxed">
+            Promoting the Rule of Law through unwavering professional integrity and community service.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="hero" size="lg" asChild>
-              <Link to="/signin">Access Portal <ArrowRight className="ml-1 h-4 w-4" /></Link>
-            </Button>
-            <Button size="lg" className="bg-white/10 text-white border border-white/30 hover:bg-white/20" asChild>
-              <a href="#about">Learn More</a>
-            </Button>
+            <Link
+              to="/signin"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-md hover:bg-primary/90 transition-colors text-sm"
+            >
+              Access Portal <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href="#about"
+              className="inline-flex items-center justify-center gap-2 border border-border text-foreground font-semibold px-6 py-3 rounded-md hover:bg-muted transition-colors text-sm"
+            >
+              Learn More
+            </a>
+          </div>
+        </div>
+
+        {/* Right: decorative grey panel */}
+        <div className="hidden lg:block bg-muted/60 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full bg-primary/5 border border-primary/10" />
+          <div className="absolute top-16 right-24 w-24 h-24 rounded-full bg-accent/10 border border-accent/10" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-10">
+            <p className="font-heading text-7xl font-bold text-primary leading-none">NBA</p>
+            <p className="font-heading text-2xl font-bold text-primary tracking-widest mt-1">ANAOCHA</p>
           </div>
         </div>
       </section>
 
-      {/* About Us */}
-      <section id="about" className="py-16 md:py-24 overflow-hidden">
+      {/* About */}
+      <section id="about" className="py-16 md:py-24">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Image */}
+            {/* Image with overlapping stat card */}
             <div className="relative">
-              <div className="absolute -inset-4 bg-accent/10 rounded-2xl -z-10" />
               <img
                 src={aboutBranch}
                 alt="NBA Anaocha Branch"
-                className="w-full rounded-xl shadow-xl"
+                className="w-full rounded-xl shadow-xl object-cover aspect-[4/3]"
                 loading="lazy"
               />
+              <div className="absolute bottom-6 left-6 bg-background border border-border rounded-xl shadow-lg p-5 max-w-[180px]">
+                <p className="font-heading text-3xl font-bold text-primary">2014</p>
+                <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mt-1">Founded in Anaocha</p>
+                <p className="text-xs text-muted-foreground mt-2 leading-snug">Established with a vision for legal excellence and professional camaraderie.</p>
+              </div>
             </div>
 
             {/* Text */}
             <div>
-              <p className="text-accent text-xs font-semibold tracking-widest uppercase mb-3">Who We Are</p>
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
                 The Family Bar
               </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <div className="space-y-4 text-muted-foreground leading-relaxed text-sm md:text-base">
                 <p>
-                  The Nigerian Bar Association Anaocha Branch, popularly known as the <span className="text-foreground font-medium">"Family Bar,"</span> is one of the youngest yet most dynamic branches of the Nigerian Bar Association, officially inaugurated in <span className="text-foreground font-medium">May 2014.</span>
+                  The NBA Anaocha Branch, fondly known as "The Family Bar," stands as a pillar of professional development and legal advocacy in Anambra State. Since our founding in 2014, we have cultivated an environment where legal practitioners thrive through mutual support and intellectual rigor.
                 </p>
                 <p>
-                  Since its establishment, the branch has grown into a vibrant community of legal practitioners committed to promoting the rule of law, upholding professional ethics, and advancing justice within Anaocha and beyond.
-                </p>
-                <p>
-                  Driven by a culture of inclusiveness and excellence, the branch actively engages in legal advocacy, capacity-building programmes, and community-focused initiatives — regularly organizing trainings and professional development activities to keep members aligned with evolving legal standards.
+                  Our commitment extends beyond the courtroom: we are dedicated to the preservation of the rule of law and the advancement of justice for all members of the Anaocha community.
                 </p>
               </div>
-
-              <div className="grid grid-cols-2 gap-4 mt-8">
-                <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
-                  <p className="font-heading text-2xl font-bold text-primary">2014</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">Year Founded</p>
+              <div className="flex gap-6 mt-8">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">Integrity</span>
                 </div>
-                <div className="bg-accent/5 border border-accent/10 rounded-xl p-4">
-                  <p className="font-heading text-2xl font-bold text-accent">11</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">Active Committees</p>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs font-bold tracking-widest uppercase text-muted-foreground">Unity</span>
                 </div>
               </div>
-
-              <Button className="mt-8" asChild>
-                <Link to="/signin">Join the Branch <ArrowRight className="ml-1 h-4 w-4" /></Link>
-              </Button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Committees */}
-      <section className="bg-muted/40 border-y border-border py-16">
+      <section id="committees" className="py-16 md:py-20 bg-muted/30 border-y border-border">
         <div className="container">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2 text-center">Our Committees</h2>
-          <p className="text-muted-foreground text-center mb-10">Standing committees of the NBA Anaocha Branch</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-4xl mx-auto">
-            {[
-              "Human Rights Committee",
-              "ICT Committee",
-              "Young Lawyers Forum",
-              "Women Forum",
-              "Disciplinary Committee",
-              "Remuneration Committee",
-              "Journal Committee",
-              "Welfare Committee",
-              "Publicity Committee",
-              "Sports Committee",
-              "Bar Center Committee",
-            ].map((committee) => (
-              <div key={committee} className="flex items-center gap-3 bg-background border border-border rounded-lg px-4 py-3 shadow-sm">
-                <div className="h-2 w-2 rounded-full bg-accent shrink-0" />
-                <span className="text-sm font-medium text-foreground">NBA Anaocha {committee}</span>
+          <div className="text-center mb-12">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2">Branch Committees</h2>
+            <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">Specialized Divisions Driving Our Mission</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            {committees.map((c) => (
+              <div
+                key={c.name}
+                className={`rounded-xl p-5 border transition-all ${
+                  c.featured
+                    ? "bg-primary border-primary text-primary-foreground"
+                    : "bg-background border-border hover:border-primary/30 hover:shadow-md"
+                }`}
+              >
+                <div className={`mb-3 ${c.featured ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                  {c.icon}
+                </div>
+                <p className={`font-heading font-semibold text-sm mb-1.5 ${c.featured ? "text-primary-foreground" : "text-foreground"}`}>
+                  {c.name}
+                </p>
+                <p className={`text-xs leading-relaxed ${c.featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                  {c.desc}
+                </p>
+                {c.featured && (
+                  <ArrowRight className="h-4 w-4 text-primary-foreground/60 mt-3" />
+                )}
               </div>
             ))}
           </div>
@@ -156,67 +214,84 @@ const Index = () => {
 
       {/* Remuneration Portal Banner */}
       <section className="bg-primary">
-        <div className="container py-14 text-center">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-            Remuneration Portal
-          </h2>
-          <p className="text-primary-foreground/80 max-w-3xl mx-auto mb-8 font-body">
-            The Official Remuneration Portal of the Nigerian Bar Association, Anaocha Branch. Manage property transactions, generate compliant legal documents, verify fee compliance, and track professional remuneration — all in one place.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button variant="hero" size="lg" asChild>
-              <Link to="/signin">Sign In <ArrowRight className="ml-1 h-4 w-4" /></Link>
-            </Button>
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90" asChild>
-              <Link to="/signup">Create Account</Link>
-            </Button>
+        <div className="container py-14 md:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground mb-3 leading-snug">
+                Remuneration &amp; Compliance Portal
+              </h2>
+              <p className="text-primary-foreground/70 text-sm leading-relaxed mb-7 max-w-md">
+                Secure access for members to track legal document fees, submit compliance reports, and manage professional standing.
+              </p>
+              <div className="flex gap-3">
+                <Link
+                  to="/signin"
+                  className="inline-flex items-center justify-center bg-primary-foreground text-primary font-semibold px-5 py-2.5 rounded-md text-sm hover:bg-primary-foreground/90 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center border border-primary-foreground/30 text-primary-foreground font-semibold px-5 py-2.5 rounded-md text-sm hover:bg-primary-foreground/10 transition-colors"
+                >
+                  Create Account
+                </Link>
+              </div>
+            </div>
+            <div className="text-center md:text-right">
+              <p className="font-heading text-6xl md:text-7xl font-bold text-accent leading-none">100%</p>
+              <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary-foreground/50 mt-2">Compliance Security</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Resources / News */}
+      {/* Archival Resources / News */}
       <section className="container py-16 md:py-24">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground text-center mb-2">
-          Resources
-        </h2>
-        <p className="text-muted-foreground text-center mb-10">
-          Latest news about NBA Anaocha Branch
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-1">Archival Resources</h2>
+            <p className="text-sm text-muted-foreground">Stay updated with the latest institutional developments</p>
+          </div>
+          <Link
+            to="/resources"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+          >
+            View All News <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {newsArticles.map((article) => (
-            <Card
+            <div
               key={article.title}
-              className="shadow-card hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden"
+              className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
             >
-              <img
-                src={article.image}
-                alt={article.title}
-                className="w-full h-48 object-cover"
-                loading="lazy"
-                width={640}
-                height={512}
-              />
-              <CardContent className="p-5">
-                <h3 className="font-heading text-base font-semibold text-card-foreground mb-2 line-clamp-2">
+              <div className="relative">
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="w-full h-44 object-cover"
+                  loading="lazy"
+                />
+                <span className={`absolute top-3 left-3 text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded ${article.tagColor}`}>
+                  {article.tag}
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="font-heading text-sm font-semibold text-card-foreground mb-2 leading-snug">
                   {article.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
+                <p className="text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-3">
                   {article.excerpt}
                 </p>
-                <Link
-                  to="/resources"
-                  className="text-sm font-semibold text-primary hover:text-accent transition-colors inline-flex items-center gap-1"
-                >
-                  Read More <ArrowRight className="h-3 w-3" />
-                </Link>
-              </CardContent>
-            </Card>
+                <p className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">{article.date}</p>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-
-<Footer />
+      <Footer />
     </div>
   );
 };

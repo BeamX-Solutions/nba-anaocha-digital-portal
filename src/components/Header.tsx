@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,10 +8,10 @@ import ProfileDropdown from "@/components/ProfileDropdown";
 import nbaLogo from "@/assets/nba-logo.png";
 
 const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "About Branch", to: "/#about" },
-  { label: "Remuneration Portal", to: "/remuneration/about" },
+  { label: "Committees", to: "/#committees" },
+  { label: "Remuneration", to: "/remuneration/about" },
   { label: "Resources", to: "/resources" },
+  { label: "About", to: "/#about" },
 ];
 
 const Header = () => {
@@ -26,14 +26,11 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-primary shadow-md">
+    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
       <div className="container flex h-16 items-center justify-between">
-        <Link to={user ? "/anaocha/dashboard" : "/"} className="flex items-center gap-2">
-          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-10 w-10" />
-          <div className="flex flex-col leading-tight">
-            <span className="font-heading text-lg font-bold text-primary-foreground">NBA Anaocha</span>
-            <span className="text-xs text-primary-foreground/70">Anambra State, Nigeria</span>
-          </div>
+        <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2">
+          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-9 w-9" />
+          <span className="font-heading text-base font-bold text-foreground tracking-tight">NBA ANAOCHA</span>
         </Link>
 
         <div className="flex items-center gap-4">
@@ -44,31 +41,30 @@ const Header = () => {
             </>
           ) : (
             <>
-              <nav className="hidden md:flex items-center gap-6 mr-4">
+              <nav className="hidden md:flex items-center gap-7 mr-2">
                 {navLinks.map((link) => (
-                  <Link
+                  <a
                     key={link.to}
-                    to={link.to}
-                    className={`text-sm font-medium transition-colors ${
-                      location.pathname === link.to
-                        ? "text-accent"
-                        : "text-primary-foreground/80 hover:text-primary-foreground"
-                    }`}
+                    href={link.to}
+                    className="text-xs font-semibold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 ))}
               </nav>
               <div className="hidden md:block">
-                <Button variant="hero" size="sm" asChild>
-                  <Link to="/signin">Log In</Link>
-                </Button>
+                <Link
+                  to="/signin"
+                  className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  Portal Access <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
               <button
-                className="md:hidden text-primary-foreground"
+                className="md:hidden text-foreground"
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
-                {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </>
           )}
@@ -76,29 +72,33 @@ const Header = () => {
       </div>
 
       {mobileOpen && !user && (
-        <div className="md:hidden bg-primary border-t border-sidebar-border pb-4">
-          <nav className="container flex flex-col gap-2 pt-2">
+        <div className="md:hidden bg-background border-t border-border pb-4">
+          <nav className="container flex flex-col gap-1 pt-2">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.to}
-                to={link.to}
-                className={`text-sm py-2 font-medium ${
-                  location.pathname === link.to
-                    ? "text-accent"
-                    : "text-primary-foreground/80"
-                }`}
+                href={link.to}
+                className="text-xs font-semibold tracking-widest uppercase text-muted-foreground py-3 border-b border-border/50"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
-            <div className="flex gap-2 pt-2">
-              <Button variant="hero" size="sm" asChild>
-                <Link to="/signin" onClick={() => setMobileOpen(false)}>Log In</Link>
-              </Button>
-              <Button variant="hero-outline" size="sm" asChild>
-                <Link to="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
-              </Button>
+            <div className="flex gap-2 pt-3">
+              <Link
+                to="/signin"
+                className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-md"
+                onClick={() => setMobileOpen(false)}
+              >
+                Portal Access <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                to="/signup"
+                className="inline-flex items-center text-sm font-semibold px-4 py-2 rounded-md border border-border text-foreground"
+                onClick={() => setMobileOpen(false)}
+              >
+                Sign Up
+              </Link>
             </div>
           </nav>
         </div>
