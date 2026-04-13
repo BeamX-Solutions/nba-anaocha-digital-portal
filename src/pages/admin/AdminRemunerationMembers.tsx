@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, User, Scale, ChevronDown, ChevronUp, Edit2, Check, X, Ban, CheckCircle, UserCheck } from "lucide-react";
+import { Search, User, Scale, ChevronDown, ChevronUp, Ban, CheckCircle, UserCheck } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +13,6 @@ const AdminRemunerationMembers = () => {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [editing, setEditing] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<any>({});
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -43,39 +40,6 @@ const AdminRemunerationMembers = () => {
           .some((v) => v?.toLowerCase().includes(q))
       )
     );
-  };
-
-  const toggleExpand = (id: string) => {
-    setExpanded(expanded === id ? null : id);
-    if (editing === id) setEditing(null);
-  };
-
-  const startEdit = (m: any) => {
-    setEditForm({
-      surname: m.surname || "",
-      first_name: m.first_name || "",
-      middle_name: m.middle_name || "",
-      year_of_call: m.year_of_call || "",
-      phone: m.phone || "",
-      office_address: m.office_address || "",
-      branch: m.branch || "",
-    });
-    setEditing(m.id);
-  };
-
-  const handleSave = async (m: any) => {
-    setSaving(true);
-    const { error } = await supabase.from("profiles").update(editForm).eq("id", m.id);
-    setSaving(false);
-    if (error) {
-      toast({ title: "Save failed", description: error.message, variant: "destructive" });
-      return;
-    }
-    const updated = members.map((mem) => mem.id === m.id ? { ...mem, ...editForm } : mem);
-    setMembers(updated);
-    setFiltered(updated);
-    setEditing(null);
-    toast({ title: "Profile updated" });
   };
 
   const approveAccount = async (m: any) => {
@@ -117,15 +81,6 @@ const AdminRemunerationMembers = () => {
     setFiltered(updated);
     toast({ title: newStatus === "suspended" ? "Member suspended" : "Member reinstated" });
   };
-
-  const editFields = [
-    { key: "surname", label: "Surname" },
-    { key: "first_name", label: "First Name" },
-    { key: "middle_name", label: "Middle Name" },
-    { key: "year_of_call", label: "Year of Call" },
-    { key: "phone", label: "Phone" },
-    { key: "branch", label: "Branch" },
-  ];
 
   return (
     <AdminLayout>
@@ -170,7 +125,7 @@ const AdminRemunerationMembers = () => {
             {filtered.map((m) => (
               <Card key={m.id} className={`shadow-card transition-shadow ${m.status === "suspended" ? "opacity-60" : ""} ${m.status === "pending" ? "border-amber-300" : ""}`}>
                 <CardContent className="p-4">
-                  <div className="flex items-center gap-4 cursor-pointer" onClick={() => toggleExpand(m.id)}>
+                  <div className="flex items-center gap-4 cursor-pointer" onClick={() => setExpanded(expanded === m.id ? null : m.id)}>
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Scale className="h-5 w-5 text-primary" />
                     </div>
@@ -198,66 +153,29 @@ const AdminRemunerationMembers = () => {
 
                   {expanded === m.id && (
                     <div className="mt-4 border-t pt-4 space-y-4">
-                      {editing === m.id ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {editFields.map((f) => (
-                            <div key={f.key}>
-                              <label className="text-xs font-medium text-muted-foreground">{f.label}</label>
-                              <input
-                                type="text"
-                                value={editForm[f.key]}
-                                onChange={(e) => setEditForm((prev: any) => ({ ...prev, [f.key]: e.target.value }))}
-                                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                              />
-                            </div>
-                          ))}
-                          <div className="md:col-span-2">
-                            <label className="text-xs font-medium text-muted-foreground">Office Address</label>
-                            <input
-                              type="text"
-                              value={editForm.office_address}
-                              onChange={(e) => setEditForm((prev: any) => ({ ...prev, office_address: e.target.value }))}
-                              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                            />
-                          </div>
-                          <div className="md:col-span-2 flex gap-2">
-                            <Button size="sm" onClick={() => handleSave(m)} disabled={saving}>
-                              <Check className="h-4 w-4 mr-1" />{saving ? "Saving..." : "Save Changes"}
-                            </Button>
-                            <Button size="sm" variant="outline" onClick={() => setEditing(null)}>
-                              <X className="h-4 w-4 mr-1" />Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                          <div><span className="text-muted-foreground">Branch:</span> {m.branch || "-"}</div>
-                          <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "-"}</div>
-                          <div><span className="text-muted-foreground">Phone:</span> {m.phone || "-"}</div>
-                          <div><span className="text-muted-foreground">Office:</span> {m.office_address || "-"}</div>
-                        </div>
-                      )}
-
-                      {editing !== m.id && (
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          {m.status === "pending" ? (
-                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => approveAccount(m)}>
-                              <UserCheck className="h-4 w-4 mr-1" />Approve Account
-                            </Button>
-                          ) : (
-                            <>
-                              <Button size="sm" variant="outline" onClick={() => startEdit(m)} disabled={m.status === "suspended"}>
-                                <Edit2 className="h-4 w-4 mr-1" />Edit Profile
-                              </Button>
-                              <Button size="sm" variant={m.status === "suspended" ? "default" : "destructive"} onClick={() => toggleSuspend(m)}>
-                                {m.status === "suspended"
-                                  ? <><CheckCircle className="h-4 w-4 mr-1" />Reinstate</>
-                                  : <><Ban className="h-4 w-4 mr-1" />Suspend</>}
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div><span className="text-muted-foreground">Branch:</span> {m.branch || "-"}</div>
+                        <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "-"}</div>
+                        <div><span className="text-muted-foreground">Phone:</span> {m.phone || "-"}</div>
+                        <div><span className="text-muted-foreground">Office:</span> {m.office_address || "-"}</div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {m.status === "pending" ? (
+                          <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => approveAccount(m)}>
+                            <UserCheck className="h-4 w-4 mr-1" />Approve Account
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant={m.status === "suspended" ? "default" : "destructive"}
+                            onClick={() => toggleSuspend(m)}
+                          >
+                            {m.status === "suspended"
+                              ? <><CheckCircle className="h-4 w-4 mr-1" />Reinstate</>
+                              : <><Ban className="h-4 w-4 mr-1" />Suspend</>}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </CardContent>

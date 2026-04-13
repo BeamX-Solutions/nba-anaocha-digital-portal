@@ -80,15 +80,15 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
 
-            {/* NBA Anaocha Module - Protected */}
-            <Route path="/anaocha/dashboard" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
-            <Route path="/anaocha/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-            <Route path="/anaocha/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
-            <Route path="/anaocha/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
-            <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaPayments /></ProtectedRoute>} />
-            <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
-            <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            {/* NBA Anaocha Module - Protected (Anaocha members only) */}
+            <Route path="/anaocha/dashboard" element={<ProtectedRoute portalGuard="anaocha"><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/profile" element={<ProtectedRoute portalGuard="anaocha"><MyProfile /></ProtectedRoute>} />
+            <Route path="/anaocha/settings" element={<ProtectedRoute portalGuard="anaocha"><Settings /></ProtectedRoute>} />
+            <Route path="/anaocha/apply" element={<ProtectedRoute portalGuard="anaocha"><ApplyForServices /></ProtectedRoute>} />
+            <Route path="/anaocha/applications" element={<ProtectedRoute portalGuard="anaocha"><MyApplications /></ProtectedRoute>} />
+            <Route path="/anaocha/payments" element={<ProtectedRoute portalGuard="anaocha"><AnaochaPayments /></ProtectedRoute>} />
+            <Route path="/anaocha/members" element={<ProtectedRoute portalGuard="anaocha"><FindMember /></ProtectedRoute>} />
+            <Route path="/anaocha/notifications" element={<ProtectedRoute portalGuard="anaocha"><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />
 
             {/* Remuneration Module - Protected */}

@@ -99,8 +99,8 @@ const PendingApproval = () => {
   );
 };
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading, profileComplete, profileStatus } = useAuth();
+const ProtectedRoute = ({ children, portalGuard }: { children: React.ReactNode; portalGuard?: "anaocha" }) => {
+  const { user, loading, profileComplete, profileStatus, portalAccess } = useAuth();
 
   if (loading || (user && profileComplete === null)) {
     return (
@@ -120,6 +120,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   // Admins are always approved
   const isAdmin = adminEmails.includes(user.email?.toLowerCase() ?? "");
   if (!isAdmin && profileStatus === "pending") return <PendingApproval />;
+
+  // Remuneration-only users cannot access Anaocha portal routes
+  if (portalGuard === "anaocha" && portalAccess === "remuneration") {
+    return <Navigate to="/remuneration/dashboard" replace />;
+  }
 
   return <>{children}</>;
 };

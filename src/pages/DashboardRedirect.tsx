@@ -29,7 +29,7 @@ const DashboardRedirect = () => {
       });
   }, [user, loading, portalAccess]);
 
-  if (loading || syncing || (user && (portalAccess === null || !done))) {
+  if (loading || syncing || (user && (portalAccess === null || profileComplete === null || !done))) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
