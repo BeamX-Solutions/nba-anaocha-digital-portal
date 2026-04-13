@@ -15,7 +15,7 @@ const DashboardRedirect = () => {
     const pending = localStorage.getItem("pending_portal_access");
     if (!pending) { setDone(true); return; }
 
-    // New Google OAuth user — apply the portal_access they chose before redirecting
+    // Apply the portal_access the user chose at sign-in/sign-up (works for both email and Google OAuth)
     setSyncing(true);
     supabase
       .from("profiles")

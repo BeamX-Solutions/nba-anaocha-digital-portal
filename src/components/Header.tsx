@@ -8,10 +8,10 @@ import ProfileDropdown from "@/components/ProfileDropdown";
 import nbaLogo from "@/assets/nba-logo.png";
 
 const navLinks = [
-  { label: "Committees", to: "/#committees" },
-  { label: "Remuneration", to: "/remuneration/about" },
-  { label: "Resources", to: "/resources" },
-  { label: "About", to: "/#about" },
+  { label: "About", to: "#about" },
+  { label: "Committees", to: "#committees" },
+  { label: "Remuneration", to: "/remuneration/about", external: false },
+  { label: "Resources", to: "/resources", external: false },
 ];
 
 const Header = () => {
@@ -26,11 +26,11 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
+    <header className={`sticky top-0 z-50 shadow-sm ${user ? "bg-primary" : "bg-background border-b border-border"}`}>
       <div className="container flex h-16 items-center justify-between">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2">
           <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-9 w-9" />
-          <span className="font-heading text-base font-bold text-foreground tracking-tight">NBA ANAOCHA</span>
+          <span className={`font-heading text-base font-bold tracking-tight ${user ? "text-primary-foreground" : "text-foreground"}`}>NBA ANAOCHA</span>
         </Link>
 
         <div className="flex items-center gap-4">
@@ -42,15 +42,25 @@ const Header = () => {
           ) : (
             <>
               <nav className="hidden md:flex items-center gap-7 mr-2">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.to}
-                    href={link.to}
-                    className="text-xs font-semibold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                {navLinks.map((link) =>
+                  link.to.startsWith("#") ? (
+                    <a
+                      key={link.to}
+                      href={link.to}
+                      className="text-xs font-semibold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className="text-xs font-semibold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                )}
               </nav>
               <div className="hidden md:block">
                 <Link
@@ -74,16 +84,27 @@ const Header = () => {
       {mobileOpen && !user && (
         <div className="md:hidden bg-background border-t border-border pb-4">
           <nav className="container flex flex-col gap-1 pt-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.to}
-                href={link.to}
-                className="text-xs font-semibold tracking-widest uppercase text-muted-foreground py-3 border-b border-border/50"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.to.startsWith("#") ? (
+                <a
+                  key={link.to}
+                  href={link.to}
+                  className="text-xs font-semibold tracking-widest uppercase text-muted-foreground py-3 border-b border-border/50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-xs font-semibold tracking-widest uppercase text-muted-foreground py-3 border-b border-border/50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
             <div className="flex gap-2 pt-3">
               <Link
                 to="/signin"

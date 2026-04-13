@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import heroBg from "@/assets/hero-bg.jpg";
-import aboutBranch from "@/assets/about-branch.jpg";
+import aboutBranch from "@/assets/about-branch.png";
 import newsTraining from "@/assets/news-training.jpg";
 import newsLegal from "@/assets/news-legal.jpg";
 import newsRights from "@/assets/news-rights.jpg";
@@ -76,7 +76,7 @@ const Index = () => {
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.08] mb-4 max-w-3xl">
             Nigerian Bar Association
             <br />
-            <em className="not-italic italic font-heading text-white/90">Anaocha Branch</em>
+            <span className="italic font-heading text-white/90">Anaocha Branch</span>
           </h1>
           <p className="text-white/65 italic text-base md:text-lg max-w-xl mb-10 leading-relaxed">
             Promoting the Rule of Law through unwavering professional integrity and community service.
@@ -107,7 +107,7 @@ const Index = () => {
               <img
                 src={aboutBranch}
                 alt="NBA Anaocha Branch"
-                className="w-full rounded-xl shadow-xl object-cover aspect-[4/3]"
+                className="w-full rounded-xl shadow-xl object-contain bg-muted/30"
                 loading="lazy"
               />
               <div className="absolute bottom-6 left-6 bg-background border border-border rounded-xl shadow-lg p-5 max-w-[180px]">
