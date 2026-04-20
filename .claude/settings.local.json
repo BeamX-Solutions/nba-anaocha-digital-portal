@@ -12,7 +12,21 @@
       "Bash(npm list:*)",
       "Bash(find /c/Users/user/Documents/nba-anaocha-digital-portal/supabase -type f -name *.ts)",
       "Bash(grep -r \"\\\\.then\\\\\\(.*error\\\\|catch\\\\|\\\\.error\\\\\\)\" /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages --include=*.tsx)",
-      "Bash(grep -n \"\\\\.then\\(\\({ data }\\)\" /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/anaocha/*.tsx /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/remuneration/*.tsx /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/admin/*.tsx)"
+      "Bash(grep -n \"\\\\.then\\(\\({ data }\\)\" /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/anaocha/*.tsx /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/remuneration/*.tsx /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/admin/*.tsx)",
+      "Bash(curl -s -X POST \"https://pwxahgqhtyciemqozgml.supabase.co/functions/v1/generate-document\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk\" -H \"Content-Type: application/json\" -d \"{\"\"method\"\":\"\"ai\"\",\"\"documentType\"\":\"\"deed_of_assignment\"\",\"\"formData\"\":{\"\"donor_name\"\":\"\"Test Donor\"\",\"\"donor_address\"\":\"\"Test Address\"\",\"\"donee_name\"\":\"\"Test Donee\"\",\"\"donee_address\"\":\"\"Test Address 2\"\",\"\"land_address\"\":\"\"Test Land\"\",\"\"consideration\"\":\"\"1000000\"\"}}\")",
+      "Bash(npx supabase:*)",
+      "Bash(npm install:*)",
+      "Bash(find /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages -name \"*.tsx\" -exec wc -l {} \\\\;)",
+      "Bash(grep -n \"Online payments will be available soon\\\\|coming soon\\\\|placeholder\\\\|stub\" /c/Users/user/Documents/nba-anaocha-digital-portal/src/pages/**/*.tsx)",
+      "Bash(gh auth:*)",
+      "Bash(gh org:*)",
+      "Bash(ping -n 2 github.com)",
+      "Bash(curl -s 'https://pwxahgqhtyciemqozgml.supabase.co/rest/v1/profiles?limit=1' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk')",
+      "Bash(curl -s 'https://pwxahgqhtyciemqozgml.supabase.co/rest/v1/__TRACKED_VAR__?limit=1' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk')",
+      "Bash(curl -s https://pwxahgqhtyciemqozgml.supabase.co/auth/v1/admin/users -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk')",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(curl -s 'https://pwxahgqhtyciemqozgml.supabase.co/rest/v1/profiles?select=first_name,surname,email,status,portal_access,created_at&order=created_at.desc' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3eGFoZ3FodHljaWVtcW96Z21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMDAwMzEsImV4cCI6MjA5MDU3NjAzMX0.3Kqa6Yl2rYZS3L-g0L4XzrMJdjhk1Z4iLOiUDEL4UFk')"
     ]
   }
 }

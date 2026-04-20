@@ -46,37 +46,67 @@ export type Database = {
       }
       documents: {
         Row: {
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
+          approver_comments: string | null
+          ban: string | null
           content: string | null
           created_at: string
           document_type: string
           form_data: Json | null
           id: string
           reference_number: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
           status: string
+          submitted_at: string | null
+          submitted_by: string | null
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          approver_comments?: string | null
+          ban?: string | null
           content?: string | null
           created_at?: string
           document_type: string
           form_data?: Json | null
           id?: string
           reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          approver_comments?: string | null
+          ban?: string | null
           content?: string | null
           created_at?: string
           document_type?: string
           form_data?: Json | null
           id?: string
           reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -193,6 +223,51 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      document_versions: {
+        Row: {
+          content: string | null
+          created_at: string
+          created_by: string
+          document_id: string
+          form_data: Json | null
+          id: string
+          version_number: number
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          created_by: string
+          document_id: string
+          form_data?: Json | null
+          id?: string
+          version_number?: number
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          created_by?: string
+          document_id?: string
+          form_data?: Json | null
+          id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

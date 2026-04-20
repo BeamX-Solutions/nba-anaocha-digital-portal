@@ -77,6 +77,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [checkProfile]);
 
+  // Real-time listener for profile status changes (auto-update when admin approves)
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel(`profiles:${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const newProfile = (payload.new as any);
+          if (newProfile) {
+            setProfileStatus(newProfile.status ?? null);
+            setPortalAccess(newProfile.portal_access ?? "anaocha");
+            setProfileComplete(!!(newProfile.first_name && newProfile.surname));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [user?.id]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfileComplete(null);

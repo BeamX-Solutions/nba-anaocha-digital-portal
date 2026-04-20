@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Loader2, ChevronDown, BookOpen, FolderOpen } from "lucide-react";
+import { Sparkles, Loader2, ChevronDown, BookOpen, FolderOpen, Download } from "lucide-react";
+import { exportDocumentToPDF } from "@/lib/pdfExport";
+import { saveDocumentVersion } from "@/lib/documentUtils";
 import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -122,6 +124,17 @@ const PrepareDocument = () => {
   const [generatedContent, setGeneratedContent] = useState("");
   const [generating, setGenerating] = useState(false);
   const [method, setMethod] = useState<"ai" | "precedent">("ai");
+  const [userBan, setUserBan] = useState<string | null>(null);
+
+  // Fetch user's BAN from profile
+  useEffect(() => {
+    const fetchBan = async () => {
+      if (!user) return;
+      const { data } = await supabase.from("profiles").select("ban").eq("user_id", user.id).maybeSingle();
+      if (data?.ban) setUserBan(data.ban);
+    };
+    fetchBan();
+  }, [user]);
 
   const selectedDoc = DOC_TYPES.find((d) => d.value === docType)!;
 
@@ -175,10 +188,22 @@ const PrepareDocument = () => {
     setGenerating(false);
   };
 
+  const handleExportDocument = () => {
+    const title = method === "ai"
+      ? `${selectedDoc?.label}`
+      : "Precedent Document";
+    const filename = `document-draft-${Date.now()}`;
+    exportDocumentToPDF(filename, title, generatedContent, {
+      ban: userBan,
+      status: "Draft",
+    });
+    toast({ title: "Exporting", description: "Your document is being exported as PDF." });
+  };
+
   const handleSaveDocument = async () => {
     if (!user) return;
     const refNum = `REM-${Date.now().toString(36).toUpperCase()}`;
-    const { error } = await supabase.from("documents").insert({
+    const { data: newDoc, error } = await supabase.from("documents").insert({
       user_id: user.id,
       title: method === "ai"
         ? `${selectedDoc.label} - ${formData.donee_name || formData.donor_name || "Draft"}`
@@ -188,11 +213,23 @@ const PrepareDocument = () => {
       form_data: method === "ai" ? (formData as any) : ({ precedent: precedentText } as any),
       status: "draft",
       reference_number: refNum,
-    });
+      ban: userBan,
+      approval_status: "pending",
+    }).select();
 
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
+      // Save first version
+      const docId = data?.[0]?.id;
+      if (docId) {
+        await saveDocumentVersion(
+          docId,
+          user.id,
+          generatedContent,
+          method === "ai" ? (formData as any) : ({ precedent: precedentText } as any)
+        );
+      }
       toast({ title: "Document saved!", description: `Reference: ${refNum}` });
       setCurrentStep(4);
     }
@@ -334,8 +371,11 @@ const PrepareDocument = () => {
               <div className="border border-border rounded-md p-6 bg-background min-h-[300px] prose prose-sm max-w-none text-foreground">
                 <ReactMarkdown>{generatedContent}</ReactMarkdown>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 <Button variant="outline" onClick={() => setCurrentStep(1)}>← Edit</Button>
+                <Button variant="secondary" onClick={handleExportDocument}>
+                  <Download className="h-4 w-4 mr-2" />Export as PDF
+                </Button>
                 <Button onClick={() => setCurrentStep(3)}>Proceed to Payment →</Button>
               </div>
             </CardContent>

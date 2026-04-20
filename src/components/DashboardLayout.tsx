@@ -27,9 +27,8 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
 
   const SidebarContent = () => (
     <>
-      <div className="p-5 border-b border-sidebar-border space-y-3">
-        <h2 className="font-heading text-lg font-bold text-sidebar-primary">{title}</h2>
-        {!isRemunerationOnly && (
+      {!isRemunerationOnly && (
+        <div className="p-5 border-b border-sidebar-border">
           <div className="flex gap-1.5">
             <Link
               to="/anaocha/dashboard"
@@ -54,8 +53,8 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
               <Scale className="h-3 w-3" /> Remuneration
             </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <nav className="flex-1 p-4 space-y-1">
         {sidebarItems.map((item) => (
           <Link

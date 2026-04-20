@@ -40,7 +40,8 @@ import AnaochaPayments from "./pages/anaocha/AnaochaPayments.tsx";
 // Remuneration pages
 import RemunerationDashboard from "./pages/remuneration/RemunerationDashboard.tsx";
 import PrepareDocument from "./pages/remuneration/PrepareDocument.tsx";
-import MyDocuments from "./pages/remuneration/MyDocuments.tsx";
+import MyDocumentsRemuneration from "./pages/remuneration/MyDocuments.tsx";
+import MyDocumentsAnaocha from "./pages/anaocha/MyDocumentsWithApproval.tsx";
 import PaymentHistory from "./pages/remuneration/PaymentHistory.tsx";
 import FindDocument from "./pages/remuneration/FindDocument.tsx";
 import RemunerationAbout from "./pages/remuneration/RemunerationAbout.tsx";
@@ -56,6 +57,7 @@ import AdminContacts from "./pages/admin/AdminContacts.tsx";
 import AdminAnnouncements from "./pages/admin/AdminAnnouncements.tsx";
 import AdminResources from "./pages/admin/AdminResources.tsx";
 import AdminRemunerationMembers from "./pages/admin/AdminRemunerationMembers.tsx";
+import AdminApprovalQueue from "./pages/admin/AdminApprovalQueue.tsx";
 
 const queryClient = new QueryClient();
 
@@ -94,7 +96,8 @@ const App = () => (
             {/* Remuneration Module - Protected */}
             <Route path="/remuneration/dashboard" element={<ProtectedRoute><RemunerationDashboard /></ProtectedRoute>} />
             <Route path="/remuneration/prepare" element={<ProtectedRoute><PrepareDocument /></ProtectedRoute>} />
-            <Route path="/remuneration/documents" element={<ProtectedRoute><MyDocuments /></ProtectedRoute>} />
+            <Route path="/anaocha/my-documents" element={<ProtectedRoute portalGuard="anaocha"><MyDocumentsAnaocha /></ProtectedRoute>} />
+            <Route path="/remuneration/documents" element={<ProtectedRoute><MyDocumentsRemuneration /></ProtectedRoute>} />
             <Route path="/remuneration/payments" element={<ProtectedRoute><PaymentHistory /></ProtectedRoute>} />
             <Route path="/remuneration/search" element={<ProtectedRoute><FindDocument /></ProtectedRoute>} />
             <Route path="/remuneration/about" element={<RemunerationAbout />} />
@@ -109,6 +112,7 @@ const App = () => (
             <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
             <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
             <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
+            <Route path="/admin/approval-queue" element={<AdminRoute><AdminApprovalQueue /></AdminRoute>} />
             <Route path="/admin/remuneration-members" element={<AdminRoute><AdminRemunerationMembers /></AdminRoute>} />
 
             <Route path="*" element={<NotFound />} />

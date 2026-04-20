@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Save, Camera, Upload, User } from "lucide-react";
+import { Save, Camera, Upload, User, CheckCircle2 } from "lucide-react";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ const profileSchema = z.object({
   phone: z.string().trim().max(20).optional(),
   office_address: z.string().trim().max(500).optional(),
   branch: z.string().trim().max(100).optional(),
+  ban: z.string().trim().max(50).optional(),
 });
 
 const MyProfile = () => {
@@ -27,9 +29,10 @@ const MyProfile = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [approvalStatus, setApprovalStatus] = useState<string>("");
   const [form, setForm] = useState({
     surname: "", first_name: "", middle_name: "", year_of_call: "",
-    phone: "", office_address: "", branch: "Anaocha", email: "",
+    phone: "", office_address: "", branch: "Anaocha", email: "", ban: "",
   });
 
   useEffect(() => {
@@ -48,7 +51,9 @@ const MyProfile = () => {
             office_address: data.office_address ?? "",
             branch: data.branch ?? "Anaocha",
             email: data.email ?? user.email ?? "",
+            ban: (data as any).ban ?? "",
           });
+          setApprovalStatus((data as any).status ?? "");
           if (data.avatar_url) setAvatarUrl(data.avatar_url);
         }
         setLoading(false);
@@ -102,6 +107,7 @@ const MyProfile = () => {
       middle_name: form.middle_name || null,
       year_of_call: form.year_of_call || null,
       phone: form.phone || null,
+      ban: form.ban || null,
       office_address: form.office_address || null,
       branch: form.branch || null,
     }).eq("user_id", user!.id);
@@ -114,6 +120,7 @@ const MyProfile = () => {
     }
   };
 
+  const isBanReadOnly = approvalStatus === "active";
   const fields = [
     { key: "surname", label: "Surname", required: true },
     { key: "first_name", label: "First Name", required: true },
@@ -122,6 +129,7 @@ const MyProfile = () => {
     { key: "phone", label: "Phone Number", required: true },
     { key: "office_address", label: "Office Address", fullWidth: true },
     { key: "branch", label: "Branch" },
+    { key: "ban", label: "BAN (Bar Admission Number)", readOnly: isBanReadOnly },
   ];
 
   if (loading) {
@@ -202,18 +210,26 @@ const MyProfile = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {fields.map((f) => (
+                {fields.map((f: any) => (
                   <div key={f.key} className={f.fullWidth ? "md:col-span-2" : ""}>
-                    <label className="text-sm font-medium text-foreground">
-                      {f.label}
-                      {f.required && <span className="text-destructive ml-1">*</span>}
-                    </label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm font-medium text-foreground">
+                        {f.label}
+                        {f.required && <span className="text-destructive ml-1">*</span>}
+                      </label>
+                      {f.readOnly && <Badge variant="secondary" className="text-xs">Verified</Badge>}
+                    </div>
                     <input
                       type="text"
                       value={form[f.key as keyof typeof form]}
                       onChange={handleChange(f.key)}
+                      disabled={f.readOnly || false}
                       placeholder={f.label}
-                      className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                      className={`mt-1 w-full rounded-md border border-input px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring ${
+                        f.readOnly || false
+                          ? "bg-muted text-muted-foreground cursor-not-allowed"
+                          : "bg-background text-foreground"
+                      }`}
                     />
                   </div>
                 ))}
