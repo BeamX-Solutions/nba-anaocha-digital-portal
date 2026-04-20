@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { FolderOpen, FileText, ChevronDown, ChevronUp, Copy, Trash2, Check } from "lucide-react";
+import { FolderOpen, FileText, ChevronDown, ChevronUp, Copy, Trash2, Check, Download } from "lucide-react";
 import RemunerationLayout from "@/components/RemunerationLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { exportDocument } from "@/lib/pdfExport";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
   DialogDescription, DialogFooter,
@@ -46,6 +47,11 @@ const MyDocuments = () => {
       toast({ title: "Copied", description: "Reference number copied to clipboard." });
       setTimeout(() => setCopied(null), 2000);
     });
+  };
+
+  const handleExport = (doc: any) => {
+    exportDocument(doc);
+    toast({ title: "Downloading", description: `${doc.title} is being exported as PDF.` });
   };
 
   const confirmDelete = async () => {
@@ -162,6 +168,9 @@ const MyDocuments = () => {
                           ) : (
                             <><Copy className="h-3.5 w-3.5 mr-1" />Copy Reference</>
                           )}
+                        </Button>
+                        <Button size="sm" variant="secondary" onClick={() => handleExport(doc)}>
+                          <Download className="h-3.5 w-3.5 mr-1" />Export PDF
                         </Button>
                         {doc.status === "draft" && (
                           <Button

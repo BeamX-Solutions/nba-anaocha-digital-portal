@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <header className={`sticky top-0 z-50 shadow-sm ${user ? "bg-primary" : "bg-background border-b border-border"}`}>
       <div className="container flex h-16 items-center justify-between">
-        <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2">
+        <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2" aria-label="NBA Anaocha Home">
           <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-9 w-9" />
           <span className={`font-heading text-base font-bold tracking-tight ${user ? "text-primary-foreground" : "text-foreground"}`}>NBA ANAOCHA</span>
         </Link>
