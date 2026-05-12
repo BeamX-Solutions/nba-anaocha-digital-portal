@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
 import { SERVICE_LABELS } from "@/lib/constants";
 import {
-  FileText, Scale, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone,
+  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone,
 } from "lucide-react";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
@@ -20,7 +20,6 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> = 
 
 const quickActions = [
   { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-5 w-5" />, desc: "NBA Diary, ID Card, BAIN, Stamp & Seal" },
-  { label: "Prepare a Document", href: "/remuneration/prepare", icon: <Scale className="h-5 w-5" />, desc: "Deeds, POA, Tenancy and more" },
   { label: "Find a Member", href: "/anaocha/members", icon: <Users className="h-5 w-5" />, desc: "Search the member directory" },
   { label: "Notifications", href: "/anaocha/notifications", icon: <Bell className="h-5 w-5" />, desc: "View all your alerts" },
   { label: "Contact Us", href: "/anaocha/contact", icon: <Phone className="h-5 w-5" />, desc: "Reach the secretariat" },
@@ -39,10 +38,9 @@ const AnaochaDashboard = () => {
     if (!user) return;
 
     const load = async () => {
-      const [profileRes, appsRes, docsRes, notifsRes, announcementsRes] = await Promise.all([
+      const [profileRes, appsRes, notifsRes, announcementsRes] = await Promise.all([
         supabase.from("profiles").select("first_name, surname, year_of_call, branch").eq("user_id", user.id).single(),
         supabase.from("service_applications").select("id, service_type, status, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
-        supabase.from("documents").select("id", { count: "exact" }).eq("user_id", user.id),
         supabase.from("notifications").select("id, title, message, read, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
         supabase.from("announcements").select("id, title, content, created_at").or("portal.eq.anaocha,portal.eq.both").eq("published", true).order("created_at", { ascending: false }).limit(3),
       ]);
@@ -52,7 +50,7 @@ const AnaochaDashboard = () => {
       const apps = appsRes.data || [];
       setStats({
         applications: apps.length,
-        documents: docsRes.count || 0,
+        documents: 0,
         unread: (notifsRes.data || []).filter((n) => !n.read).length,
       });
       setRecentApplications(apps.slice(0, 3));
@@ -95,19 +93,6 @@ const AnaochaDashboard = () => {
                 <div>
                   <p className="text-2xl font-bold text-foreground">{loading ? "-" :stats.applications}</p>
                   <p className="text-sm text-muted-foreground">Application{stats.applications !== 1 ? "s" : ""}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link to="/remuneration/documents">
-            <Card className="shadow-card hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <FileText className="h-6 w-6 text-accent" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">{loading ? "-" :stats.documents}</p>
-                  <p className="text-sm text-muted-foreground">Document{stats.documents !== 1 ? "s" : ""} Prepared</p>
                 </div>
               </CardContent>
             </Card>

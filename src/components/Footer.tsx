@@ -46,7 +46,6 @@ const Footer = () => (
               { label: "Home", to: "/" },
               { label: "About the Branch", to: "/#about" },
               { label: "Committees", to: "/#committees" },
-              { label: "Remuneration Portal", to: "/remuneration/about" },
               { label: "Member Directory", to: "/anaocha/find-member" },
               { label: "Apply for Services", to: "/anaocha/apply" },
               { label: "Resources", to: "/resources" },
@@ -92,7 +91,7 @@ const Footer = () => (
         <div>
           <h4 className="font-heading font-semibold text-sm mb-4 text-accent tracking-wide">Portal Access</h4>
           <p className="text-sm text-primary-foreground/60 mb-5 leading-relaxed">
-            Members can sign in to access branch services, manage applications, and use the Remuneration Portal.
+            Members can sign in to access branch services, manage applications, and the member directory.
           </p>
           <div className="flex flex-col gap-2">
             <Link

@@ -8,17 +8,12 @@ export const superAdminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
 export const anaochaAdminEmails = (import.meta.env.VITE_ANAOCHA_ADMIN_EMAILS || "")
   .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
 
-export const remunerationAdminEmails = (import.meta.env.VITE_REMUNERATION_ADMIN_EMAILS || "")
-  .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
-
 export const isSuperAdmin = (email: string) => superAdminEmails.includes(email.toLowerCase());
 export const isAnaochaAdmin = (email: string) => anaochaAdminEmails.includes(email.toLowerCase());
-export const isRemunerationAdmin = (email: string) => remunerationAdminEmails.includes(email.toLowerCase());
 
-export const getAdminRole = (email: string): "super" | "anaocha" | "remuneration" | null => {
+export const getAdminRole = (email: string): "super" | "anaocha" | null => {
   if (isSuperAdmin(email)) return "super";
   if (isAnaochaAdmin(email)) return "anaocha";
-  if (isRemunerationAdmin(email)) return "remuneration";
   return null;
 };
 

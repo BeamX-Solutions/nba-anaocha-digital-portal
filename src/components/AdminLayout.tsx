@@ -1,22 +1,20 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardList, Users, FileText, Bell, LogOut, Crown, Mail, Menu, Megaphone, BookMarked, Scale } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Crown, Mail, Menu, Megaphone, BookMarked } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getAdminRole } from "@/components/AdminRoute";
 
 const allSidebarItems = [
-  { label: "Dashboard",             href: "/admin",                        icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "anaocha", "remuneration"] },
-  { label: "Anaocha Members",       href: "/admin/members",                icon: <Users className="h-4 w-4" />,          roles: ["super", "anaocha"] },
-  { label: "Applications",          href: "/admin/applications",           icon: <ClipboardList className="h-4 w-4" />,  roles: ["super", "anaocha"] },
-  { label: "Contact Messages",      href: "/admin/contacts",               icon: <Mail className="h-4 w-4" />,           roles: ["super", "anaocha"] },
-  { label: "Remuneration Members",  href: "/admin/remuneration-members",   icon: <Scale className="h-4 w-4" />,          roles: ["super", "remuneration"] },
-  { label: "Documents",             href: "/admin/documents",              icon: <FileText className="h-4 w-4" />,       roles: ["super", "remuneration"] },
-  { label: "Announcements",         href: "/admin/announcements",          icon: <Megaphone className="h-4 w-4" />,      roles: ["super", "anaocha", "remuneration"] },
-  { label: "Resources",             href: "/admin/resources",              icon: <BookMarked className="h-4 w-4" />,     roles: ["super", "anaocha", "remuneration"] },
-  { label: "Send Notification",     href: "/admin/notify",                 icon: <Bell className="h-4 w-4" />,           roles: ["super", "anaocha", "remuneration"] },
+  { label: "Dashboard",         href: "/admin",                icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "anaocha"] },
+  { label: "Anaocha Members",   href: "/admin/members",        icon: <Users className="h-4 w-4" />,          roles: ["super", "anaocha"] },
+  { label: "Applications",      href: "/admin/applications",   icon: <ClipboardList className="h-4 w-4" />,  roles: ["super", "anaocha"] },
+  { label: "Contact Messages",  href: "/admin/contacts",       icon: <Mail className="h-4 w-4" />,           roles: ["super", "anaocha"] },
+  { label: "Announcements",     href: "/admin/announcements",  icon: <Megaphone className="h-4 w-4" />,      roles: ["super", "anaocha"] },
+  { label: "Resources",         href: "/admin/resources",      icon: <BookMarked className="h-4 w-4" />,     roles: ["super", "anaocha"] },
+  { label: "Send Notification", href: "/admin/notify",         icon: <Bell className="h-4 w-4" />,           roles: ["super", "anaocha"] },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {

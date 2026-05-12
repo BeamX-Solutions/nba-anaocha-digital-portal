@@ -10,9 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 const CATEGORIES = ["Legal Compliance", "Branch Documents", "Practice Guides", "General"];
 const TYPES = ["PDF", "Guide", "Link"];
 const PORTAL_OPTIONS = [
-  { value: "both", label: "Both Portals" },
+  { value: "both", label: "All Members" },
   { value: "anaocha", label: "Anaocha Only" },
-  { value: "remuneration", label: "Remuneration Only" },
 ];
 
 const emptyForm = { title: "", description: "", category: "General", type: "PDF", portal: "both", file_url: "", external_url: "" };

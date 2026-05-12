@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, FileText, Send, Home } from "lucide-react";
+import { CheckCircle2, FileText, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Step4DocumentSavedProps {
@@ -74,17 +74,6 @@ export const Step4DocumentSaved = ({
         >
           <FileText className="h-6 w-6 mb-2" />
           <span>View My Documents</span>
-        </Button>
-
-        <Button
-          onClick={() => navigate("/anaocha/remuneration/review", {
-            state: { referenceNumber, documentTitle }
-          })}
-          variant="default"
-          className="w-full h-24 flex-col justify-center"
-        >
-          <Send className="h-6 w-6 mb-2" />
-          <span>Submit for Approval</span>
         </Button>
 
         <Button

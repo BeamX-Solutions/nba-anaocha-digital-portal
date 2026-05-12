@@ -65,7 +65,6 @@ describe("Header", () => {
     renderHeader();
     expect(screen.getByText("About")).toBeInTheDocument();
     expect(screen.getByText("Committees")).toBeInTheDocument();
-    expect(screen.getByText("Remuneration")).toBeInTheDocument();
     expect(screen.getByText("Resources")).toBeInTheDocument();
   });
 
