@@ -11,8 +11,7 @@ import { getAdminRole } from "@/components/AdminRoute";
 
 const PORTAL_LABELS: Record<string, string> = {
   anaocha: "Anaocha",
-  remuneration: "Remuneration",
-  both: "Both Portals",
+  both: "All Members",
 };
 
 const emptyForm = { title: "", content: "", portal: "anaocha", published: true };
@@ -102,12 +101,9 @@ const AdminAnnouncements = () => {
 
   const portalOptions = role === "anaocha"
     ? [{ value: "anaocha", label: "Anaocha" }]
-    : role === "remuneration"
-    ? [{ value: "remuneration", label: "Remuneration" }]
     : [
         { value: "anaocha", label: "Anaocha" },
-        { value: "remuneration", label: "Remuneration" },
-        { value: "both", label: "Both Portals" },
+        { value: "both", label: "All Members" },
       ];
 
   return (

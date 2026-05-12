@@ -7,7 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import { DocumentStatusBadge } from "@/components/DocumentStatusBadge";
 import { VersionHistoryViewer } from "@/components/VersionHistoryViewer";
 import { submitDocumentForApproval } from "@/lib/documentUtils";
-import { FileText, Loader2, Send, Edit2, Eye } from "lucide-react";
+import { FileText, Loader2, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const MyDocumentsAnaocha = () => {
@@ -117,8 +117,8 @@ const MyDocumentsAnaocha = () => {
               <p className="text-muted-foreground mb-4">
                 You haven't created any documents yet. Start by preparing a new document.
               </p>
-              <Button onClick={() => navigate("/anaocha/remuneration/prepare")}>
-                Create Document
+              <Button onClick={() => navigate("/anaocha/dashboard")}>
+                Go to Dashboard
               </Button>
             </div>
           </CardContent>
@@ -172,43 +172,14 @@ const MyDocumentsAnaocha = () => {
                   )}
 
                   <div className="flex gap-2 flex-wrap pt-2 border-t">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/anaocha/remuneration/review/${doc.id}`)}
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View
-                    </Button>
-
                     {doc.approval_status === "draft" && (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/anaocha/remuneration/prepare/${doc.id}`)}
-                        >
-                          <Edit2 className="h-4 w-4 mr-2" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => handleSubmitForApproval(doc.id)}
-                          disabled={submittingId === doc.id}
-                        >
-                          <Send className="h-4 w-4 mr-2" />
-                          {submittingId === doc.id ? "Submitting..." : "Submit for Approval"}
-                        </Button>
-                      </>
-                    )}
-
-                    {doc.approval_status === "rejected" && (
                       <Button
                         size="sm"
-                        onClick={() => navigate(`/anaocha/remuneration/prepare/${doc.id}`)}
+                        onClick={() => handleSubmitForApproval(doc.id)}
+                        disabled={submittingId === doc.id}
                       >
-                        <Edit2 className="h-4 w-4 mr-2" />
-                        Revise
+                        <Send className="h-4 w-4 mr-2" />
+                        {submittingId === doc.id ? "Submitting..." : "Submit for Approval"}
                       </Button>
                     )}
 

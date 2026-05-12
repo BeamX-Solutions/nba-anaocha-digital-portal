@@ -37,26 +37,16 @@ import ContactUs from "./pages/anaocha/ContactUs.tsx";
 import Notifications from "./pages/anaocha/Notifications.tsx";
 import AnaochaPayments from "./pages/anaocha/AnaochaPayments.tsx";
 
-// Remuneration pages
-import RemunerationDashboard from "./pages/remuneration/RemunerationDashboard.tsx";
-import PrepareDocument from "./pages/remuneration/PrepareDocument.tsx";
-import MyDocumentsRemuneration from "./pages/remuneration/MyDocuments.tsx";
 import MyDocumentsAnaocha from "./pages/anaocha/MyDocumentsWithApproval.tsx";
-import PaymentHistory from "./pages/remuneration/PaymentHistory.tsx";
-import FindDocument from "./pages/remuneration/FindDocument.tsx";
-import RemunerationAbout from "./pages/remuneration/RemunerationAbout.tsx";
-import RemunerationNotifications from "./pages/remuneration/RemunerationNotifications.tsx";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminApplications from "./pages/admin/AdminApplications.tsx";
 import AdminMembers from "./pages/admin/AdminMembers.tsx";
-import AdminDocuments from "./pages/admin/AdminDocuments.tsx";
 import AdminNotify from "./pages/admin/AdminNotify.tsx";
 import AdminContacts from "./pages/admin/AdminContacts.tsx";
 import AdminAnnouncements from "./pages/admin/AdminAnnouncements.tsx";
 import AdminResources from "./pages/admin/AdminResources.tsx";
-import AdminRemunerationMembers from "./pages/admin/AdminRemunerationMembers.tsx";
 import AdminApprovalQueue from "./pages/admin/AdminApprovalQueue.tsx";
 
 const queryClient = new QueryClient();
@@ -82,38 +72,27 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
 
-            {/* NBA Anaocha Module - Protected (Anaocha members only) */}
-            <Route path="/anaocha/dashboard" element={<ProtectedRoute portalGuard="anaocha"><AnaochaDashboard /></ProtectedRoute>} />
-            <Route path="/anaocha/profile" element={<ProtectedRoute portalGuard="anaocha"><MyProfile /></ProtectedRoute>} />
-            <Route path="/anaocha/settings" element={<ProtectedRoute portalGuard="anaocha"><Settings /></ProtectedRoute>} />
-            <Route path="/anaocha/apply" element={<ProtectedRoute portalGuard="anaocha"><ApplyForServices /></ProtectedRoute>} />
-            <Route path="/anaocha/applications" element={<ProtectedRoute portalGuard="anaocha"><MyApplications /></ProtectedRoute>} />
-            <Route path="/anaocha/payments" element={<ProtectedRoute portalGuard="anaocha"><AnaochaPayments /></ProtectedRoute>} />
-            <Route path="/anaocha/members" element={<ProtectedRoute portalGuard="anaocha"><FindMember /></ProtectedRoute>} />
-            <Route path="/anaocha/notifications" element={<ProtectedRoute portalGuard="anaocha"><Notifications /></ProtectedRoute>} />
+            {/* NBA Anaocha Module - Protected */}
+            <Route path="/anaocha/dashboard" element={<ProtectedRoute><AnaochaDashboard /></ProtectedRoute>} />
+            <Route path="/anaocha/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+            <Route path="/anaocha/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
+            <Route path="/anaocha/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
+            <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaPayments /></ProtectedRoute>} />
+            <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
+            <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />
-
-            {/* Remuneration Module - Protected */}
-            <Route path="/remuneration/dashboard" element={<ProtectedRoute><RemunerationDashboard /></ProtectedRoute>} />
-            <Route path="/remuneration/prepare" element={<ProtectedRoute><PrepareDocument /></ProtectedRoute>} />
-            <Route path="/anaocha/my-documents" element={<ProtectedRoute portalGuard="anaocha"><MyDocumentsAnaocha /></ProtectedRoute>} />
-            <Route path="/remuneration/documents" element={<ProtectedRoute><MyDocumentsRemuneration /></ProtectedRoute>} />
-            <Route path="/remuneration/payments" element={<ProtectedRoute><PaymentHistory /></ProtectedRoute>} />
-            <Route path="/remuneration/search" element={<ProtectedRoute><FindDocument /></ProtectedRoute>} />
-            <Route path="/remuneration/about" element={<RemunerationAbout />} />
-            <Route path="/remuneration/notifications" element={<ProtectedRoute><RemunerationNotifications /></ProtectedRoute>} />
+            <Route path="/anaocha/my-documents" element={<ProtectedRoute><MyDocumentsAnaocha /></ProtectedRoute>} />
 
             {/* Admin Module */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/applications" element={<AdminRoute><AdminApplications /></AdminRoute>} />
             <Route path="/admin/members" element={<AdminRoute><AdminMembers /></AdminRoute>} />
-            <Route path="/admin/documents" element={<AdminRoute><AdminDocuments /></AdminRoute>} />
             <Route path="/admin/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
             <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
             <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
             <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
             <Route path="/admin/approval-queue" element={<AdminRoute><AdminApprovalQueue /></AdminRoute>} />
-            <Route path="/admin/remuneration-members" element={<AdminRoute><AdminRemunerationMembers /></AdminRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

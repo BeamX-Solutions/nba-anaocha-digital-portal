@@ -7,24 +7,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import nbaLogo from "@/assets/nba-logo.png";
 
-const anaochaFields = [
+const profileFields = [
   { key: "surname", label: "Surname", required: true },
   { key: "first_name", label: "First Name", required: true },
   { key: "middle_name", label: "Middle Name", required: false },
   { key: "ban", label: "BAN (Bar Admission Number)", required: true, placeholder: "e.g. 12345" },
   { key: "year_of_call", label: "Year of Call", required: false, placeholder: "e.g. 2018" },
   { key: "phone", label: "Phone Number", required: true },
-  { key: "office_address", label: "Office Address", required: false, fullWidth: true },
-];
-
-const remunerationFields = [
-  { key: "surname", label: "Surname", required: true },
-  { key: "first_name", label: "First Name", required: true },
-  { key: "middle_name", label: "Middle Name", required: false },
-  { key: "ban", label: "BAN (Bar Admission Number)", required: true, placeholder: "e.g. 12345" },
-  { key: "year_of_call", label: "Year of Call", required: false, placeholder: "e.g. 2018" },
-  { key: "phone", label: "Phone Number", required: true },
-  { key: "branch", label: "NBA Branch", required: true, placeholder: "e.g. Lagos", fullWidth: false },
   { key: "office_address", label: "Office Address", required: false, fullWidth: true },
 ];
 
@@ -33,13 +22,10 @@ const CompleteProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const portalAccess = user?.user_metadata?.portal_access ?? "anaocha";
-  const isRemuneration = portalAccess === "remuneration";
-  const fields = isRemuneration ? remunerationFields : anaochaFields;
 
   const [form, setForm] = useState({
     surname: "", first_name: "", middle_name: "", ban: "",
-    year_of_call: "", phone: "", office_address: "", branch: isRemuneration ? "" : "Anaocha",
+    year_of_call: "", phone: "", office_address: "", branch: "Anaocha",
   });
 
   useEffect(() => {
@@ -95,7 +81,7 @@ const CompleteProfile = () => {
       <div className="flex items-center gap-3 mb-8">
         <img src={nbaLogo} alt="NBA Anaocha" className="h-12 w-12" />
         <div>
-          <h1 className="font-heading text-xl font-bold text-foreground">NBA {isRemuneration ? "Remuneration Portal" : "Anaocha"}</h1>
+          <h1 className="font-heading text-xl font-bold text-foreground">NBA Anaocha</h1>
           <p className="text-xs text-muted-foreground">Complete your member profile</p>
         </div>
       </div>
@@ -109,7 +95,7 @@ const CompleteProfile = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fields.map((f) => (
+              {profileFields.map((f) => (
                 <div key={f.key} className={f.fullWidth ? "md:col-span-2" : ""}>
                   <label className="text-sm font-medium text-foreground">
                     {f.label}

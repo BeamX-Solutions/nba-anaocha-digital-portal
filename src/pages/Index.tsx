@@ -1,5 +1,5 @@
 import { Link, Navigate } from "react-router-dom";
-import { ArrowRight, Scale, Monitor, Users, GraduationCap, Gavel, ShieldCheck, BookOpen, Heart, Megaphone, Trophy, Building2 } from "lucide-react";
+import { ArrowRight, Monitor, Users, GraduationCap, Gavel, ShieldCheck, BookOpen, Heart, Megaphone, Trophy, Building2 } from "lucide-react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,7 +14,6 @@ const committees = [
   { icon: <Monitor className="h-5 w-5" />, name: "ICT & Tech", desc: "Driving digital transformation and innovation in legal practice.", featured: true },
   { icon: <Users className="h-5 w-5" />, name: "Women Forum", desc: "Promoting the interests of female practitioners and gender equity in law." },
   { icon: <GraduationCap className="h-5 w-5" />, name: "Young Lawyers", desc: "Empowering new entrants through mentorship and professional workshops." },
-  { icon: <Scale className="h-5 w-5" />, name: "Remuneration", desc: "Ensuring fair compensation standards and financial compliance for all members." },
   { icon: <Gavel className="h-5 w-5" />, name: "Disciplinary", desc: "Upholding the highest standards of professional ethics and conduct." },
   { icon: <BookOpen className="h-5 w-5" />, name: "Journal", desc: "Publishing and curating legal research and academic contributions." },
   { icon: <Heart className="h-5 w-5" />, name: "Welfare", desc: "Supporting members' well-being and providing social assistance." },
@@ -173,40 +172,6 @@ const Index = () => {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Remuneration Portal Banner */}
-      <section className="bg-primary">
-        <div className="container py-14 md:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <div>
-              <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground mb-3 leading-snug">
-                Remuneration &amp; Compliance Portal
-              </h2>
-              <p className="text-primary-foreground/70 text-sm leading-relaxed mb-7 max-w-md">
-                Secure access for members to track legal document fees, submit compliance reports, and manage professional standing.
-              </p>
-              <div className="flex gap-3">
-                <Link
-                  to="/signin"
-                  className="inline-flex items-center justify-center bg-primary-foreground text-primary font-semibold px-5 py-2.5 rounded-md text-sm hover:bg-primary-foreground/90 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/signup"
-                  className="inline-flex items-center justify-center border border-primary-foreground/30 text-primary-foreground font-semibold px-5 py-2.5 rounded-md text-sm hover:bg-primary-foreground/10 transition-colors"
-                >
-                  Create Account
-                </Link>
-              </div>
-            </div>
-            <div className="text-center md:text-right">
-              <p className="font-heading text-6xl md:text-7xl font-bold text-accent leading-none">100%</p>
-              <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary-foreground/50 mt-2">Compliance Security</p>
-            </div>
           </div>
         </div>
       </section>

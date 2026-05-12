@@ -10,7 +10,6 @@ import nbaLogo from "@/assets/nba-logo.png";
 const navLinks = [
   { label: "About", to: "#about" },
   { label: "Committees", to: "#committees" },
-  { label: "Remuneration", to: "/remuneration/about", external: false },
   { label: "Resources", to: "/resources", external: false },
 ];
 
