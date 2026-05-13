@@ -177,7 +177,7 @@ const Index = () => {
       </section>
 
       {/* Archival Resources / News */}
-      <section className="container py-16 md:py-24">
+      <section id="resources" className="container py-16 md:py-24">
         <div className="flex items-end justify-between mb-10">
           <div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-1">Archival Resources</h2>
