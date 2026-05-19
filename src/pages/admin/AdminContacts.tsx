@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
-import { Mail, MailOpen, ChevronDown, ChevronUp } from "lucide-react";
+import { Mail, MailOpen, ChevronDown, ChevronUp, Send, Loader2 } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminContacts = () => {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Reply dialog
+  const [replyTarget, setReplyTarget] = useState<any | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     supabase
@@ -27,27 +35,60 @@ const AdminContacts = () => {
   }, []);
 
   const toggleExpand = async (msg: any) => {
-    if (expanded === msg.id) {
-      setExpanded(null);
-      return;
-    }
+    if (expanded === msg.id) { setExpanded(null); return; }
     setExpanded(msg.id);
     if (!msg.read) {
       const { error } = await supabase.from("contact_messages").update({ read: true }).eq("id", msg.id);
-      if (!error) {
-        setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, read: true } : m));
-      }
+      if (!error) setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, read: true } : m));
     }
   };
 
   const toggleRead = async (msg: any) => {
     const newRead = !msg.read;
     const { error } = await supabase.from("contact_messages").update({ read: newRead }).eq("id", msg.id);
+    if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
+    setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, read: newRead } : m));
+  };
+
+  const openReply = (msg: any) => {
+    setReplyTarget(msg);
+    setReplyText("");
+  };
+
+  const sendReply = async () => {
+    if (!replyTarget || !replyText.trim()) return;
+    setSending(true);
+
+    // Send via Edge Function
+    const { error } = await supabase.functions.invoke("send-email", {
+      body: {
+        type: "contact_reply",
+        to: replyTarget.email,
+        name: replyTarget.full_name,
+        reply_message: replyText.trim(),
+        original_message: replyTarget.message,
+      },
+    });
+
     if (error) {
-      toast({ title: "Failed", description: error.message, variant: "destructive" });
+      toast({ title: "Failed to send reply", description: "Email could not be delivered. Try again.", variant: "destructive" });
+      setSending(false);
       return;
     }
-    setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, read: newRead } : m));
+
+    // Save reply record against the contact message
+    await supabase
+      .from("contact_messages")
+      .update({ read: true, admin_reply: replyText.trim(), replied_at: new Date().toISOString() })
+      .eq("id", replyTarget.id);
+
+    setMessages((prev) =>
+      prev.map((m) => m.id === replyTarget.id ? { ...m, read: true, admin_reply: replyText.trim() } : m)
+    );
+
+    setSending(false);
+    setReplyTarget(null);
+    toast({ title: "Reply sent", description: `Your reply was emailed to ${replyTarget.email}.` });
   };
 
   const unreadCount = messages.filter((m) => !m.read).length;
@@ -83,9 +124,7 @@ const AdminContacts = () => {
                 <CardContent className="p-4">
                   <div className="flex items-start gap-4">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      {msg.read
-                        ? <MailOpen className="h-5 w-5 text-muted-foreground" />
-                        : <Mail className="h-5 w-5 text-primary" />}
+                      {msg.read ? <MailOpen className="h-5 w-5 text-muted-foreground" /> : <Mail className="h-5 w-5 text-primary" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
@@ -97,6 +136,7 @@ const AdminContacts = () => {
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {!msg.read && <Badge>Unread</Badge>}
+                          {msg.admin_reply && <Badge variant="outline" className="text-green-700 border-green-300">Replied</Badge>}
                           <p className="text-xs text-muted-foreground">
                             {new Date(msg.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                           </p>
@@ -111,15 +151,22 @@ const AdminContacts = () => {
                           <div className="bg-muted/50 rounded-md p-4 text-sm text-foreground whitespace-pre-wrap">
                             {msg.message}
                           </div>
+
+                          {msg.admin_reply && (
+                            <div className="bg-green-50 border border-green-100 rounded-md p-4">
+                              <p className="text-xs font-semibold text-green-700 mb-1">Your reply</p>
+                              <p className="text-sm text-green-900 whitespace-pre-wrap">{msg.admin_reply}</p>
+                            </div>
+                          )}
+
                           <div className="flex gap-2">
                             <Button variant="outline" size="sm" onClick={() => toggleRead(msg)}>
                               {msg.read ? "Mark as Unread" : "Mark as Read"}
                             </Button>
-                            <a href={`mailto:${msg.email}`}>
-                              <Button size="sm">
-                                <Mail className="h-4 w-4 mr-1" /> Reply via Email
-                              </Button>
-                            </a>
+                            <Button size="sm" onClick={() => openReply(msg)} className="gap-1.5">
+                              <Send className="h-3.5 w-3.5" />
+                              {msg.admin_reply ? "Reply Again" : "Reply"}
+                            </Button>
                           </div>
                         </div>
                       )}
@@ -131,6 +178,38 @@ const AdminContacts = () => {
           </div>
         )}
       </div>
+
+      {/* Reply dialog */}
+      <Dialog open={!!replyTarget} onOpenChange={(open) => { if (!open) setReplyTarget(null); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Reply to {replyTarget?.full_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="bg-muted/50 rounded-md p-3 text-sm text-muted-foreground">
+              <p className="font-semibold text-foreground mb-1">Original message</p>
+              <p className="line-clamp-3">{replyTarget?.message}</p>
+            </div>
+            <textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              rows={5}
+              placeholder="Type your reply here..."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              This will be sent to <span className="font-semibold text-foreground">{replyTarget?.email}</span> via email.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReplyTarget(null)} disabled={sending}>Cancel</Button>
+            <Button onClick={sendReply} disabled={sending || !replyText.trim()} className="gap-1.5">
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {sending ? "Sending..." : "Send Reply"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };

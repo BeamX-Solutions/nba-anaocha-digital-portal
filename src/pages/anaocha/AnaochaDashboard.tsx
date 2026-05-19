@@ -9,8 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
 import { SERVICE_LABELS } from "@/lib/constants";
 import {
-  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone,
+  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone, ExternalLink, Scale, FolderOpen,
 } from "lucide-react";
+
+const REMUNERATION_URL = import.meta.env.VITE_REMUNERATION_PORTAL_URL || "#";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   pending: "secondary",
@@ -38,11 +40,12 @@ const AnaochaDashboard = () => {
     if (!user) return;
 
     const load = async () => {
-      const [profileRes, appsRes, notifsRes, announcementsRes] = await Promise.all([
+      const [profileRes, appsRes, notifsRes, announcementsRes, docsRes] = await Promise.all([
         supabase.from("profiles").select("first_name, surname, year_of_call, branch").eq("user_id", user.id).single(),
         supabase.from("service_applications").select("id, service_type, status, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("notifications").select("id, title, message, read, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
         supabase.from("announcements").select("id, title, content, created_at").or("portal.eq.anaocha,portal.eq.both").eq("published", true).order("created_at", { ascending: false }).limit(3),
+        supabase.from("documents").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
 
       setProfile(profileRes.data);
@@ -50,7 +53,7 @@ const AnaochaDashboard = () => {
       const apps = appsRes.data || [];
       setStats({
         applications: apps.length,
-        documents: 0,
+        documents: docsRes.count ?? 0,
         unread: (notifsRes.data || []).filter((n) => !n.read).length,
       });
       setRecentApplications(apps.slice(0, 3));
@@ -104,8 +107,21 @@ const AnaochaDashboard = () => {
                   <Bell className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{loading ? "-" :stats.unread}</p>
+                  <p className="text-2xl font-bold text-foreground">{loading ? "-" : stats.unread}</p>
                   <p className="text-sm text-muted-foreground">Unread Notification{stats.unread !== 1 ? "s" : ""}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link to="/anaocha/my-documents">
+            <Card className="shadow-card hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <FolderOpen className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{loading ? "-" : stats.documents}</p>
+                  <p className="text-sm text-muted-foreground">Document{stats.documents !== 1 ? "s" : ""}</p>
                 </div>
               </CardContent>
             </Card>
@@ -131,6 +147,23 @@ const AnaochaDashboard = () => {
                 </Card>
               </Link>
             ))}
+            {/* Remuneration Portal link */}
+            <a href={REMUNERATION_URL} target="_blank" rel="noopener noreferrer">
+              <Card className="shadow-card hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer h-full border-accent/30 bg-accent/5">
+                <CardContent className="p-4 flex items-start gap-3">
+                  <div className="h-9 w-9 rounded-md bg-accent/15 flex items-center justify-center flex-shrink-0 text-accent">
+                    <Scale className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-semibold text-foreground">Remuneration Portal</p>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">Prepare & stamp legal documents</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
           </div>
         </div>
 

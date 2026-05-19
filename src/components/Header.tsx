@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import NotificationBell from "@/components/NotificationBell";
 import ProfileDropdown from "@/components/ProfileDropdown";
+import HeaderSearch from "@/components/HeaderSearch";
 import nbaLogo from "@/assets/nba-logo.png";
 
 const navLinks = [
@@ -53,9 +54,10 @@ const Header = () => {
           <span className={`font-heading text-base font-bold tracking-tight ${user ? "text-primary-foreground" : "text-foreground"}`}>NBA ANAOCHA</span>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-1 justify-end">
           {user ? (
             <>
+              <HeaderSearch />
               <NotificationBell viewAllHref="/anaocha/notifications" />
               <ProfileDropdown />
             </>

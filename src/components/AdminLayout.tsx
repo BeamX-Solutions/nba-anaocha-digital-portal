@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Crown, Mail, Menu, Megaphone, BookMarked } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Crown, Mail, Menu, Megaphone, BookMarked, Shield, ScrollText, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -15,6 +15,9 @@ const allSidebarItems = [
   { label: "Announcements",     href: "/admin/announcements",  icon: <Megaphone className="h-4 w-4" />,      roles: ["super", "anaocha"] },
   { label: "Resources",         href: "/admin/resources",      icon: <BookMarked className="h-4 w-4" />,     roles: ["super", "anaocha"] },
   { label: "Send Notification", href: "/admin/notify",         icon: <Bell className="h-4 w-4" />,           roles: ["super", "anaocha"] },
+  { label: "Admin Roles",       href: "/admin/roles",          icon: <Shield className="h-4 w-4" />,         roles: ["super"] },
+  { label: "Reporting",         href: "/admin/reporting",      icon: <TrendingUp className="h-4 w-4" />,     roles: ["super"] },
+  { label: "Audit Logs",        href: "/admin/audit-logs",     icon: <ScrollText className="h-4 w-4" />,     roles: ["super"] },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {

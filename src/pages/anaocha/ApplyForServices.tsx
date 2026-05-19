@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Hash, Stamp, ScrollText, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Hash, Stamp, ScrollText, ChevronRight, CheckCircle2, BadgeCheck } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { SERVICE_FEES } from "@/lib/constants";
+
+declare global { interface Window { PaystackPop: any; } }
+
+const loadPaystack = (): Promise<void> =>
+  new Promise((resolve) => {
+    if (window.PaystackPop) { resolve(); return; }
+    const s = document.createElement("script");
+    s.src = "https://js.paystack.co/v1/inline.js";
+    s.onload = () => resolve();
+    document.head.appendChild(s);
+  });
+
+const makeRef = () =>
+  `ANAOCHA-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
 interface ServiceConfig {
   title: string;
@@ -24,12 +39,12 @@ interface ServiceConfig {
 const services: ServiceConfig[] = [
   {
     title: "NBA Diary",
-    description: "Order your NBA Diary, a comprehensive resource with member details, court schedules, and branch information.",
+    description: "Order your NBA Diary — a comprehensive resource with member details, court schedules, and branch information.",
     icon: <BookOpen className="h-6 w-6" />,
     color: "text-blue-600 bg-blue-50 border-blue-100",
     textFields: [
-      { key: "full_name", label: "Full Name", required: true },
-      { key: "phone", label: "Phone Number", required: true },
+      { key: "full_name",        label: "Full Name",        required: true },
+      { key: "phone",            label: "Phone Number",     required: true },
       { key: "delivery_address", label: "Delivery Address", required: true },
     ],
     fileFields: [],
@@ -42,14 +57,14 @@ const services: ServiceConfig[] = [
     icon: <CreditCard className="h-6 w-6" />,
     color: "text-primary bg-primary/5 border-primary/10",
     textFields: [
-      { key: "full_name", label: "Full Name", required: true },
-      { key: "phone", label: "Phone Number", required: true },
-      { key: "year_of_call", label: "Year of Call", required: true },
+      { key: "full_name",      label: "Full Name",      required: true },
+      { key: "phone",          label: "Phone Number",   required: true },
+      { key: "year_of_call",   label: "Year of Call",   required: true },
       { key: "office_address", label: "Office Address", required: true },
     ],
     fileFields: [
       { key: "passport_photo", label: "Passport Photo", accept: "image/*" },
-      { key: "signature", label: "Signature", accept: "image/*" },
+      { key: "signature",      label: "Signature",      accept: "image/*" },
     ],
     action: "Apply Now",
     serviceType: "nba_id_card",
@@ -60,36 +75,31 @@ const services: ServiceConfig[] = [
     icon: <Hash className="h-6 w-6" />,
     color: "text-violet-600 bg-violet-50 border-violet-100",
     textFields: [],
-    fileFields: [
-      { key: "payment_receipt", label: "Receipt of 10% Payment", accept: "image/*,.pdf" },
-    ],
-    action: "Upload & Apply",
+    fileFields: [],
+    action: "Apply Now",
     serviceType: "bain",
   },
   {
     title: "Stamp & Seal",
-    description: "Request your official NBA Stamp & Seal for authenticating legal documents and correspondence.",
+    description: "Request your official NBA Stamp & Seal. Upload your practicing fee and branch dues receipts to proceed.",
     icon: <Stamp className="h-6 w-6" />,
     color: "text-accent bg-accent/5 border-accent/10",
     textFields: [],
     fileFields: [
       { key: "practicing_fee_receipt", label: "Practicing Fee Receipt", accept: "image/*,.pdf" },
-      { key: "branch_dues_receipt", label: "Branch Dues Receipt", accept: "image/*,.pdf" },
-      { key: "stamp_seal_receipt", label: "Stamp & Seal Payment Receipt", accept: "image/*,.pdf" },
+      { key: "branch_dues_receipt",    label: "Branch Dues Receipt",    accept: "image/*,.pdf" },
     ],
-    action: "Upload & Apply",
+    action: "Apply Now",
     serviceType: "stamp_seal",
   },
   {
     title: "Title Document Front Page",
-    description: "Apply for the NBA-endorsed front page for your title documents. Upload proof of payment to proceed.",
+    description: "Apply for the NBA-endorsed front page for your title documents.",
     icon: <ScrollText className="h-6 w-6" />,
     color: "text-emerald-600 bg-emerald-50 border-emerald-100",
     textFields: [],
-    fileFields: [
-      { key: "payment_receipt", label: "Receipt of Payment", accept: "image/*,.pdf" },
-    ],
-    action: "Upload & Apply",
+    fileFields: [],
+    action: "Apply Now",
     serviceType: "title_document_front_page",
   },
 ];
@@ -98,10 +108,10 @@ const ApplyForServices = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [openService, setOpenService] = useState<ServiceConfig | null>(null);
-  const [formData, setFormData] = useState<Record<string, string>>({});
-  const [files, setFiles] = useState<Record<string, File>>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData]       = useState<Record<string, string>>({});
+  const [files, setFiles]             = useState<Record<string, File>>({});
+  const [submitting, setSubmitting]   = useState(false);
+  const [submitted, setSubmitted]     = useState(false);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const openModal = (service: ServiceConfig) => {
@@ -109,30 +119,34 @@ const ApplyForServices = () => {
     setFormData({});
     setFiles({});
     setSubmitted(false);
+    setSubmitting(false);
   };
 
-  const handleSubmit = async () => {
+  const validate = (): boolean => {
+    if (!openService) return false;
+    for (const f of openService.textFields) {
+      if (f.required && !formData[f.key]?.trim()) {
+        toast({ title: "Required field missing", description: `${f.label} is required.`, variant: "destructive" });
+        return false;
+      }
+    }
+    for (const f of openService.fileFields) {
+      if (!files[f.key]) {
+        toast({ title: "Document required", description: `Please upload ${f.label}.`, variant: "destructive" });
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const submitAfterPayment = async (reference: string) => {
     if (!user || !openService) return;
-
-    for (const field of openService.textFields) {
-      if (field.required && !formData[field.key]?.trim()) {
-        toast({ title: "Required field missing", description: `${field.label} is required.`, variant: "destructive" });
-        return;
-      }
-    }
-
-    for (const field of openService.fileFields) {
-      if (!files[field.key]) {
-        toast({ title: "Document required", description: `Please upload ${field.label}.`, variant: "destructive" });
-        return;
-      }
-    }
-
     setSubmitting(true);
 
+    // 1. Upload any files
     const fileUrls: string[] = [];
     for (const [key, file] of Object.entries(files)) {
-      const ext = file.name.split(".").pop();
+      const ext  = file.name.split(".").pop();
       const path = `${user.id}/${openService.serviceType}/${key}.${ext}`;
       const { error } = await supabase.storage.from("uploads").upload(path, file, { upsert: true });
       if (error) {
@@ -143,58 +157,84 @@ const ApplyForServices = () => {
       fileUrls.push(path);
     }
 
-    const { error } = await supabase.from("service_applications").insert({
-      user_id: user.id,
-      service_type: openService.serviceType,
-      form_data: formData as any,
-      file_urls: fileUrls,
-    });
+    // 2. Insert service application
+    const { data: appData, error: appErr } = await supabase
+      .from("service_applications")
+      .insert({
+        user_id:           user.id,
+        service_type:      openService.serviceType,
+        form_data:         formData as any,
+        file_urls:         fileUrls,
+        payment_reference: reference,
+        payment_status:    "paid",
+      })
+      .select("id")
+      .single();
 
-    setSubmitting(false);
-    if (error) {
-      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
+    if (appErr) {
+      toast({ title: "Submission failed", description: appErr.message, variant: "destructive" });
+      setSubmitting(false);
       return;
     }
 
-    // Notify all admins
-    const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
-      .split(",")
-      .map((e: string) => e.trim().toLowerCase())
-      .filter(Boolean);
+    // 3. Verify payment via Edge Function (writes to payments table)
+    try {
+      await supabase.functions.invoke("verify-payment", {
+        body: { reference, user_id: user.id, entity_type: "service_application", entity_id: appData.id },
+      });
+    } catch {
+      // Non-fatal — application is submitted; admin can reconcile via Paystack reference
+      toast({
+        title: "Payment recorded but verification pending",
+        description: `Your application was submitted. Keep your reference: ${reference}. Contact the secretariat if payment is not reflected.`,
+      });
+    }
 
+    // 4. Notify admins
+    const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
+      .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
     if (adminEmails.length > 0) {
       const { data: adminProfiles } = await supabase
-        .from("profiles")
-        .select("user_id")
-        .in("email", adminEmails);
-
-      if (adminProfiles && adminProfiles.length > 0) {
-        const memberProfile = await supabase
-          .from("profiles")
-          .select("first_name, surname")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        const memberName = [memberProfile.data?.surname, memberProfile.data?.first_name]
-          .filter(Boolean).join(" ") || user.email;
-
+        .from("profiles").select("user_id").in("email", adminEmails);
+      if (adminProfiles?.length) {
+        const { data: me } = await supabase
+          .from("profiles").select("first_name, surname").eq("user_id", user.id).maybeSingle();
+        const memberName = [me?.surname, me?.first_name].filter(Boolean).join(" ") || user.email;
         await supabase.from("notifications").insert(
           adminProfiles.map((p) => ({
             user_id: p.user_id,
-            title: `New Application: ${openService.title}`,
-            message: `${memberName} has submitted a new application for ${openService.title}. Review it in the Applications section.`,
-            type: "application_update",
+            title:   `New Application: ${openService.title}`,
+            message: `${memberName} has submitted a ${openService.title} application.`,
+            type:    "application_update",
           }))
         );
       }
     }
 
+    setSubmitting(false);
     setSubmitted(true);
   };
 
-  const totalRequired = openService
-    ? openService.textFields.filter((f) => f.required).length + openService.fileFields.length
-    : 0;
+  const handlePay = async () => {
+    if (!validate() || !user || !openService) return;
+    const fee = SERVICE_FEES[openService.serviceType] ?? 0;
+    await loadPaystack();
+    window.PaystackPop.setup({
+      key:      import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
+      email:    user.email!,
+      amount:   fee * 100,
+      currency: "NGN",
+      ref:      makeRef(),
+      metadata: {
+        custom_fields: [
+          { display_name: "Service", variable_name: "service_type", value: openService.serviceType },
+          { display_name: "Portal",  variable_name: "portal",       value: "NBA Anaocha" },
+        ],
+      },
+      callback: (res: any) => submitAfterPayment(res.reference),
+      onClose:  () => toast({ title: "Payment not completed", description: "Your application was not submitted. You can try again at any time.", variant: "destructive" }),
+    }).openIframe();
+  };
 
   return (
     <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
@@ -202,87 +242,71 @@ const ApplyForServices = () => {
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Apply for Services</h1>
           <p className="text-muted-foreground mt-1">
-            Select a service below to apply. Ensure you have the required documents ready before proceeding.
+            Select a service below. Payment is processed securely via Paystack before your application is submitted.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {services.map((service) => (
-            <Card
-              key={service.serviceType}
-              className="shadow-card hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 group cursor-pointer"
-              onClick={() => openModal(service)}
-            >
-              <CardContent className="p-6 flex flex-col h-full">
-                {/* Icon + badge row */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-xl border ${service.color}`}>
-                    {service.icon}
+          {services.map((service) => {
+            const fee = SERVICE_FEES[service.serviceType];
+            return (
+              <Card
+                key={service.serviceType}
+                className="shadow-card hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 group cursor-pointer"
+                onClick={() => openModal(service)}
+              >
+                <CardContent className="p-6 flex flex-col h-full">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-xl border ${service.color}`}>{service.icon}</div>
+                    <Badge variant="outline" className="text-xs font-semibold">
+                      ₦{fee.toLocaleString("en-NG")}
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="text-xs text-muted-foreground">
-                    {service.textFields.length + service.fileFields.length} required
-                  </Badge>
-                </div>
-
-                {/* Title + description */}
-                <h3 className="font-heading text-base font-semibold text-card-foreground mb-1.5">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-                  {service.description}
-                </p>
-
-                {/* Required items */}
-                {(service.textFields.length > 0 || service.fileFields.length > 0) && (
-                  <ul className="mt-4 space-y-1">
-                    {service.textFields.slice(0, 2).map((f) => (
-                      <li key={f.key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <CheckCircle2 className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-                        {f.label}
-                      </li>
-                    ))}
-                    {service.fileFields.slice(0, 2).map((f) => (
-                      <li key={f.key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <FileText className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-                        {f.label}
-                      </li>
-                    ))}
-                    {service.textFields.length + service.fileFields.length > 4 && (
-                      <li className="text-xs text-muted-foreground/60 pl-4">
-                        +{service.textFields.length + service.fileFields.length - 4} more...
-                      </li>
-                    )}
-                  </ul>
-                )}
-
-                {/* CTA */}
-                <div className="mt-5 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-primary group-hover:underline underline-offset-2">
-                    {service.action}
-                  </span>
-                  <ChevronRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-0.5" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <h3 className="font-heading text-base font-semibold text-card-foreground mb-1.5">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                    {service.description}
+                  </p>
+                  {service.fileFields.length > 0 && (
+                    <ul className="mt-4 space-y-1">
+                      {service.fileFields.map((f) => (
+                        <li key={f.key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <FileText className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+                          {f.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="mt-5 flex items-center justify-between">
+                    <span className="text-sm font-semibold text-primary group-hover:underline underline-offset-2">
+                      {service.action}
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
-      {/* Application Modal */}
-      <Dialog open={!!openService} onOpenChange={(open) => !open && setOpenService(null)}>
+      {/* Application + Payment Modal */}
+      <Dialog open={!!openService} onOpenChange={(open) => !open && !submitting && setOpenService(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           {submitted ? (
             <div className="py-8 text-center space-y-4">
               <div className="h-16 w-16 rounded-full bg-green-50 border border-green-100 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="h-8 w-8 text-green-600" />
+                <BadgeCheck className="h-8 w-8 text-green-600" />
               </div>
               <div>
                 <h3 className="font-heading text-xl font-semibold text-foreground">Application Submitted</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Your <span className="font-medium text-foreground">{openService?.title}</span> application has been received. The secretariat will review and get back to you.
+                  Your <span className="font-medium text-foreground">{openService?.title}</span> application
+                  has been received and payment confirmed. The secretariat will process it shortly.
                 </p>
               </div>
-              <Button onClick={() => setOpenService(null)} className="mt-2">Done</Button>
+              <Button onClick={() => setOpenService(null)}>Done</Button>
             </div>
           ) : (
             <>
@@ -295,43 +319,41 @@ const ApplyForServices = () => {
                   )}
                   <div>
                     <DialogTitle className="font-heading text-lg">{openService?.title}</DialogTitle>
-                    <p className="text-xs text-muted-foreground mt-0.5">{totalRequired} item{totalRequired !== 1 ? "s" : ""} required</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Fee:{" "}
+                      <span className="font-semibold text-foreground">
+                        ₦{(SERVICE_FEES[openService?.serviceType ?? ""] ?? 0).toLocaleString("en-NG")}
+                      </span>
+                    </p>
                   </div>
                 </div>
               </DialogHeader>
 
               {openService && (
                 <div className="space-y-5 mt-2">
-                  {openService.textFields.length > 0 && (
-                    <div className="space-y-4">
-                      {openService.textFields.map((field) => (
-                        <div key={field.key}>
-                          <label className="text-sm font-medium text-foreground">
-                            {field.label}
-                            {field.required && <span className="text-destructive ml-1">*</span>}
-                          </label>
-                          <input
-                            type="text"
-                            value={formData[field.key] || ""}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                            placeholder={field.label}
-                            className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                          />
-                        </div>
-                      ))}
+                  {/* Text fields */}
+                  {openService.textFields.map((field) => (
+                    <div key={field.key}>
+                      <label className="text-sm font-medium text-foreground">
+                        {field.label}
+                        {field.required && <span className="text-destructive ml-1">*</span>}
+                      </label>
+                      <input
+                        type="text"
+                        value={formData[field.key] || ""}
+                        onChange={(e) => setFormData((p) => ({ ...p, [field.key]: e.target.value }))}
+                        placeholder={field.label}
+                        className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      />
                     </div>
-                  )}
+                  ))}
 
+                  {/* File fields */}
                   {openService.fileFields.length > 0 && (
                     <div className="space-y-3">
-                      {openService.textFields.length > 0 && (
-                        <div className="border-t pt-4">
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Documents to Upload</p>
-                        </div>
-                      )}
-                      {openService.textFields.length === 0 && (
-                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Documents to Upload</p>
-                      )}
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                        Documents Required
+                      </p>
                       {openService.fileFields.map((field) => (
                         <div key={field.key}>
                           <label className="text-sm font-medium text-foreground">
@@ -341,10 +363,10 @@ const ApplyForServices = () => {
                             {files[field.key] ? (
                               <div className="flex items-center gap-2 text-sm bg-muted/60 border border-border px-3 py-2.5 rounded-md">
                                 <FileText className="h-4 w-4 text-accent shrink-0" />
-                                <span className="truncate flex-1 text-foreground">{files[field.key].name}</span>
+                                <span className="truncate flex-1">{files[field.key].name}</span>
                                 <button
-                                  onClick={() => setFiles((prev) => { const n = { ...prev }; delete n[field.key]; return n; })}
-                                  className="text-muted-foreground hover:text-destructive transition-colors"
+                                  onClick={() => setFiles((p) => { const n = { ...p }; delete n[field.key]; return n; })}
+                                  className="text-muted-foreground hover:text-destructive"
                                 >
                                   <X className="h-4 w-4" />
                                 </button>
@@ -366,7 +388,7 @@ const ApplyForServices = () => {
                               accept={field.accept}
                               onChange={(e) => {
                                 const f = e.target.files?.[0];
-                                if (f) setFiles((prev) => ({ ...prev, [field.key]: f }));
+                                if (f) setFiles((p) => ({ ...p, [field.key]: f }));
                               }}
                               className="hidden"
                             />
@@ -376,11 +398,23 @@ const ApplyForServices = () => {
                     </div>
                   )}
 
-                  <Button onClick={handleSubmit} disabled={submitting} className="w-full mt-2">
+                  {/* Payment info */}
+                  <div className="bg-muted/40 border border-border rounded-md px-4 py-3 flex items-start gap-3">
+                    <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                    <p className="text-xs text-muted-foreground">
+                      A payment of{" "}
+                      <span className="font-semibold text-foreground">
+                        ₦{(SERVICE_FEES[openService.serviceType] ?? 0).toLocaleString("en-NG")}
+                      </span>{" "}
+                      will be collected securely via Paystack. Your application is only submitted after payment is confirmed.
+                    </p>
+                  </div>
+
+                  <Button onClick={handlePay} disabled={submitting} className="w-full gap-2">
                     {submitting ? (
-                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Submitting...</>
+                      <><Loader2 className="h-4 w-4 animate-spin" />Processing...</>
                     ) : (
-                      `Submit Application`
+                      <>Pay ₦{(SERVICE_FEES[openService.serviceType] ?? 0).toLocaleString("en-NG")} &amp; Submit</>
                     )}
                   </Button>
                 </div>

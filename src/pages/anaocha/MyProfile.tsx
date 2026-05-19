@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Save, Camera, Upload, User, CheckCircle2 } from "lucide-react";
-import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { Save, Camera, Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,129 +7,119 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
+import { anaochaSidebarItems } from "@/lib/sidebarItems";
 
-const profileSchema = z.object({
-  surname: z.string().trim().max(100).optional(),
-  first_name: z.string().trim().max(100).optional(),
-  middle_name: z.string().trim().max(100).optional(),
-  year_of_call: z.string().trim().max(10).optional(),
-  phone: z.string().trim().max(20).optional(),
-  office_address: z.string().trim().max(500).optional(),
-  branch: z.string().trim().max(100).optional(),
-  ban: z.string().trim().max(50).optional(),
-});
+const FIELD_GROUPS = [
+  {
+    title: "Personal Information",
+    fields: [
+      { key: "first_name",  label: "First Name",  required: true },
+      { key: "surname",     label: "Surname",      required: true },
+      { key: "middle_name", label: "Middle Name" },
+    ],
+  },
+  {
+    title: "Bar Details",
+    fields: [
+      { key: "ban",          label: "Bar Admission Number (BAN)", verifiedLock: true },
+      { key: "year_of_call", label: "Year of Call" },
+      { key: "branch",       label: "NBA Branch", locked: true },
+    ],
+  },
+  {
+    title: "Contact",
+    fields: [
+      { key: "phone",          label: "Phone Number", required: true },
+      { key: "office_address", label: "Office Address", multiline: true },
+    ],
+  },
+];
 
 const MyProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [profile, setProfile] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [approvalStatus, setApprovalStatus] = useState<string>("");
-  const [form, setForm] = useState({
-    surname: "", first_name: "", middle_name: "", year_of_call: "",
-    phone: "", office_address: "", branch: "Anaocha", email: "", ban: "",
-  });
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("*").eq("user_id", user.id).single()
-      .then(({ data, error: err }) => {
-        // PGRST116 = no rows found — not a real error, just a new user with no profile yet
-        if (err && err.code !== "PGRST116") { setLoading(false); return; }
+    supabase
+      .from("profiles")
+      .select("id, first_name, middle_name, surname, ban, year_of_call, branch, phone, office_address, avatar_url, status")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
         if (data) {
-          setForm({
-            surname: data.surname ?? "",
-            first_name: data.first_name ?? "",
-            middle_name: data.middle_name ?? "",
-            year_of_call: data.year_of_call ?? "",
-            phone: data.phone ?? "",
-            office_address: data.office_address ?? "",
-            branch: data.branch ?? "Anaocha",
-            email: data.email ?? user.email ?? "",
-            ban: (data as any).ban ?? "",
-          });
+          setProfileId(data.id);
           setApprovalStatus((data as any).status ?? "");
-          if (data.avatar_url) setAvatarUrl(data.avatar_url);
+          setAvatarUrl((data as any).avatar_url ?? null);
+          const { id, avatar_url, status, ...rest } = data as any;
+          setProfile(Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, (v as any) ?? ""])));
         }
         setLoading(false);
       });
   }, [user]);
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (key: string, value: string) =>
+    setProfile((prev) => ({ ...prev, [key]: value }));
+
+  const handleAvatarClick = () => fileInputRef.current?.click();
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast({ title: "File too large", description: "Max 2MB allowed.", variant: "destructive" });
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Invalid file type", description: "Please select an image file.", variant: "destructive" });
       return;
     }
-
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum size is 2 MB.", variant: "destructive" });
+      return;
+    }
     setUploading(true);
-    const ext = file.name.split(".").pop();
+    const ext = file.name.split(".").pop() ?? "jpg";
     const path = `${user.id}/avatar.${ext}`;
-
-    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true, contentType: file.type });
     if (uploadError) {
       toast({ title: "Upload failed", description: uploadError.message, variant: "destructive" });
       setUploading(false);
       return;
     }
-
-    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
-    const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
-
+    const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+    const cacheBusted = `${publicUrl}?t=${Date.now()}`;
     await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", user.id);
-    setAvatarUrl(publicUrl);
     setUploading(false);
-    toast({ title: "Profile photo updated!" });
+    setAvatarUrl(cacheBusted);
+    toast({ title: "Profile photo updated." });
+    e.target.value = "";
   };
 
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = profileSchema.safeParse(form);
-    if (!result.success) {
-      toast({ title: "Validation error", description: result.error.errors[0]?.message, variant: "destructive" });
+  const handleSave = async () => {
+    if (!user || !profileId) return;
+    if (!profile.first_name?.trim() || !profile.surname?.trim()) {
+      toast({ title: "First name and surname are required.", variant: "destructive" });
       return;
     }
-
     setSaving(true);
-    const { error } = await supabase.from("profiles").update({
-      surname: form.surname || null,
-      first_name: form.first_name || null,
-      middle_name: form.middle_name || null,
-      year_of_call: form.year_of_call || null,
-      phone: form.phone || null,
-      ban: form.ban || null,
-      office_address: form.office_address || null,
-      branch: form.branch || null,
-    }).eq("user_id", user!.id);
-
+    const { error } = await supabase.from("profiles").update(profile).eq("id", profileId);
     setSaving(false);
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Profile updated successfully!" });
+      toast({ title: "Failed to save", description: error.message, variant: "destructive" });
+      return;
     }
+    toast({ title: "Profile updated successfully." });
   };
 
-  const isBanReadOnly = approvalStatus === "active";
-  const fields = [
-    { key: "surname", label: "Surname", required: true },
-    { key: "first_name", label: "First Name", required: true },
-    { key: "middle_name", label: "Middle Name" },
-    { key: "year_of_call", label: "Year of Call" },
-    { key: "phone", label: "Phone Number", required: true },
-    { key: "office_address", label: "Office Address", fullWidth: true },
-    { key: "branch", label: "Branch" },
-    { key: "ban", label: "BAN (Bar Admission Number)", readOnly: isBanReadOnly },
-  ];
+  const isBanLocked = approvalStatus === "active";
+  const initials = [profile.first_name, profile.surname]
+    .filter(Boolean).map((n) => n[0]).join("").toUpperCase() || user?.email?.[0]?.toUpperCase() || "?";
 
   if (loading) {
     return (
@@ -144,102 +133,127 @@ const MyProfile = () => {
 
   return (
     <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
-      <div className="space-y-6">
-        <div>
-          <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">My Profile</h1>
-          <p className="text-muted-foreground mt-1">View and update your member information.</p>
+      <div className="space-y-6 max-w-2xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">My Profile</h1>
+            <p className="text-muted-foreground mt-1">Manage your personal and professional information.</p>
+          </div>
+          <Button onClick={handleSave} disabled={saving} className="gap-2">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
         </div>
 
+        {/* Avatar + identity card */}
         <Card className="shadow-card">
           <CardContent className="p-6">
-            <form onSubmit={handleSave} className="space-y-6">
-              {/* Avatar Section */}
-              <div className="flex items-center gap-6 pb-6 border-b border-border">
-                <div className="relative group">
-                  <div className="h-24 w-24 rounded-full bg-muted border-2 border-accent overflow-hidden flex items-center justify-center">
-                    {avatarUrl ? (
-                      <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
-                    ) : (
-                      <User className="h-10 w-10 text-muted-foreground" />
-                    )}
+            <div className="flex items-center gap-5">
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={handleAvatarClick}
+                  disabled={uploading}
+                  className="group relative h-20 w-20 rounded-full overflow-hidden ring-2 ring-border focus:outline-none focus:ring-primary transition-all"
+                  aria-label="Change profile photo"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-xl font-bold text-primary">{initials}</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {uploading ? <Loader2 className="h-5 w-5 text-white animate-spin" /> : <Camera className="h-5 w-5 text-white" />}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    className="absolute inset-0 rounded-full bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                  >
-                    {uploading ? (
-                      <Upload className="h-5 w-5 text-background animate-pulse" />
-                    ) : (
-                      <Camera className="h-5 w-5 text-background" />
-                    )}
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    onChange={handleAvatarUpload}
-                    className="hidden"
-                  />
-                </div>
-                <div>
-                  <h3 className="font-heading text-lg font-semibold text-foreground">
-                    {form.first_name} {form.surname}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{form.email}</p>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="text-xs text-accent hover:underline mt-1"
-                  >
-                    {uploading ? "Uploading..." : "Change Photo"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Email (read-only) */}
-              <div>
-                <label className="text-sm font-medium text-foreground">Email</label>
+                </button>
                 <input
-                  type="email"
-                  value={form.email}
-                  disabled
-                  className="mt-1 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleAvatarChange}
                 />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {fields.map((f: any) => (
-                  <div key={f.key} className={f.fullWidth ? "md:col-span-2" : ""}>
-                    <div className="flex items-center gap-2">
-                      <label className="text-sm font-medium text-foreground">
-                        {f.label}
-                        {f.required && <span className="text-destructive ml-1">*</span>}
-                      </label>
-                      {f.readOnly && <Badge variant="secondary" className="text-xs">Verified</Badge>}
-                    </div>
-                    <input
-                      type="text"
-                      value={form[f.key as keyof typeof form]}
-                      onChange={handleChange(f.key)}
-                      disabled={f.readOnly || false}
-                      placeholder={f.label}
-                      className={`mt-1 w-full rounded-md border border-input px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring ${
-                        f.readOnly || false
-                          ? "bg-muted text-muted-foreground cursor-not-allowed"
-                          : "bg-background text-foreground"
-                      }`}
-                    />
-                  </div>
-                ))}
+              <div>
+                <p className="font-heading text-lg font-semibold text-foreground">
+                  {[profile.first_name, profile.surname].filter(Boolean).join(" ") || "Your Name"}
+                </p>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <p className="text-sm text-muted-foreground">{profile.branch || "NBA Member"}</p>
+                <button
+                  type="button"
+                  onClick={handleAvatarClick}
+                  disabled={uploading}
+                  className="text-xs text-primary hover:text-accent transition-colors mt-1 font-medium"
+                >
+                  {uploading ? "Uploading..." : avatarUrl ? "Change photo" : "Upload photo"}
+                </button>
               </div>
+            </div>
+          </CardContent>
+        </Card>
 
-              <Button type="submit" disabled={saving} className="mt-2">
-                <Save className="h-4 w-4 mr-2" />
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
-            </form>
+        {/* Field groups */}
+        {FIELD_GROUPS.map((group) => (
+          <Card key={group.title} className="shadow-card">
+            <CardContent className="p-6 space-y-5">
+              <div className="flex items-center gap-3 pb-2 border-b border-border">
+                <h3 className="text-sm font-semibold text-foreground">{group.title}</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {group.fields.map((field: any) => {
+                  const isLocked = field.verifiedLock && isBanLocked;
+                  return (
+                    <div key={field.key} className={field.multiline ? "md:col-span-2" : ""}>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <label className="text-sm font-medium text-foreground">
+                          {field.label}
+                          {field.required && <span className="text-destructive ml-1">*</span>}
+                        </label>
+                        {isLocked && (
+                          <Badge variant="secondary" className="text-xs">Verified</Badge>
+                        )}
+                      </div>
+                      {(isLocked || (field as any).locked) ? (
+                        <div className="w-full rounded-md border border-border/40 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+                          {(field as any).locked ? "Anaocha" : (profile[field.key] || <span className="italic opacity-50">Not set</span>)}
+                        </div>
+                      ) : field.multiline ? (
+                        <textarea
+                          value={profile[field.key] || ""}
+                          onChange={(e) => handleChange(field.key, e.target.value)}
+                          rows={3}
+                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          value={profile[field.key] || ""}
+                          onChange={(e) => handleChange(field.key, e.target.value)}
+                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {/* Email (read-only) */}
+        <Card className="shadow-card">
+          <CardContent className="p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-foreground pb-2 border-b border-border">Account</h3>
+            <div>
+              <label className="text-sm font-medium text-foreground">Email Address</label>
+              <div className="mt-1.5 w-full rounded-md border border-border/40 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+                {user?.email}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Email cannot be changed. Contact the secretariat if needed.</p>
+            </div>
           </CardContent>
         </Card>
       </div>

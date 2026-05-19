@@ -38,6 +38,8 @@ import Notifications from "./pages/anaocha/Notifications.tsx";
 import AnaochaPayments from "./pages/anaocha/AnaochaPayments.tsx";
 
 import MyDocumentsAnaocha from "./pages/anaocha/MyDocumentsWithApproval.tsx";
+import AboutBranch from "./pages/anaocha/AboutBranch.tsx";
+import Blog from "./pages/Blog.tsx";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
@@ -48,6 +50,9 @@ import AdminContacts from "./pages/admin/AdminContacts.tsx";
 import AdminAnnouncements from "./pages/admin/AdminAnnouncements.tsx";
 import AdminResources from "./pages/admin/AdminResources.tsx";
 import AdminApprovalQueue from "./pages/admin/AdminApprovalQueue.tsx";
+import AdminAuditLogs from "./pages/admin/AdminAuditLogs.tsx";
+import AdminRoles from "./pages/admin/AdminRoles.tsx";
+import AdminReporting from "./pages/admin/AdminReporting.tsx";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +88,8 @@ const App = () => (
             <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/anaocha/contact" element={<ContactUs />} />
             <Route path="/anaocha/my-documents" element={<ProtectedRoute><MyDocumentsAnaocha /></ProtectedRoute>} />
+            <Route path="/anaocha/about" element={<ProtectedRoute><AboutBranch /></ProtectedRoute>} />
+            <Route path="/blog" element={<Blog />} />
 
             {/* Admin Module */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -93,6 +100,9 @@ const App = () => (
             <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
             <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
             <Route path="/admin/approval-queue" element={<AdminRoute><AdminApprovalQueue /></AdminRoute>} />
+            <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
+            <Route path="/admin/roles" element={<AdminRoute><AdminRoles /></AdminRoute>} />
+            <Route path="/admin/reporting" element={<AdminRoute><AdminReporting /></AdminRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
