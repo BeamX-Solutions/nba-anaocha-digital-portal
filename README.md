@@ -127,7 +127,6 @@ The project is configured for Vercel deployment. Push to the main branch to trig
 ### License
 
 This project is proprietary and confidential for NBA Anaocha Branch use only.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
 
 ## What technologies are used for this project?
 
@@ -141,12 +140,14 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+The project is deployed on Vercel. Push to the `main` branch to trigger an automatic deployment.
 
-## Can I connect a custom domain to my Lovable project?
+To deploy manually:
+```sh
+npm run build
+vercel --prod
+```
 
-Yes, you can!
+## Can I connect a custom domain?
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Yes. In the Vercel dashboard, go to your project → Settings → Domains and add your domain there.
