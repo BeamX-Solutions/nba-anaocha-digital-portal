@@ -1,11 +1,12 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Crown, Mail, Menu, Megaphone, BookMarked, Shield, ScrollText, TrendingUp } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Mail, Menu, Megaphone, BookMarked, Shield, ScrollText, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getAdminRole } from "@/components/AdminRoute";
+import nbaLogo from "@/assets/nba-logo.png";
 
 const allSidebarItems = [
   { label: "Dashboard",         href: "/admin",                icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "anaocha"] },
@@ -27,7 +28,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const email = user?.email?.toLowerCase() ?? "";
-  const role = getAdminRole(email) ?? "super";
+  const role = getAdminRole(email) ?? "anaocha";
   const sidebarItems = allSidebarItems.filter((item) => item.roles.includes(role));
 
   const handleSignOut = async () => {
@@ -39,7 +40,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
     <>
       <div className="p-6 border-b border-primary-foreground/20">
         <div className="flex items-center gap-2 mb-1">
-          <Crown className="h-5 w-5 text-accent" />
+          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-8 w-8 rounded-md" />
           <h2 className="font-heading text-lg font-bold text-accent">Admin Panel</h2>
         </div>
         <p className="text-xs text-primary-foreground/60 truncate">{user?.email}</p>
@@ -101,7 +102,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
             </SheetContent>
           </Sheet>
           <div className="flex items-center gap-2">
-            <Crown className="h-4 w-4 text-accent" />
+            <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-6 w-6 rounded-sm" />
             <span className="font-heading font-semibold text-sm text-accent">Admin Panel</span>
           </div>
         </div>

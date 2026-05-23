@@ -14,7 +14,7 @@ export const DocumentStatusBadge = ({ status }: DocumentStatusBadgeProps) => {
       color: "text-slate-600",
     },
     submitted: {
-      label: "Submitted for Approval",
+      label: "Pending Review",
       variant: "secondary",
       color: "text-blue-600",
     },

@@ -14,17 +14,24 @@ const ResetPassword = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for recovery token in URL hash
-    const hash = window.location.hash;
-    if (hash.includes("type=recovery")) {
+    const isRecoveryLink = () => {
+      const url = new URL(window.location.href);
+      return url.hash.includes("type=recovery") || url.searchParams.get("type") === "recovery";
+    };
+
+    if (isRecoveryLink()) {
       setReady(true);
     }
 
-    supabase.auth.onAuthStateChange((event) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
         setReady(true);
       }
     });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

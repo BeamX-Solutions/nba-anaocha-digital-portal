@@ -134,6 +134,39 @@ const AdminReporting = () => {
           </Card>
         </div>
 
+        {/* Status breakdown */}
+        <Card className="shadow-card">
+          <CardContent className="p-0">
+            <div className="px-5 py-4 border-b border-border">
+              <h3 className="font-heading text-base font-semibold text-foreground">Status Breakdown</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[400px]">
+                <thead>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th className="text-left px-5 py-3 text-[10px] tracking-wider uppercase font-semibold text-muted-foreground">Status</th>
+                    <th className="text-right px-5 py-3 text-[10px] tracking-wider uppercase font-semibold text-muted-foreground">Count</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-5 py-3 text-foreground">Pending</td>
+                    <td className="px-5 py-3 text-muted-foreground text-right">{pending}</td>
+                  </tr>
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-5 py-3 text-foreground">Approved</td>
+                    <td className="px-5 py-3 text-muted-foreground text-right">{approved}</td>
+                  </tr>
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-5 py-3 text-foreground">Rejected</td>
+                    <td className="px-5 py-3 text-muted-foreground text-right">{rejected}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* By service type */}
         {Object.keys(byType).length > 0 && (
           <Card className="shadow-card">
