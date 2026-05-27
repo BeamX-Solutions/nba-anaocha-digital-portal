@@ -9,6 +9,8 @@ import { VersionHistoryViewer } from "@/components/VersionHistoryViewer";
 import { submitDocumentForApproval } from "@/lib/documentUtils";
 import { FileText, Loader2, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "@/components/DashboardLayout";
+import { anaochaSidebarItems } from "@/lib/sidebarItems";
 
 const MyDocumentsAnaocha = () => {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -96,10 +98,11 @@ const MyDocumentsAnaocha = () => {
   };
 
   return (
+    <DashboardLayout title="NBA Anaocha" sidebarItems={anaochaSidebarItems}>
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">My Documents</h2>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">My Documents</h1>
+        <p className="text-muted-foreground mt-1">
           View and manage your submitted documents
         </p>
       </div>
@@ -195,6 +198,7 @@ const MyDocumentsAnaocha = () => {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 };
 

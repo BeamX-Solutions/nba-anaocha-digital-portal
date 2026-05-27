@@ -81,7 +81,7 @@ const ContactUs = () => {
               <div className="space-y-3 text-sm text-muted-foreground">
                 <div>
                   <p className="font-medium text-foreground">Address</p>
-                  <p>NBA Anaocha Branch Secretariat,<br />Nnewi, Anambra State, Nigeria</p>
+                  <p>Charles E. N. Obegolu Bar Centre,<br />Obeledu, Anaocha LGA,<br />Anambra State, Nigeria</p>
                 </div>
                 <div>
                   <p className="font-medium text-foreground">Website</p>

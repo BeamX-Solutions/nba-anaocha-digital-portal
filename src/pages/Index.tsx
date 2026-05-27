@@ -110,7 +110,7 @@ const Index = () => {
                 loading="lazy"
               />
               <div className="absolute bottom-6 left-6 bg-background border border-border rounded-xl shadow-lg p-5 max-w-[180px]">
-                <p className="font-heading text-3xl font-bold text-primary">2011</p>
+                <p className="font-heading text-3xl font-bold text-primary">2014</p>
                 <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mt-1">Founded in Anaocha</p>
                 <p className="text-xs text-muted-foreground mt-2 leading-snug">Established with a vision for legal excellence and professional camaraderie.</p>
               </div>
@@ -123,7 +123,7 @@ const Index = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed text-sm md:text-base">
                 <p>
-                  The NBA Anaocha Branch, fondly known as "The Family Bar," stands as a pillar of professional development and legal advocacy in Anambra State. Since our founding in <span className="text-foreground font-medium">2011</span>, we have cultivated an environment where legal practitioners thrive through mutual support and intellectual rigor.
+                  The NBA Anaocha Branch, fondly known as "The Family Bar," stands as a pillar of professional development and legal advocacy in Anambra State. Since our founding in <span className="text-foreground font-medium">2014</span>, we have cultivated an environment where legal practitioners thrive through mutual support and intellectual rigor.
                 </p>
                 <p>
                   Our commitment extends beyond the courtroom: we are dedicated to the preservation of the rule of law and the advancement of justice for all members of the Anaocha community.

@@ -17,7 +17,7 @@ const Footer = () => (
             </div>
           </div>
           <p className="text-sm text-primary-foreground/60 leading-relaxed">
-            The Nigerian Bar Association, Anaocha Branch — promoting the rule of law, professional ethics, and justice since 2011.
+            The Nigerian Bar Association, Anaocha Branch — promoting the rule of law, professional ethics, and justice since 2014.
           </p>
           {/* Social links */}
           <div className="flex gap-3 mt-5">
@@ -112,7 +112,7 @@ const Footer = () => (
 
       <div className="border-t border-primary-foreground/15 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/40">
         <p>© {new Date().getFullYear()} NBA Anaocha Branch. All Rights Reserved.</p>
-        <p>Promoting the Rule of Law since 2011.</p>
+        <p>Promoting the Rule of Law since 2014.</p>
       </div>
     </div>
   </footer>
