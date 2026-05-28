@@ -1,13 +1,20 @@
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Clock, LogOut } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "").split(",").map((e: string) => e.trim().toLowerCase());
 
 const PendingApproval = () => {
   const { signOut } = useAuth();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
       {/* Top bar */}
@@ -76,7 +83,7 @@ const PendingApproval = () => {
             </div>
 
             {/* Sign out */}
-            <Button onClick={signOut} className="w-full mt-2">
+            <Button onClick={() => setConfirmOpen(true)} className="w-full mt-2">
               <LogOut className="h-4 w-4 mr-2" /> Sign Out
             </Button>
           </div>
@@ -95,6 +102,23 @@ const PendingApproval = () => {
         <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} NBA Anaocha Branch. All rights reserved.</p>
         <a href="mailto:support@nbaanaocha.org.ng" className="text-xs text-muted-foreground hover:text-foreground">Contact Support</a>
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will be signed out of your NBA Anaocha account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={signOut} className="bg-destructive hover:bg-destructive/90">
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

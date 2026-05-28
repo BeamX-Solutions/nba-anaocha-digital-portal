@@ -3,9 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ProfileDropdown = () => {
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const { user, signOut } = useAuth();
@@ -38,7 +44,7 @@ const ProfileDropdown = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  const handleSignOut = async () => {
+  const handleSignOutConfirm = async () => {
     setOpen(false);
     await signOut();
     navigate("/");
@@ -104,7 +110,7 @@ const ProfileDropdown = () => {
 
           <div className="border-t border-border py-1">
             <button
-              onClick={handleSignOut}
+              onClick={() => { setOpen(false); setConfirmOpen(true); }}
               className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-destructive hover:bg-muted transition-colors w-full text-left"
             >
               <LogOut className="h-4 w-4" />
@@ -113,6 +119,23 @@ const ProfileDropdown = () => {
           </div>
         </div>
       )}
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will be signed out of your NBA Anaocha account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOutConfirm} className="bg-destructive hover:bg-destructive/90">
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

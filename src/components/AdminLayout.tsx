@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getAdminRole } from "@/components/AdminRoute";
 import nbaLogo from "@/assets/nba-logo.png";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const allSidebarItems = [
   { label: "Dashboard",         href: "/admin",                icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "anaocha"] },
@@ -26,12 +31,13 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const email = user?.email?.toLowerCase() ?? "";
   const role = getAdminRole(email) ?? "anaocha";
   const sidebarItems = allSidebarItems.filter((item) => item.roles.includes(role));
 
-  const handleSignOut = async () => {
+  const handleSignOutConfirm = async () => {
     await signOut();
     navigate("/");
   };
@@ -70,7 +76,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
           variant="ghost"
           size="sm"
           className="w-full justify-start text-primary-foreground/75 hover:text-primary-foreground hover:bg-primary-foreground/10"
-          onClick={handleSignOut}
+          onClick={() => setConfirmOpen(true)}
         >
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
@@ -109,6 +115,23 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
 
         <div className="p-4 md:p-8 animate-fade-in">{children}</div>
       </main>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will be signed out of the admin panel.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOutConfirm} className="bg-destructive hover:bg-destructive/90">
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
