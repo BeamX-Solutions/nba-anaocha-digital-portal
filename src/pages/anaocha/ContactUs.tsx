@@ -89,7 +89,7 @@ const ContactUs = () => {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">Remuneration Portal</p>
-                  <p>www.nbabranchremuneration.org.ng</p>
+                  <p>nba-remuneration-portal.vercel.app</p>
                 </div>
               </div>
             </CardContent>

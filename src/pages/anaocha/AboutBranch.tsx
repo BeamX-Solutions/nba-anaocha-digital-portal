@@ -40,7 +40,7 @@ const AboutBranch = () => (
             <Card className="shadow-card">
               <CardContent className="p-4">
                 <h4 className="font-heading font-semibold text-foreground mb-1">Remuneration Portal</h4>
-                <p className="text-sm text-muted-foreground">nbabranchremuneration.org.ng</p>
+                <p className="text-sm text-muted-foreground">nba-remuneration-portal.vercel.app</p>
               </CardContent>
             </Card>
           </div>

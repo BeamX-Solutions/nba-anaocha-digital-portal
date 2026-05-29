@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
 import { SERVICE_LABELS } from "@/lib/constants";
 import {
-  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone, ExternalLink, Scale, FolderOpen,
+  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone, ExternalLink, Scale,
 } from "lucide-react";
 
 const REMUNERATION_URL = import.meta.env.VITE_REMUNERATION_PORTAL_URL || "#";
@@ -30,7 +30,7 @@ const quickActions = [
 const AnaochaDashboard = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
-  const [stats, setStats] = useState({ applications: 0, documents: 0, unread: 0 });
+  const [stats, setStats] = useState({ applications: 0, unread: 0 });
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
   const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,12 +40,11 @@ const AnaochaDashboard = () => {
     if (!user) return;
 
     const load = async () => {
-      const [profileRes, appsRes, notifsRes, announcementsRes, docsRes] = await Promise.all([
+      const [profileRes, appsRes, notifsRes, announcementsRes] = await Promise.all([
         supabase.from("profiles").select("first_name, surname, year_of_call, branch").eq("user_id", user.id).single(),
         supabase.from("service_applications").select("id, service_type, status, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("notifications").select("id, title, message, read, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
         supabase.from("announcements").select("id, title, content, created_at").or("portal.eq.anaocha,portal.eq.both").eq("published", true).order("created_at", { ascending: false }).limit(3),
-        supabase.from("documents").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
 
       setProfile(profileRes.data);
@@ -53,7 +52,6 @@ const AnaochaDashboard = () => {
       const apps = appsRes.data || [];
       setStats({
         applications: apps.length,
-        documents: docsRes.count ?? 0,
         unread: (notifsRes.data || []).filter((n) => !n.read).length,
       });
       setRecentApplications(apps.slice(0, 3));
@@ -109,19 +107,6 @@ const AnaochaDashboard = () => {
                 <div>
                   <p className="text-2xl font-bold text-foreground">{loading ? "-" : stats.unread}</p>
                   <p className="text-sm text-muted-foreground">Unread Notification{stats.unread !== 1 ? "s" : ""}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link to="/anaocha/my-documents">
-            <Card className="shadow-card hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <FolderOpen className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">{loading ? "-" : stats.documents}</p>
-                  <p className="text-sm text-muted-foreground">Document{stats.documents !== 1 ? "s" : ""}</p>
                 </div>
               </CardContent>
             </Card>

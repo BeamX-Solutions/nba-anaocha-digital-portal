@@ -30,7 +30,6 @@ const Settings            = lazy(() => import("./pages/anaocha/Settings.tsx"));
 const ContactUs           = lazy(() => import("./pages/anaocha/ContactUs.tsx"));
 const Notifications       = lazy(() => import("./pages/anaocha/Notifications.tsx"));
 const AnaochaPayments     = lazy(() => import("./pages/anaocha/AnaochaPayments.tsx"));
-const MyDocumentsAnaocha  = lazy(() => import("./pages/anaocha/MyDocumentsWithApproval.tsx"));
 const AboutBranch         = lazy(() => import("./pages/anaocha/AboutBranch.tsx"));
 const Blog                = lazy(() => import("./pages/Blog.tsx"));
 const Resources           = lazy(() => import("./pages/Resources.tsx"));
@@ -43,7 +42,6 @@ const AdminNotify       = lazy(() => import("./pages/admin/AdminNotify.tsx"));
 const AdminContacts     = lazy(() => import("./pages/admin/AdminContacts.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements.tsx"));
 const AdminResources    = lazy(() => import("./pages/admin/AdminResources.tsx"));
-const AdminApprovalQueue = lazy(() => import("./pages/admin/AdminApprovalQueue.tsx"));
 const AdminAuditLogs    = lazy(() => import("./pages/admin/AdminAuditLogs.tsx"));
 const AdminRoles        = lazy(() => import("./pages/admin/AdminRoles.tsx"));
 const AdminReporting    = lazy(() => import("./pages/admin/AdminReporting.tsx"));
@@ -101,7 +99,6 @@ const App = () => (
               <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
               <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
               <Route path="/anaocha/contact" element={<ContactUs />} />
-              <Route path="/anaocha/my-documents" element={<ProtectedRoute><MyDocumentsAnaocha /></ProtectedRoute>} />
               <Route path="/anaocha/about" element={<ProtectedRoute><AboutBranch /></ProtectedRoute>} />
               <Route path="/blog" element={<Blog />} />
 
@@ -113,7 +110,6 @@ const App = () => (
               <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
               <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
               <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
-              <Route path="/admin/approval-queue" element={<AdminRoute><AdminApprovalQueue /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
               <Route path="/admin/roles" element={<AdminRoute><AdminRoles /></AdminRoute>} />
               <Route path="/admin/reporting" element={<AdminRoute><AdminReporting /></AdminRoute>} />
