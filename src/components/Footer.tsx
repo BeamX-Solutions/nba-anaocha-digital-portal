@@ -113,6 +113,17 @@ const Footer = () => (
       <div className="border-t border-primary-foreground/15 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/40">
         <p>© {new Date().getFullYear()} NBA Anaocha Branch. All Rights Reserved.</p>
         <p>Promoting the Rule of Law since 2014.</p>
+        <p>
+          Built by{" "}
+          <a
+            href="https://beamxsolutions.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-foreground/60 hover:text-primary-foreground transition-colors underline underline-offset-2"
+          >
+            BeamX Solutions
+          </a>
+        </p>
       </div>
     </div>
   </footer>

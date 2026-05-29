@@ -112,6 +112,7 @@ const ApplyForServices = () => {
   const [files, setFiles]             = useState<Record<string, File>>({});
   const [submitting, setSubmitting]   = useState(false);
   const [submitted, setSubmitted]     = useState(false);
+  const [paying, setPaying]           = useState(false);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const openModal = (service: ServiceConfig) => {
@@ -219,6 +220,10 @@ const ApplyForServices = () => {
     if (!validate() || !user || !openService) return;
     const fee = SERVICE_FEES[openService.serviceType] ?? 0;
     await loadPaystack();
+
+    // Close the form dialog first so its overlay doesn't block the Paystack popup
+    setPaying(true);
+
     window.PaystackPop.setup({
       key:      import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
       email:    user.email!,
@@ -231,8 +236,15 @@ const ApplyForServices = () => {
           { display_name: "Portal",  variable_name: "portal",       value: "NBA Anaocha" },
         ],
       },
-      callback: (res: any) => submitAfterPayment(res.reference),
-      onClose:  () => toast({ title: "Payment not completed", description: "Your application was not submitted. You can try again at any time.", variant: "destructive" }),
+      callback: (res: any) => {
+        setPaying(false);
+        submitAfterPayment(res.reference);
+      },
+      onClose: () => {
+        // Payment cancelled — reopen the form with data still intact
+        setPaying(false);
+        toast({ title: "Payment not completed", description: "Your application was not submitted. You can try again at any time.", variant: "destructive" });
+      },
     }).openIframe();
   };
 
@@ -292,7 +304,7 @@ const ApplyForServices = () => {
       </div>
 
       {/* Application + Payment Modal */}
-      <Dialog open={!!openService} onOpenChange={(open) => !open && !submitting && setOpenService(null)}>
+      <Dialog open={!!openService && !paying} onOpenChange={(open) => !open && !submitting && !paying && setOpenService(null)}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           {submitted ? (
             <div className="py-8 text-center space-y-4">
