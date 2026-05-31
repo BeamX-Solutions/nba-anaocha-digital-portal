@@ -30,6 +30,7 @@ const Settings            = lazy(() => import("./pages/anaocha/Settings.tsx"));
 const ContactUs           = lazy(() => import("./pages/anaocha/ContactUs.tsx"));
 const Notifications       = lazy(() => import("./pages/anaocha/Notifications.tsx"));
 const AnaochaPayments     = lazy(() => import("./pages/anaocha/AnaochaPayments.tsx"));
+const MyDues              = lazy(() => import("./pages/anaocha/MyDues.tsx"));
 const AboutBranch         = lazy(() => import("./pages/anaocha/AboutBranch.tsx"));
 const Blog                = lazy(() => import("./pages/Blog.tsx"));
 const Resources           = lazy(() => import("./pages/Resources.tsx"));
@@ -43,6 +44,7 @@ const AdminContacts     = lazy(() => import("./pages/admin/AdminContacts.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements.tsx"));
 const AdminResources    = lazy(() => import("./pages/admin/AdminResources.tsx"));
 const AdminAuditLogs    = lazy(() => import("./pages/admin/AdminAuditLogs.tsx"));
+const AdminDues         = lazy(() => import("./pages/admin/AdminDues.tsx"));
 const AdminRoles        = lazy(() => import("./pages/admin/AdminRoles.tsx"));
 const AdminReporting    = lazy(() => import("./pages/admin/AdminReporting.tsx"));
 
@@ -95,6 +97,7 @@ const App = () => (
               <Route path="/anaocha/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/anaocha/apply" element={<ProtectedRoute><ApplyForServices /></ProtectedRoute>} />
               <Route path="/anaocha/applications" element={<ProtectedRoute><MyApplications /></ProtectedRoute>} />
+              <Route path="/anaocha/dues"     element={<ProtectedRoute><MyDues /></ProtectedRoute>} />
               <Route path="/anaocha/payments" element={<ProtectedRoute><AnaochaPayments /></ProtectedRoute>} />
               <Route path="/anaocha/members" element={<ProtectedRoute><FindMember /></ProtectedRoute>} />
               <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
@@ -110,6 +113,7 @@ const App = () => (
               <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
               <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
               <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
+              <Route path="/admin/dues"       element={<AdminRoute><AdminDues /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
               <Route path="/admin/roles" element={<AdminRoute><AdminRoles /></AdminRoute>} />
               <Route path="/admin/reporting" element={<AdminRoute><AdminReporting /></AdminRoute>} />

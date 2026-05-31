@@ -4,6 +4,15 @@
 .env.production
 .env.*.local
 
+# Supabase CLI temp files (contain DB connection strings — never commit)
+supabase/.temp/
+
+# Test/audit scripts and screenshots generated during development
+audit.mjs
+test-paystack-noauth.mjs
+audit-screenshots/
+paystack-screenshots/
+
 # Logs
 logs
 *.log

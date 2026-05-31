@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
 import { SERVICE_LABELS } from "@/lib/constants";
 import {
-  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone, ExternalLink, Scale,
+  FileText, Users, Phone, Bell, ClipboardList, ArrowRight, BookMarked, Megaphone, ExternalLink, Scale, Landmark,
 } from "lucide-react";
 
 const REMUNERATION_URL = import.meta.env.VITE_REMUNERATION_PORTAL_URL || "#";
@@ -30,7 +30,7 @@ const quickActions = [
 const AnaochaDashboard = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
-  const [stats, setStats] = useState({ applications: 0, unread: 0 });
+  const [stats, setStats] = useState({ applications: 0, unread: 0, outstandingDues: 0 });
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
   const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,19 +40,27 @@ const AnaochaDashboard = () => {
     if (!user) return;
 
     const load = async () => {
-      const [profileRes, appsRes, notifsRes, announcementsRes] = await Promise.all([
+      const [profileRes, appsRes, notifsRes, announcementsRes, duesItemsRes, duesPaymentsRes] = await Promise.all([
         supabase.from("profiles").select("first_name, surname, year_of_call, branch").eq("user_id", user.id).single(),
         supabase.from("service_applications").select("id, service_type, status, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("notifications").select("id, title, message, read, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
         supabase.from("announcements").select("id, title, content, created_at").or("portal.eq.anaocha,portal.eq.both").eq("published", true).order("created_at", { ascending: false }).limit(3),
+        supabase.from("dues_items").select("id").eq("is_active", true),
+        supabase.from("dues_payments").select("dues_item_id, status").eq("user_id", user.id),
       ]);
 
       setProfile(profileRes.data);
       setAnnouncements(announcementsRes.data || []);
       const apps = appsRes.data || [];
+      const allDuesIds = (duesItemsRes.data || []).map((d: any) => d.id);
+      const paidIds = (duesPaymentsRes.data || [])
+        .filter((p: any) => p.status === "paid" || p.status === "uploaded")
+        .map((p: any) => p.dues_item_id);
+      const outstandingDues = allDuesIds.filter((id: string) => !paidIds.includes(id)).length;
       setStats({
         applications: apps.length,
         unread: (notifsRes.data || []).filter((n) => !n.read).length,
+        outstandingDues,
       });
       setRecentApplications(apps.slice(0, 3));
       setRecentNotifications(notifsRes.data || []);
@@ -84,7 +92,7 @@ const AnaochaDashboard = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link to="/anaocha/applications">
             <Card className="shadow-card hover:shadow-lg transition-shadow cursor-pointer">
               <CardContent className="p-5 flex items-center gap-4">
@@ -107,6 +115,21 @@ const AnaochaDashboard = () => {
                 <div>
                   <p className="text-2xl font-bold text-foreground">{loading ? "-" : stats.unread}</p>
                   <p className="text-sm text-muted-foreground">Unread Notification{stats.unread !== 1 ? "s" : ""}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link to="/anaocha/dues">
+            <Card className={`shadow-card hover:shadow-lg transition-shadow cursor-pointer ${!loading && stats.outstandingDues > 0 ? "border-amber-200 bg-amber-50/40" : ""}`}>
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className={`h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0 ${!loading && stats.outstandingDues > 0 ? "bg-amber-100" : "bg-primary/10"}`}>
+                  <Landmark className={`h-6 w-6 ${!loading && stats.outstandingDues > 0 ? "text-amber-600" : "text-primary"}`} />
+                </div>
+                <div>
+                  <p className={`text-2xl font-bold ${!loading && stats.outstandingDues > 0 ? "text-amber-700" : "text-foreground"}`}>
+                    {loading ? "-" : stats.outstandingDues}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Outstanding Due{stats.outstandingDues !== 1 ? "s" : ""}</p>
                 </div>
               </CardContent>
             </Card>

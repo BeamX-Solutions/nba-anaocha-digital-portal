@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      dues_items: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          category: string
+          year: number
+          deadline: string | null
+          is_tiered: boolean
+          amount_0_4: number | null
+          amount_5_9: number | null
+          amount_10_14: number | null
+          amount_15_plus: number | null
+          flat_amount: number | null
+          requires_upload: boolean
+          upload_label: string | null
+          is_active: boolean
+          created_at: string
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          category?: string
+          year: number
+          deadline?: string | null
+          is_tiered?: boolean
+          amount_0_4?: number | null
+          amount_5_9?: number | null
+          amount_10_14?: number | null
+          amount_15_plus?: number | null
+          flat_amount?: number | null
+          requires_upload?: boolean
+          upload_label?: string | null
+          is_active?: boolean
+          created_at?: string
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          category?: string
+          year?: number
+          deadline?: string | null
+          is_tiered?: boolean
+          amount_0_4?: number | null
+          amount_5_9?: number | null
+          amount_10_14?: number | null
+          amount_15_plus?: number | null
+          flat_amount?: number | null
+          requires_upload?: boolean
+          upload_label?: string | null
+          is_active?: boolean
+          created_at?: string
+          created_by?: string | null
+        }
+        Relationships: []
+      }
+      dues_payments: {
+        Row: {
+          id: string
+          user_id: string
+          dues_item_id: string
+          amount: number | null
+          reference: string | null
+          receipt_url: string | null
+          status: string
+          paid_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          dues_item_id: string
+          amount?: number | null
+          reference?: string | null
+          receipt_url?: string | null
+          status?: string
+          paid_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          dues_item_id?: string
+          amount?: number | null
+          reference?: string | null
+          receipt_url?: string | null
+          status?: string
+          paid_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "dues_payments_dues_item_id_fkey"; columns: ["dues_item_id"]; referencedRelation: "dues_items"; referencedColumns: ["id"] }
+        ]
+      }
       contact_messages: {
         Row: {
           created_at: string
