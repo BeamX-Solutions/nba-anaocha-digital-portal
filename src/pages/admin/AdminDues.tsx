@@ -24,6 +24,32 @@ type DuesPayment = {
   profiles: { first_name: string | null; surname: string | null; email: string | null; year_of_call: string | null } | null;
 };
 
+const formatWithCommas = (raw: string) => {
+  const digits = raw.replace(/\D/g, "");
+  return digits ? Number(digits).toLocaleString("en-NG") : "";
+};
+
+const CurrencyInput = ({ value, onChange, placeholder, className }: {
+  value: string; onChange: (raw: string) => void;
+  placeholder?: string; className?: string;
+}) => {
+  const displayed = formatWithCommas(value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    onChange(raw);
+  };
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={displayed}
+      onChange={handleChange}
+      placeholder={placeholder}
+      className={className}
+    />
+  );
+};
+
 const EMPTY_FORM = {
   title: "", description: "", category: "branch_dues", year: new Date().getFullYear(),
   deadline: "", is_tiered: true,
@@ -198,9 +224,12 @@ const AdminDues = () => {
                     ].map(({ key, label, hint }) => (
                       <div key={key}>
                         <label className="text-sm font-medium text-foreground">{label}</label>
-                        <input type="number" value={(form as any)[key]} onChange={e => f(key, e.target.value)}
+                        <CurrencyInput
+                          value={(form as any)[key]}
+                          onChange={raw => f(key, raw)}
                           placeholder={hint}
-                          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        />
                         <p className="text-[10px] text-muted-foreground mt-0.5">{hint}</p>
                       </div>
                     ))}
@@ -208,8 +237,12 @@ const AdminDues = () => {
                 ) : (
                   <div className="max-w-xs">
                     <label className="text-sm font-medium text-foreground">Flat Amount (₦)</label>
-                    <input type="number" value={form.flat_amount} onChange={e => f("flat_amount", e.target.value)}
-                      className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                    <CurrencyInput
+                      value={form.flat_amount}
+                      onChange={raw => f("flat_amount", raw)}
+                      placeholder="e.g. 5,000"
+                      className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
                   </div>
                 )
               )}
@@ -272,8 +305,8 @@ const AdminDues = () => {
                           {item.requires_upload
                             ? <span className="text-blue-600 font-medium">Receipt upload</span>
                             : item.is_tiered
-                              ? <span>Tiered: ₦{item.amount_0_4?.toLocaleString("en-NG")} – ₦{item.amount_15_plus?.toLocaleString("en-NG")}</span>
-                              : <span>₦{item.flat_amount?.toLocaleString("en-NG")}</span>}
+                              ? <span>Tiered: ₦{Number(item.amount_0_4).toLocaleString("en-NG")} – ₦{Number(item.amount_15_plus).toLocaleString("en-NG")}</span>
+                              : <span>₦{Number(item.flat_amount).toLocaleString("en-NG")}</span>}
                           {compliance[item.id] && (
                             <span className="font-medium text-foreground">{paid}/{total} paid</span>
                           )}

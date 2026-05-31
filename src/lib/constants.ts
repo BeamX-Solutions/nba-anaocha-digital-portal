@@ -24,12 +24,12 @@ export function getDueAmount(
   item: { is_tiered: boolean; amount_0_4: number | null; amount_5_9: number | null; amount_10_14: number | null; amount_15_plus: number | null; flat_amount: number | null },
   yearOfCall: string | null | undefined
 ): number {
-  if (!item.is_tiered) return item.flat_amount ?? 0;
+  if (!item.is_tiered) return Number(item.flat_amount ?? 0);
   const years = getYearsOfCall(yearOfCall);
-  if (years < 5)  return item.amount_0_4     ?? 0;
-  if (years < 10) return item.amount_5_9     ?? 0;
-  if (years < 15) return item.amount_10_14   ?? 0;
-  return item.amount_15_plus ?? 0;
+  if (years < 5)  return Number(item.amount_0_4     ?? 0);
+  if (years < 10) return Number(item.amount_5_9     ?? 0);
+  if (years < 15) return Number(item.amount_10_14   ?? 0);
+  return Number(item.amount_15_plus ?? 0);
 }
 
 export const SERVICE_LABELS: Record<string, string> = {
