@@ -191,10 +191,10 @@ const AdminDues = () => {
                 form.is_tiered ? (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                      { key: "amount_0_4",     label: "0–4 yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_0_4.toLocaleString()}` },
-                      { key: "amount_5_9",     label: "5–9 yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_5_9.toLocaleString()}` },
-                      { key: "amount_10_14",   label: "10–14 yrs (₦)", hint: `BPF: ₦${BPF_TIERS.amount_10_14.toLocaleString()}` },
-                      { key: "amount_15_plus", label: "15+ yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_15_plus.toLocaleString()}` },
+                      { key: "amount_0_4",     label: "0–4 yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_0_4.toLocaleString("en-NG")}` },
+                      { key: "amount_5_9",     label: "5–9 yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_5_9.toLocaleString("en-NG")}` },
+                      { key: "amount_10_14",   label: "10–14 yrs (₦)", hint: `BPF: ₦${BPF_TIERS.amount_10_14.toLocaleString("en-NG")}` },
+                      { key: "amount_15_plus", label: "15+ yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_15_plus.toLocaleString("en-NG")}` },
                     ].map(({ key, label, hint }) => (
                       <div key={key}>
                         <label className="text-sm font-medium text-foreground">{label}</label>
@@ -272,8 +272,8 @@ const AdminDues = () => {
                           {item.requires_upload
                             ? <span className="text-blue-600 font-medium">Receipt upload</span>
                             : item.is_tiered
-                              ? <span>Tiered: ₦{item.amount_0_4?.toLocaleString()} – ₦{item.amount_15_plus?.toLocaleString()}</span>
-                              : <span>₦{item.flat_amount?.toLocaleString()}</span>}
+                              ? <span>Tiered: ₦{item.amount_0_4?.toLocaleString("en-NG")} – ₦{item.amount_15_plus?.toLocaleString("en-NG")}</span>
+                              : <span>₦{item.flat_amount?.toLocaleString("en-NG")}</span>}
                           {compliance[item.id] && (
                             <span className="font-medium text-foreground">{paid}/{total} paid</span>
                           )}
