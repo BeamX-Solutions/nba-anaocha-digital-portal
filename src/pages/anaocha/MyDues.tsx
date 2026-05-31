@@ -100,7 +100,11 @@ const MyDues = () => {
           paid_at: new Date().toISOString(),
         }, { onConflict: "user_id,dues_item_id" });
         if (error) {
-          toast({ title: "Payment recorded but save failed", description: `Keep your reference: ${res.reference}`, variant: "destructive" });
+          toast({
+            title: "Payment successful but record failed",
+            description: `Reference: ${res.reference} — please share this with the secretariat. Error: ${error.message}`,
+            variant: "destructive",
+          });
         } else {
           toast({ title: "Payment confirmed", description: `₦${amount.toLocaleString("en-NG")} paid for ${item.title}.` });
           load();
