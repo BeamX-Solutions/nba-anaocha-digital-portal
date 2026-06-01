@@ -92,23 +92,24 @@ const MyDues = () => {
           { display_name: "Portal", variable_name: "portal",        value: "NBA Anaocha" },
         ],
       },
-      callback: async (res: any) => {
+      callback: (res: any) => {
         setPaying(null);
-        const { error } = await supabase.from("dues_payments").upsert({
+        supabase.from("dues_payments").upsert({
           user_id: user.id, dues_item_id: item.id,
           amount, reference: res.reference, status: "paid",
           paid_at: new Date().toISOString(),
-        }, { onConflict: "user_id,dues_item_id" });
-        if (error) {
-          toast({
-            title: "Payment successful but record failed",
-            description: `Reference: ${res.reference} — please share this with the secretariat. Error: ${error.message}`,
-            variant: "destructive",
-          });
-        } else {
-          toast({ title: "Payment confirmed", description: `₦${amount.toLocaleString("en-NG")} paid for ${item.title}.` });
-          load();
-        }
+        }, { onConflict: "user_id,dues_item_id" }).then(({ error }) => {
+          if (error) {
+            toast({
+              title: "Payment successful but record failed",
+              description: `Reference: ${res.reference} — share this with the secretariat. Error: ${error.message}`,
+              variant: "destructive",
+            });
+          } else {
+            toast({ title: "Payment confirmed", description: `₦${amount.toLocaleString("en-NG")} paid for ${item.title}.` });
+            load();
+          }
+        });
       },
       onClose: () => setPaying(null),
     }).openIframe();
