@@ -40,6 +40,31 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    if (entity_type === "dues") {
+      // Dues payment: record against dues_payments using the Paystack-verified amount
+      if (!entity_id) {
+        return new Response(JSON.stringify({ success: false, message: "Missing entity_id (dues_item_id)" }), {
+          status: 400, headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
+
+      const { error: duesErr } = await supabase.from("dues_payments").upsert({
+        user_id,
+        dues_item_id: entity_id,
+        amount:       amountNaira,
+        reference,
+        status:       "paid",
+        paid_at:      new Date().toISOString(),
+      }, { onConflict: "user_id,dues_item_id" });
+
+      if (duesErr) throw new Error(duesErr.message);
+
+      return new Response(
+        JSON.stringify({ success: true, amount: amountNaira, channel }),
+        { headers: { ...cors, "Content-Type": "application/json" } }
+      );
+    }
+
     const { error: payErr } = await supabase.from("payments").insert({
       user_id,
       entity_type: entity_type ?? "service_application",

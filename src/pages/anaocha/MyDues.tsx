@@ -94,19 +94,17 @@ const MyDues = () => {
       },
       callback: (res: any) => {
         setPaying(null);
-        supabase.from("dues_payments").upsert({
-          user_id: user.id, dues_item_id: item.id,
-          amount, reference: res.reference, status: "paid",
-          paid_at: new Date().toISOString(),
-        }, { onConflict: "user_id,dues_item_id" }).then(({ error }) => {
-          if (error) {
+        supabase.functions.invoke("verify-payment", {
+          body: { reference: res.reference, user_id: user.id, entity_type: "dues", entity_id: item.id },
+        }).then(({ data, error }) => {
+          if (error || !data?.success) {
             toast({
-              title: "Payment successful but record failed",
-              description: `Reference: ${res.reference} — share this with the secretariat. Error: ${error.message}`,
+              title: "Payment successful but verification failed",
+              description: `Reference: ${res.reference} — share this with the secretariat. ${error?.message || data?.message || ""}`,
               variant: "destructive",
             });
           } else {
-            toast({ title: "Payment confirmed", description: `₦${amount.toLocaleString("en-NG")} paid for ${item.title}.` });
+            toast({ title: "Payment confirmed", description: `₦${Number(data.amount).toLocaleString("en-NG")} paid for ${item.title}.` });
             load();
           }
         });
