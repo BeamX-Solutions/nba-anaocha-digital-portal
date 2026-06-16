@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Hash, Stamp, ScrollText, ChevronRight, CheckCircle2, BadgeCheck } from "lucide-react";
+import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Stamp, ScrollText, ChevronRight, CheckCircle2, BadgeCheck } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,14 +70,31 @@ const services: ServiceConfig[] = [
     serviceType: "nba_id_card",
   },
   {
-    title: "Bar Identification Number",
-    description: "Obtain your unique Bar Identification Number (BAIN) for practice verification and compliance.",
-    icon: <Hash className="h-6 w-6" />,
-    color: "text-violet-600 bg-violet-50 border-violet-100",
-    textFields: [],
+    title: "Annual Practicing Certificate",
+    description: "Apply for your Annual Practicing Certificate (APC). Upload your Bar Practicing Fee and branch dues receipts to proceed.",
+    icon: <FileText className="h-6 w-6" />,
+    color: "text-amber-600 bg-amber-50 border-amber-100",
+    textFields: [
+      { key: "year", label: "Practicing Year", required: true },
+    ],
+    fileFields: [
+      { key: "bpf_receipt",         label: "Bar Practicing Fee (BPF) Receipt", accept: "image/*,.pdf" },
+      { key: "branch_dues_receipt", label: "Branch Dues Receipt",               accept: "image/*,.pdf" },
+    ],
+    action: "Apply Now",
+    serviceType: "apc",
+  },
+  {
+    title: "Letter of Good Standing",
+    description: "Request an official letter confirming your good standing as a member of the NBA Anaocha Branch.",
+    icon: <BadgeCheck className="h-6 w-6" />,
+    color: "text-green-600 bg-green-50 border-green-100",
+    textFields: [
+      { key: "purpose", label: "Purpose / Addressed To", required: true },
+    ],
     fileFields: [],
     action: "Apply Now",
-    serviceType: "bain",
+    serviceType: "letter_of_good_standing",
   },
   {
     title: "Stamp & Seal",

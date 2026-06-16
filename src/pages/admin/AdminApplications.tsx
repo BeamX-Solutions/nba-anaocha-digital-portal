@@ -11,10 +11,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { logAudit } from "@/lib/auditLog";
 
 const SERVICE_LABELS: Record<string, string> = {
-  nba_diary: "NBA Diary",
-  nba_id_card: "NBA ID Card",
-  bain: "Bar Identification Number",
-  stamp_seal: "Stamp & Seal",
+  nba_diary:                 "NBA Diary",
+  nba_id_card:               "NBA ID Card",
+  apc:                       "Annual Practicing Certificate",
+  letter_of_good_standing:   "Letter of Good Standing",
+  stamp_seal:                "Stamp & Seal",
   title_document_front_page: "Title Document Front Page",
 };
 

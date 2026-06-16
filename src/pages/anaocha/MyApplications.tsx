@@ -15,7 +15,8 @@ import { Link } from "react-router-dom";
 const SERVICE_ICONS: Record<string, string> = {
   nba_diary:                 "📘",
   nba_id_card:               "🪪",
-  bain:                      "🔖",
+  apc:                       "📜",
+  letter_of_good_standing:   "✅",
   stamp_seal:                "🔏",
   title_document_front_page: "📄",
 };

@@ -26,11 +26,11 @@ const posts = [
       "The NBA Anaocha Branch is pleased to announce the launch of the NBA Remuneration Portal at nba-remuneration-portal.vercel.app. Legal practitioners can now generate compliant documents and process payments online.",
   },
   {
-    title: "Bar Identification Number (BAIN): Application Process",
+    title: "Annual Practicing Certificate (APC): How to Apply",
     date: "2025-07-15",
     category: "Guides",
     summary:
-      "A step-by-step guide on how to apply for your Bar Identification Number (BAIN). Members are required to upload proof of the 10% fee payment through the portal.",
+      "A step-by-step guide on how to apply for your Annual Practicing Certificate (APC) through the portal. Members are required to upload their BPF and branch dues receipts.",
   },
   {
     title: "Welfare Committee Update: Legal Aid Clinic",
