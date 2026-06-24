@@ -50,9 +50,9 @@ const AdminMembers = () => {
     const rows = [
       ["Name", "Email", "BAN", "Year of Call", "Phone", "Status", "Joined"],
       ...members.map((m) => [
-        [m.surname, m.first_name, m.middle_name].filter(Boolean).join(" ") || "—",
-        m.email || "—", m.ban || "—",
-        m.year_of_call || "—", m.phone || "—", m.status || "—",
+        [m.surname, m.first_name, m.middle_name].filter(Boolean).join(" ") || "-",
+        m.email || "-", m.ban || "-",
+        m.year_of_call || "-", m.phone || "-", m.status || "-",
         new Date(m.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }),
       ]),
     ];
@@ -188,10 +188,10 @@ const AdminMembers = () => {
                     {isExpanded && (
                       <div className="mt-4 border-t pt-4 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                          <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "—"}</div>
-                          <div><span className="text-muted-foreground">BAN:</span> {m.ban || "—"}</div>
-                          <div><span className="text-muted-foreground">Phone:</span> {m.phone || "—"}</div>
-                          <div><span className="text-muted-foreground">Office:</span> {m.office_address || "—"}</div>
+                          <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "-"}</div>
+                          <div><span className="text-muted-foreground">BAN:</span> {m.ban || "-"}</div>
+                          <div><span className="text-muted-foreground">Phone:</span> {m.phone || "-"}</div>
+                          <div><span className="text-muted-foreground">Office:</span> {m.office_address || "-"}</div>
                         </div>
                         <div className="flex flex-wrap gap-2 pt-1">
                           {m.status === "pending" ? (

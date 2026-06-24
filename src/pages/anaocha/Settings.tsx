@@ -212,8 +212,8 @@ const Settings = () => {
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>You receive notifications through two channels:</p>
               <ul className="space-y-1.5 ml-4 list-disc">
-                <li><span className="text-foreground font-medium">In-app</span> — visible via the bell icon and Notifications page.</li>
-                <li><span className="text-foreground font-medium">Email</span> — sent to <span className="text-foreground">{user?.email}</span>.</li>
+                <li><span className="text-foreground font-medium">In-app</span>: visible via the bell icon and Notifications page.</li>
+                <li><span className="text-foreground font-medium">Email</span>: sent to <span className="text-foreground">{user?.email}</span>.</li>
               </ul>
               <p className="pt-1">Emails are sent automatically when your application status changes or your account is updated.</p>
             </div>

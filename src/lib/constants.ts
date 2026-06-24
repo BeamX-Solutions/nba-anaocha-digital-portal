@@ -1,3 +1,30 @@
+// Single source of truth for the branch secretariat contact details.
+export const BRANCH_CONTACT = {
+  name: "Chief Charles Obegolu Bar Centre",
+  addressLines: [
+    "Chief Charles Obegolu Bar Centre",
+    "Obeledu, Anaocha LGA",
+    "Anambra State, Nigeria",
+  ],
+  phones: ["08134012458", "07033482194"],
+  website: "www.nbaanaocha.org.ng",
+} as const;
+
+// Branch committees. Used both on the landing page and as the admin dropdown
+// when assigning a committee member, so the names stay in sync.
+export const COMMITTEE_NAMES = [
+  "Human Rights",
+  "ICT & Tech",
+  "Women Forum",
+  "Young Lawyers",
+  "Disciplinary",
+  "Journal",
+  "Welfare",
+  "Publicity",
+  "Sports",
+  "Bar Centre",
+] as const;
+
 export const DUES_CATEGORY_LABELS: Record<string, string> = {
   branch_dues:    "Branch Dues",
   bpf_compliance: "Bar Practicing Fee (BPF)",
@@ -39,6 +66,7 @@ export const SERVICE_LABELS: Record<string, string> = {
   letter_of_good_standing:   "Letter of Good Standing",
   stamp_seal:                "Stamp & Seal",
   title_document_front_page: "Title Document Front Page",
+  nba_vehicle_plate:         "NBA Vehicle Customized Plate Number",
 };
 
 export const SERVICE_FEES: Record<string, number> = {
@@ -48,4 +76,5 @@ export const SERVICE_FEES: Record<string, number> = {
   letter_of_good_standing:   3000,
   stamp_seal:                10000,
   title_document_front_page: 5000,
+  nba_vehicle_plate:         10000,
 };

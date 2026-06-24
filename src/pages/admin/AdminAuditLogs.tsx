@@ -124,7 +124,7 @@ const AdminAuditLogs = () => {
                       const profile = adminProfiles[log.admin_id];
                       const adminName = profile
                         ? [profile.surname, profile.first_name].filter(Boolean).join(" ") || profile.email
-                        : log.admin_id?.slice(0, 8) ?? "—";
+                        : log.admin_id?.slice(0, 8) ?? "-";
                       const cfg = ACTION_CONFIG[log.action] ?? { label: log.action, variant: "secondary" as const };
                       const details = log.details
                         ? Object.entries(log.details).map(([k, v]) => `${k.replace(/_/g, " ")}: ${v}`).join(" · ")

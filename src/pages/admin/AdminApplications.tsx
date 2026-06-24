@@ -102,7 +102,7 @@ const AdminApplications = () => {
     setUpdating(null);
     toast({
       title: "Application approved",
-      description: emailFailed ? "Approved — in-app notification sent but email failed." : "The applicant has been notified.",
+      description: emailFailed ? "Approved. In-app notification sent but email failed." : "The applicant has been notified.",
       variant: emailFailed ? "destructive" : "default",
     });
   };
@@ -149,7 +149,7 @@ const AdminApplications = () => {
     setRejectTarget(null);
     toast({
       title: "Application rejected",
-      description: emailFailed ? "Rejected — in-app notification sent but email failed." : "The applicant has been notified.",
+      description: emailFailed ? "Rejected. In-app notification sent but email failed." : "The applicant has been notified.",
       variant: emailFailed ? "destructive" : "default",
     });
   };
@@ -377,7 +377,7 @@ const AdminApplications = () => {
               placeholder="e.g. Passport photo is unclear. Please resubmit with a clearer image."
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
             />
-            <p className="text-xs text-muted-foreground">Optional — but strongly recommended.</p>
+            <p className="text-xs text-muted-foreground">Optional, but strongly recommended.</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRejectTarget(null)} disabled={rejecting}>Cancel</Button>

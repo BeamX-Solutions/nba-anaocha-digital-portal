@@ -212,7 +212,7 @@ const AdminReporting = () => {
             <CardContent className="p-0">
               <div className="px-5 py-4 border-b border-border flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <h3 className="font-heading text-base font-semibold text-foreground">Monthly Trend — Applications Submitted</h3>
+                <h3 className="font-heading text-base font-semibold text-foreground">Monthly Trend: Applications Submitted</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm min-w-[300px]">

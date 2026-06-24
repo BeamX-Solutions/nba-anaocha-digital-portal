@@ -1,17 +1,42 @@
+import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { ArrowRight, Monitor, Users, GraduationCap, Gavel, ShieldCheck, BookOpen, Heart, Megaphone, Trophy, Building2 } from "lucide-react";
+import { ArrowRight, Monitor, Users, GraduationCap, Gavel, ShieldCheck, BookOpen, Heart, Megaphone, Trophy, Building2, UserRound } from "lucide-react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import heroBg from "@/assets/hero-bg.jpg";
-import aboutBranch from "@/assets/about-branch.png";
+import nbaLogo from "@/assets/nba-logo.png";
 import newsTraining from "@/assets/news-training.jpg";
 import newsLegal from "@/assets/news-legal.jpg";
 import newsRights from "@/assets/news-rights.jpg";
 
+// The generated Supabase types don't yet include the `people` table.
+const db = supabase as any;
+
+interface Person {
+  id: string;
+  name: string;
+  position: string;
+  category: "executive" | "committee";
+  committee: string | null;
+  photo_url: string | null;
+}
+
+const PersonAvatar = ({ person, size }: { person: Person; size: string }) => (
+  <div className={`${size} mx-auto rounded-full overflow-hidden border-4 border-muted bg-muted flex items-center justify-center`}>
+    {person.photo_url ? (
+      <img src={person.photo_url} alt={person.name} className="h-full w-full object-cover" loading="lazy" />
+    ) : (
+      <UserRound className="h-1/2 w-1/2 text-muted-foreground" />
+    )}
+  </div>
+);
+
 const committees = [
   { icon: <ShieldCheck className="h-5 w-5" />, name: "Human Rights", desc: "Dedicated to legal aid and protecting fundamental liberties within our jurisdiction." },
-  { icon: <Monitor className="h-5 w-5" />, name: "ICT & Tech", desc: "Driving digital transformation and innovation in legal practice.", featured: true },
+  { icon: <Monitor className="h-5 w-5" />, name: "ICT & Tech", desc: "Driving digital transformation and innovation in legal practice." },
   { icon: <Users className="h-5 w-5" />, name: "Women Forum", desc: "Promoting the interests of female practitioners and gender equity in law." },
   { icon: <GraduationCap className="h-5 w-5" />, name: "Young Lawyers", desc: "Empowering new entrants through mentorship and professional workshops." },
   { icon: <Gavel className="h-5 w-5" />, name: "Disciplinary", desc: "Upholding the highest standards of professional ethics and conduct." },
@@ -51,6 +76,20 @@ const newsArticles = [
 
 const Index = () => {
   const { user, loading } = useAuth();
+  const [people, setPeople] = useState<Person[]>([]);
+  const [openCommittee, setOpenCommittee] = useState<string | null>(null);
+
+  useEffect(() => {
+    db.from("people")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(({ data }: { data: Person[] | null }) => setPeople(data || []));
+  }, []);
+
+  const executives = people.filter((p) => p.category === "executive");
+  const membersFor = (committee: string) =>
+    people.filter((p) => p.category === "committee" && p.committee === committee);
 
   if (loading) return null;
   if (user) return <Navigate to="/dashboard" replace />;
@@ -59,7 +98,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      {/* Hero — full bleed image */}
+      {/* Hero: full bleed image */}
       <section className="relative overflow-hidden min-h-[560px] md:min-h-[640px] flex items-center">
         <img
           src={heroBg}
@@ -103,12 +142,14 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Image with overlapping stat card */}
             <div className="relative">
-              <img
-                src={aboutBranch}
-                alt="NBA Anaocha Branch"
-                className="w-full rounded-xl shadow-xl object-contain bg-muted/30"
-                loading="lazy"
-              />
+              <div className="w-full aspect-[4/3] rounded-xl shadow-xl bg-primary flex items-center justify-center p-12">
+                <img
+                  src={nbaLogo}
+                  alt="NBA Anaocha Branch crest"
+                  className="max-h-full max-w-[70%] object-contain"
+                  loading="lazy"
+                />
+              </div>
               <div className="absolute bottom-6 left-6 bg-background border border-border rounded-xl shadow-lg p-5 max-w-[180px]">
                 <p className="font-heading text-3xl font-bold text-primary">2014</p>
                 <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mt-1">Founded in Anaocha</p>
@@ -144,6 +185,47 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Branch Executives */}
+      {executives.length > 0 && (
+        <section id="executives" className="py-16 md:py-20 border-t border-border overflow-hidden">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2">Branch Executives</h2>
+              <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">Meet the Leadership of the Family Bar</p>
+            </div>
+          </div>
+          {executives.length > 5 ? (
+            // Enough to overflow: auto-scrolling marquee (list duplicated for a seamless loop).
+            <div className="relative w-full overflow-hidden group">
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-background to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-background to-transparent" />
+              <div className="flex w-max gap-8 animate-marquee group-hover:[animation-play-state:paused] px-4">
+                {[...executives, ...executives].map((p, i) => (
+                  <div key={`${p.id}-${i}`} className="shrink-0 w-44 text-center">
+                    <PersonAvatar person={p} size="h-40 w-40" />
+                    <p className="font-heading font-semibold text-sm text-foreground mt-4">{p.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            // Just a few: show them static and centered (no duplication, no movement).
+            <div className="container">
+              <div className="flex flex-wrap justify-center gap-x-12 gap-y-10">
+                {executives.map((p) => (
+                  <div key={p.id} className="w-44 text-center">
+                    <PersonAvatar person={p} size="h-40 w-40" />
+                    <p className="font-heading font-semibold text-sm text-foreground mt-4">{p.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* Committees */}
       <section id="committees" className="py-16 md:py-20 bg-muted/30 border-y border-border">
         <div className="container">
@@ -152,26 +234,24 @@ const Index = () => {
             <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">Specialized Divisions Driving Our Mission</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            {committees.map((c) => (
-              <div
-                key={c.name}
-                className={`rounded-xl p-5 border transition-all ${
-                  c.featured
-                    ? "bg-primary border-primary text-primary-foreground"
-                    : "bg-background border-border hover:border-primary/30 hover:shadow-md"
-                }`}
-              >
-                <div className={`mb-3 ${c.featured ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                  {c.icon}
-                </div>
-                <p className={`font-heading font-semibold text-sm mb-1.5 ${c.featured ? "text-primary-foreground" : "text-foreground"}`}>
-                  {c.name}
-                </p>
-                <p className={`text-xs leading-relaxed ${c.featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                  {c.desc}
-                </p>
-              </div>
-            ))}
+            {committees.map((c) => {
+              const count = membersFor(c.name).length;
+              return (
+                <button
+                  type="button"
+                  key={c.name}
+                  onClick={() => setOpenCommittee(c.name)}
+                  className="text-left rounded-xl p-5 border bg-background border-border hover:border-primary/30 hover:shadow-md transition-all"
+                >
+                  <div className="mb-3 text-muted-foreground">{c.icon}</div>
+                  <p className="font-heading font-semibold text-sm mb-1.5 text-foreground">{c.name}</p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">{c.desc}</p>
+                  <p className="mt-3 text-[11px] font-semibold text-primary">
+                    {count > 0 ? `View ${count} member${count > 1 ? "s" : ""}` : "View committee"}
+                  </p>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -220,6 +300,38 @@ const Index = () => {
           ))}
         </div>
       </section>
+
+      {/* Committee members dialog */}
+      <Dialog open={!!openCommittee} onOpenChange={(open) => !open && setOpenCommittee(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl">{openCommittee} Committee</DialogTitle>
+          </DialogHeader>
+          {openCommittee && (() => {
+            const members = membersFor(openCommittee);
+            const committee = committees.find((c) => c.name === openCommittee);
+            if (members.length === 0) {
+              return (
+                <div className="py-8 text-center space-y-2">
+                  <p className="text-sm text-muted-foreground">{committee?.desc}</p>
+                  <p className="text-sm text-muted-foreground">Committee members will be announced soon.</p>
+                </div>
+              );
+            }
+            return (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 py-2">
+                {members.map((m) => (
+                  <div key={m.id} className="text-center">
+                    <PersonAvatar person={m} size="h-28 w-28" />
+                    <p className="font-heading font-semibold text-sm text-foreground mt-3">{m.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{m.position}</p>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

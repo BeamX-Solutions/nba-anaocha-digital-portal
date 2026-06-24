@@ -72,7 +72,7 @@ const AdminRoles = () => {
         ) : (
           <div className="space-y-2">
             {members.map((m) => {
-              const name = [m.surname, m.first_name].filter(Boolean).join(" ") || "—";
+              const name = [m.surname, m.first_name].filter(Boolean).join(" ") || "-";
               return (
                 <Card
                   key={m.id}

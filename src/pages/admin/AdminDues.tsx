@@ -335,7 +335,7 @@ const AdminDues = () => {
                     {isExpanded && (
                       <div className="mt-4 border-t border-border pt-4">
                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                          Member Compliance — {paid} of {total} paid
+                          Member Compliance: {paid} of {total} paid
                         </p>
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm min-w-[500px]">
@@ -361,9 +361,9 @@ const AdminDues = () => {
                                       </p>
                                       {member.email && <p className="text-xs text-muted-foreground">{member.email}</p>}
                                     </td>
-                                    <td className="py-2.5 px-3 text-muted-foreground">{member.year_of_call || "—"}</td>
+                                    <td className="py-2.5 px-3 text-muted-foreground">{member.year_of_call || "-"}</td>
                                     <td className="py-2.5 px-3 font-medium text-foreground">
-                                      {item.requires_upload ? "—" : memberAmount > 0 ? `₦${memberAmount.toLocaleString("en-NG")}` : "—"}
+                                      {item.requires_upload ? "-" : memberAmount > 0 ? `₦${memberAmount.toLocaleString("en-NG")}` : "-"}
                                     </td>
                                     <td className="py-2.5 px-3">
                                       {status === "paid" || status === "uploaded" ? (
@@ -378,7 +378,7 @@ const AdminDues = () => {
                                       )}
                                     </td>
                                     <td className="py-2.5 px-3 text-muted-foreground text-xs">
-                                      {p?.paid_at ? new Date(p.paid_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                                      {p?.paid_at ? new Date(p.paid_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "-"}
                                     </td>
                                   </tr>
                                 );

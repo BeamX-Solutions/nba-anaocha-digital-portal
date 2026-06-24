@@ -134,7 +134,7 @@ const AdminNotify = () => {
                       onChange={(e) => setSelectedUserId(e.target.value)}
                       className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                     >
-                      <option value="">— Choose a member —</option>
+                      <option value="">Choose a member</option>
                       {members.map((m) => (
                         <option key={m.user_id} value={m.user_id}>
                           {[m.surname, m.first_name].filter(Boolean).join(" ") || m.email}

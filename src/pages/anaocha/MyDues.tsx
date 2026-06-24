@@ -100,7 +100,7 @@ const MyDues = () => {
           if (error || !data?.success) {
             toast({
               title: "Payment successful but verification failed",
-              description: `Reference: ${res.reference} — share this with the secretariat. ${error?.message || data?.message || ""}`,
+              description: `Reference: ${res.reference}. Share this with the secretariat. ${error?.message || data?.message || ""}`,
               variant: "destructive",
             });
           } else {
@@ -226,7 +226,7 @@ const MyDues = () => {
                               <div className="flex items-center gap-3 mt-2 flex-wrap">
                                 {!item.requires_upload && (
                                   <span className="text-sm font-bold text-foreground">
-                                    ₦{amount > 0 ? amount.toLocaleString("en-NG") : "—"}
+                                    ₦{amount > 0 ? amount.toLocaleString("en-NG") : "-"}
                                     {item.is_tiered && profile?.year_of_call && (
                                       <span className="text-xs font-normal text-muted-foreground ml-1">(tiered)</span>
                                     )}

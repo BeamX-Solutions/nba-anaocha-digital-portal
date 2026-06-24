@@ -114,8 +114,8 @@ const AnaochaPayments = () => {
         p.type === "dues" ? "Dues" : "Service",
         p.description,
         p.amount !== null ? Number(p.amount).toFixed(2) : "Receipt Upload",
-        p.reference || "—",
-        p.channel ? (CHANNEL_LABELS[p.channel] || p.channel) : "—",
+        p.reference || "-",
+        p.channel ? (CHANNEL_LABELS[p.channel] || p.channel) : "-",
         p.status,
         new Date(p.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }),
       ]),
@@ -211,10 +211,10 @@ const AnaochaPayments = () => {
                             : <span className="text-xs text-blue-600 font-medium">Receipt Submitted</span>}
                         </td>
                         <td className="px-5 py-4 text-xs text-muted-foreground hidden sm:table-cell font-mono">
-                          {p.reference || "—"}
+                          {p.reference || "-"}
                         </td>
                         <td className="px-5 py-4 text-muted-foreground hidden md:table-cell">
-                          {p.channel ? (CHANNEL_LABELS[p.channel] || p.channel) : "—"}
+                          {p.channel ? (CHANNEL_LABELS[p.channel] || p.channel) : "-"}
                         </td>
                         <td className="px-5 py-4 text-muted-foreground">
                           {new Date(p.created_at).toLocaleDateString("en-NG", { day: "2-digit", month: "short", year: "numeric" })}

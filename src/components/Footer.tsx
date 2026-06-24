@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Phone, Globe, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
+import { BRANCH_CONTACT } from "@/lib/constants";
+
+// X (formerly Twitter) brand logo: lucide-react has no official X icon.
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 const Footer = () => (
   <footer className="bg-primary text-primary-foreground">
@@ -17,13 +25,13 @@ const Footer = () => (
             </div>
           </div>
           <p className="text-sm text-primary-foreground/60 leading-relaxed">
-            The Nigerian Bar Association, Anaocha Branch — promoting the rule of law, professional ethics, and justice since 2014.
+            The Nigerian Bar Association, Anaocha Branch, promoting the rule of law, professional ethics, and justice since 2014.
           </p>
           {/* Social links */}
           <div className="flex gap-3 mt-5">
             {[
               { icon: <Facebook className="h-4 w-4" />, href: "#" },
-              { icon: <Twitter className="h-4 w-4" />, href: "#" },
+              { icon: <XIcon className="h-3.5 w-3.5" />, href: "#" },
               { icon: <Instagram className="h-4 w-4" />, href: "#" },
               { icon: <Linkedin className="h-4 w-4" />, href: "#" },
             ].map((s, i) => (
@@ -61,28 +69,29 @@ const Footer = () => (
 
         {/* Contact */}
         <div>
-          <h4 className="font-heading font-semibold text-sm mb-4 text-accent tracking-wide">Contact Us</h4>
+          <h4 className="font-heading font-semibold text-sm mb-4 text-accent tracking-wide">Branch Secretariat</h4>
           <ul className="space-y-4">
-            <li className="flex items-start gap-3">
-              <Phone className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-primary-foreground/80">+234 000 000 0000</p>
-                <p className="text-xs text-primary-foreground/40">Mon – Fri, 9am – 5pm</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <Mail className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-primary-foreground/80">info@nbaanaocha.org.ng</p>
-                <p className="text-xs text-primary-foreground/40">General enquiries</p>
-              </div>
-            </li>
             <li className="flex items-start gap-3">
               <MapPin className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
               <p className="text-sm text-primary-foreground/80 leading-snug">
-                Charles & N. Osondu Bar Centre,<br />
-                Anaocha LGA, Anambra State, Nigeria
+                {BRANCH_CONTACT.addressLines.map((line, i) => (
+                  <span key={i}>{line}{i < BRANCH_CONTACT.addressLines.length - 1 && <br />}</span>
+                ))}
               </p>
+            </li>
+            <li className="flex items-start gap-3">
+              <Phone className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+              <div>
+                {BRANCH_CONTACT.phones.map((phone) => (
+                  <p key={phone} className="text-sm text-primary-foreground/80">
+                    <a href={`tel:${phone}`} className="hover:text-accent transition-colors">{phone}</a>
+                  </p>
+                ))}
+              </div>
+            </li>
+            <li className="flex items-start gap-3">
+              <Globe className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-primary-foreground/80">{BRANCH_CONTACT.website}</p>
             </li>
           </ul>
         </div>

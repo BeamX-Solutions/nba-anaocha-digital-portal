@@ -10,7 +10,7 @@ import AdminRoute from "@/components/AdminRoute";
 import SplashScreen from "@/components/SplashScreen";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
-// Eager — landing, auth, shell
+// Eager: landing, auth, shell
 import Index from "./pages/Index.tsx";
 import DashboardRedirect from "./pages/DashboardRedirect.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -20,7 +20,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
 import ResetPassword from "./pages/auth/ResetPassword.tsx";
 import CompleteProfile from "./pages/auth/CompleteProfile.tsx";
 
-// Lazy — anaocha portal
+// Lazy: anaocha portal
 const AnaochaDashboard    = lazy(() => import("./pages/anaocha/AnaochaDashboard.tsx"));
 const ApplyForServices    = lazy(() => import("./pages/anaocha/ApplyForServices.tsx"));
 const MyApplications      = lazy(() => import("./pages/anaocha/MyApplications.tsx"));
@@ -35,7 +35,7 @@ const AboutBranch         = lazy(() => import("./pages/anaocha/AboutBranch.tsx")
 const Blog                = lazy(() => import("./pages/Blog.tsx"));
 const Resources           = lazy(() => import("./pages/Resources.tsx"));
 
-// Lazy — admin
+// Lazy: admin
 const AdminDashboard    = lazy(() => import("./pages/admin/AdminDashboard.tsx"));
 const AdminApplications = lazy(() => import("./pages/admin/AdminApplications.tsx"));
 const AdminMembers      = lazy(() => import("./pages/admin/AdminMembers.tsx"));
@@ -43,6 +43,7 @@ const AdminNotify       = lazy(() => import("./pages/admin/AdminNotify.tsx"));
 const AdminContacts     = lazy(() => import("./pages/admin/AdminContacts.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements.tsx"));
 const AdminResources    = lazy(() => import("./pages/admin/AdminResources.tsx"));
+const AdminLeadership   = lazy(() => import("./pages/admin/AdminLeadership.tsx"));
 const AdminAuditLogs    = lazy(() => import("./pages/admin/AdminAuditLogs.tsx"));
 const AdminDues         = lazy(() => import("./pages/admin/AdminDues.tsx"));
 const AdminRoles        = lazy(() => import("./pages/admin/AdminRoles.tsx"));
@@ -113,6 +114,7 @@ const App = () => (
               <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
               <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />
               <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
+              <Route path="/admin/leadership" element={<AdminRoute><AdminLeadership /></AdminRoute>} />
               <Route path="/admin/dues"       element={<AdminRoute><AdminDues /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
               <Route path="/admin/roles" element={<AdminRoute><AdminRoles /></AdminRoute>} />

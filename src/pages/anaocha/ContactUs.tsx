@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { BRANCH_CONTACT } from "@/lib/constants";
 
 const ContactUs = () => {
   const { user } = useAuth();
@@ -77,19 +78,27 @@ const ContactUs = () => {
           {/* Contact Info */}
           <Card className="shadow-card lg:col-span-1">
             <CardContent className="p-6 space-y-4">
-              <h3 className="font-heading text-lg font-semibold text-foreground">Branch Contact</h3>
+              <h3 className="font-heading text-lg font-semibold text-foreground">Branch Secretariat</h3>
               <div className="space-y-3 text-sm text-muted-foreground">
                 <div>
                   <p className="font-medium text-foreground">Address</p>
-                  <p>Charles E. N. Obegolu Bar Centre,<br />Obeledu, Anaocha LGA,<br />Anambra State, Nigeria</p>
+                  <p>
+                    {BRANCH_CONTACT.addressLines.map((line, i) => (
+                      <span key={i}>{line}{i < BRANCH_CONTACT.addressLines.length - 1 && <br />}</span>
+                    ))}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">Phone</p>
+                  {BRANCH_CONTACT.phones.map((phone) => (
+                    <p key={phone}>
+                      <a href={`tel:${phone}`} className="hover:text-foreground transition-colors">{phone}</a>
+                    </p>
+                  ))}
                 </div>
                 <div>
                   <p className="font-medium text-foreground">Website</p>
-                  <p>www.nbaanaocha.org.ng</p>
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">Remuneration Portal</p>
-                  <p>nba-remuneration-portal.vercel.app</p>
+                  <p>{BRANCH_CONTACT.website}</p>
                 </div>
               </div>
             </CardContent>

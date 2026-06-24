@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Stamp, ScrollText, ChevronRight, CheckCircle2, BadgeCheck } from "lucide-react";
+import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Stamp, ScrollText, ChevronRight, CheckCircle2, BadgeCheck, Car } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,12 +34,14 @@ interface ServiceConfig {
   fileFields: { key: string; label: string; accept?: string }[];
   action: string;
   serviceType: string;
+  /** When true the application is submitted without a Paystack payment. */
+  free?: boolean;
 }
 
 const services: ServiceConfig[] = [
   {
     title: "NBA Diary",
-    description: "Order your NBA Diary — a comprehensive resource with member details, court schedules, and branch information.",
+    description: "Order your NBA Diary, a comprehensive resource with member details, court schedules, and branch information.",
     icon: <BookOpen className="h-6 w-6" />,
     color: "text-blue-600 bg-blue-50 border-blue-100",
     textFields: [
@@ -119,6 +121,22 @@ const services: ServiceConfig[] = [
     action: "Apply Now",
     serviceType: "title_document_front_page",
   },
+  {
+    title: "NBA Vehicle Customized Plate Number",
+    description: "Apply for the NBA customized vehicle plate number. Provide your NIN and phone number, and upload your vehicle/customized plate papers (receipt).",
+    icon: <Car className="h-6 w-6" />,
+    color: "text-indigo-600 bg-indigo-50 border-indigo-100",
+    textFields: [
+      { key: "full_name", label: "Full Name",    required: true },
+      { key: "phone",     label: "Phone Number", required: true },
+      { key: "nin",       label: "NIN (National Identification Number)", required: true },
+    ],
+    fileFields: [
+      { key: "vehicle_papers", label: "Vehicle / Customized Plate Papers (Receipt)", accept: "image/*,.pdf" },
+    ],
+    action: "Apply Now",
+    serviceType: "nba_vehicle_plate",
+  },
 ];
 
 const ApplyForServices = () => {
@@ -157,7 +175,7 @@ const ApplyForServices = () => {
     return true;
   };
 
-  const submitAfterPayment = async (reference: string) => {
+  const doSubmit = async (reference: string | null) => {
     if (!user || !openService) return;
     setSubmitting(true);
 
@@ -184,7 +202,7 @@ const ApplyForServices = () => {
         form_data:         formData as any,
         file_urls:         fileUrls,
         payment_reference: reference,
-        payment_status:    "paid",
+        payment_status:    reference ? "paid" : "not_required",
       })
       .select("id")
       .single();
@@ -195,17 +213,19 @@ const ApplyForServices = () => {
       return;
     }
 
-    // 3. Verify payment via Edge Function (writes to payments table)
-    try {
-      await supabase.functions.invoke("verify-payment", {
-        body: { reference, user_id: user.id, entity_type: "service_application", entity_id: appData.id },
-      });
-    } catch {
-      // Non-fatal — application is submitted; admin can reconcile via Paystack reference
-      toast({
-        title: "Payment recorded but verification pending",
-        description: `Your application was submitted. Keep your reference: ${reference}. Contact the secretariat if payment is not reflected.`,
-      });
+    // 3. Verify payment via Edge Function (writes to payments table), paid services only
+    if (reference) {
+      try {
+        await supabase.functions.invoke("verify-payment", {
+          body: { reference, user_id: user.id, entity_type: "service_application", entity_id: appData.id },
+        });
+      } catch {
+        // Non-fatal: application is submitted; admin can reconcile via Paystack reference
+        toast({
+          title: "Payment recorded but verification pending",
+          description: `Your application was submitted. Keep your reference: ${reference}. Contact the secretariat if payment is not reflected.`,
+        });
+      }
     }
 
     // 4. Notify admins
@@ -233,6 +253,11 @@ const ApplyForServices = () => {
     setSubmitted(true);
   };
 
+  const handleFreeSubmit = async () => {
+    if (!validate()) return;
+    await doSubmit(null);
+  };
+
   const handlePay = async () => {
     if (!validate() || !user || !openService) return;
     const fee = SERVICE_FEES[openService.serviceType] ?? 0;
@@ -255,10 +280,10 @@ const ApplyForServices = () => {
       },
       callback: (res: any) => {
         setPaying(false);
-        submitAfterPayment(res.reference);
+        doSubmit(res.reference);
       },
       onClose: () => {
-        // Payment cancelled — reopen the form with data still intact
+        // Payment cancelled: reopen the form with data still intact
         setPaying(false);
         toast({ title: "Payment not completed", description: "Your application was not submitted. You can try again at any time.", variant: "destructive" });
       },
@@ -271,7 +296,7 @@ const ApplyForServices = () => {
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Apply for Services</h1>
           <p className="text-muted-foreground mt-1">
-            Select a service below. Payment is processed securely via Paystack before your application is submitted.
+            Select a service below. Where a fee applies, payment is processed securely via Paystack before your application is submitted.
           </p>
         </div>
 
@@ -288,7 +313,7 @@ const ApplyForServices = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-xl border ${service.color}`}>{service.icon}</div>
                     <Badge variant="outline" className="text-xs font-semibold">
-                      ₦{fee.toLocaleString("en-NG")}
+                      {service.free ? "Free" : `₦${(fee ?? 0).toLocaleString("en-NG")}`}
                     </Badge>
                   </div>
                   <h3 className="font-heading text-base font-semibold text-card-foreground mb-1.5">
@@ -332,7 +357,7 @@ const ApplyForServices = () => {
                 <h3 className="font-heading text-xl font-semibold text-foreground">Application Submitted</h3>
                 <p className="text-sm text-muted-foreground mt-1">
                   Your <span className="font-medium text-foreground">{openService?.title}</span> application
-                  has been received and payment confirmed. The secretariat will process it shortly.
+                  has been received{openService?.free ? "" : " and payment confirmed"}. The secretariat will process it shortly.
                 </p>
               </div>
               <Button onClick={() => setOpenService(null)}>Done</Button>
@@ -348,12 +373,16 @@ const ApplyForServices = () => {
                   )}
                   <div>
                     <DialogTitle className="font-heading text-lg">{openService?.title}</DialogTitle>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Fee:{" "}
-                      <span className="font-semibold text-foreground">
-                        ₦{(SERVICE_FEES[openService?.serviceType ?? ""] ?? 0).toLocaleString("en-NG")}
-                      </span>
-                    </p>
+                    {openService?.free ? (
+                      <p className="text-xs text-muted-foreground mt-0.5">No payment required</p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Fee:{" "}
+                        <span className="font-semibold text-foreground">
+                          ₦{(SERVICE_FEES[openService?.serviceType ?? ""] ?? 0).toLocaleString("en-NG")}
+                        </span>
+                      </p>
+                    )}
                   </div>
                 </div>
               </DialogHeader>
@@ -427,21 +456,33 @@ const ApplyForServices = () => {
                     </div>
                   )}
 
-                  {/* Payment info */}
+                  {/* Payment / submission info */}
                   <div className="bg-muted/40 border border-border rounded-md px-4 py-3 flex items-start gap-3">
                     <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
                     <p className="text-xs text-muted-foreground">
-                      A payment of{" "}
-                      <span className="font-semibold text-foreground">
-                        ₦{(SERVICE_FEES[openService.serviceType] ?? 0).toLocaleString("en-NG")}
-                      </span>{" "}
-                      will be collected securely via Paystack. Your application is only submitted after payment is confirmed.
+                      {openService.free ? (
+                        <>No payment is required for this service. Your application is submitted to the secretariat as soon as you click below.</>
+                      ) : (
+                        <>
+                          A payment of{" "}
+                          <span className="font-semibold text-foreground">
+                            ₦{(SERVICE_FEES[openService.serviceType] ?? 0).toLocaleString("en-NG")}
+                          </span>{" "}
+                          will be collected securely via Paystack. Your application is only submitted after payment is confirmed.
+                        </>
+                      )}
                     </p>
                   </div>
 
-                  <Button onClick={handlePay} disabled={submitting} className="w-full gap-2">
+                  <Button
+                    onClick={openService.free ? handleFreeSubmit : handlePay}
+                    disabled={submitting}
+                    className="w-full gap-2"
+                  >
                     {submitting ? (
                       <><Loader2 className="h-4 w-4 animate-spin" />Processing...</>
+                    ) : openService.free ? (
+                      <>Submit Application</>
                     ) : (
                       <>Pay ₦{(SERVICE_FEES[openService.serviceType] ?? 0).toLocaleString("en-NG")} &amp; Submit</>
                     )}
