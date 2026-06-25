@@ -64,18 +64,18 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       <Header />
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-0">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
+        <aside className="hidden lg:flex w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border overflow-y-auto">
           <SidebarContent />
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 bg-muted/30">
+        <main className="flex-1 bg-muted/30 overflow-y-auto">
           {/* Mobile menu bar */}
-          <div className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-card">
+          <div className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-card sticky top-0 z-40">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-10 w-10">

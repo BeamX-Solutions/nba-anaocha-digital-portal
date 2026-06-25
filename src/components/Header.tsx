@@ -10,7 +10,6 @@ import nbaLogo from "@/assets/nba-logo.png";
 const navLinks = [
   { label: "About", to: "/#about" },
   { label: "Committees", to: "/#committees" },
-  { label: "Resources", to: "/#resources" },
 ];
 
 const authPaths = ["/signin", "/signup", "/forgot-password", "/reset-password", "/complete-profile"];

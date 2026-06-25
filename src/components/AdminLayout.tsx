@@ -88,9 +88,9 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col bg-primary text-primary-foreground flex-shrink-0">
+      <aside className="hidden lg:flex w-64 flex-col bg-primary text-primary-foreground flex-shrink-0 overflow-y-auto">
         <SidebarContent />
       </aside>
 
