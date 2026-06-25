@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import NotificationBell from "@/components/NotificationBell";
 import ProfileDropdown from "@/components/ProfileDropdown";
@@ -14,7 +14,14 @@ const navLinks = [
 
 const authPaths = ["/signin", "/signup", "/forgot-password", "/reset-password", "/complete-profile"];
 
-const Header = () => {
+interface HeaderProps {
+  /** Menu trigger shown to the left of the logo on mobile (lg:hidden). */
+  mobileMenuButton?: ReactNode;
+  /** Dropdown panel rendered below the header bar on mobile (lg:hidden). */
+  mobileMenuPanel?: ReactNode;
+}
+
+const Header = ({ mobileMenuButton, mobileMenuPanel }: HeaderProps = {}) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -48,10 +55,13 @@ const Header = () => {
   return (
     <header className={`sticky top-0 z-50 shadow-sm ${user ? "bg-primary" : "bg-background border-b border-border"}`}>
       <div className="container flex h-16 items-center justify-between">
-        <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2" aria-label="NBA Anaocha Home">
-          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-9 w-9" />
-          <span className={`font-heading text-base font-bold tracking-tight ${user ? "text-primary-foreground" : "text-foreground"}`}>NBA ANAOCHA</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          {user && mobileMenuButton ? <div className="lg:hidden">{mobileMenuButton}</div> : null}
+          <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2" aria-label="NBA Anaocha Home">
+            <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-9 w-9" />
+            <span className={`font-heading text-base font-bold tracking-tight ${user ? "text-primary-foreground" : "text-foreground"}`}>NBA ANAOCHA</span>
+          </Link>
+        </div>
 
         <div className="flex items-center gap-4 flex-1 justify-end">
           {user ? (
@@ -91,6 +101,8 @@ const Header = () => {
           )}
         </div>
       </div>
+
+      {user && mobileMenuPanel ? <div className="lg:hidden">{mobileMenuPanel}</div> : null}
 
       {mobileOpen && !user && (
         <div className="md:hidden bg-background border-t border-border pb-4">

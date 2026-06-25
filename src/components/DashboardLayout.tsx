@@ -2,8 +2,7 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
-import { Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SidebarItem {
@@ -63,9 +62,28 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
     </>
   );
 
+  const mobileMenuButton = (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setMobileOpen((o) => !o)}
+      className="h-10 w-10 text-primary-foreground hover:bg-primary-foreground/10"
+      aria-label="Toggle menu"
+      aria-expanded={mobileOpen}
+    >
+      {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+    </Button>
+  );
+
+  const mobileMenuPanel = mobileOpen ? (
+    <div className="bg-sidebar text-sidebar-foreground border-t border-sidebar-border shadow-lg max-h-[70vh] overflow-y-auto">
+      <SidebarContent />
+    </div>
+  ) : null;
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <Header />
+      <Header mobileMenuButton={mobileMenuButton} mobileMenuPanel={mobileMenuPanel} />
       <div className="flex flex-1 min-h-0">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex w-64 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border overflow-y-auto">
@@ -74,21 +92,6 @@ const DashboardLayout = ({ children, title, sidebarItems }: DashboardLayoutProps
 
         {/* Main content */}
         <main className="flex-1 bg-muted/30 overflow-y-auto">
-          {/* Mobile menu bar */}
-          <div className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-card sticky top-0 z-40">
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10">
-                  <Menu className="h-7 w-7" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72 p-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col">
-                <SidebarContent />
-              </SheetContent>
-            </Sheet>
-            <span className="font-heading font-semibold text-sm text-foreground">{title}</span>
-          </div>
           <div className="p-6 lg:p-8 animate-fade-in">{children}</div>
         </main>
       </div>
