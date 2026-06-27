@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import heroBg from "@/assets/hero-bg.jpg";
 import nbaLogo from "@/assets/nba-logo.png";
+import barCentre from "@/assets/nba-anaocha-bar-centre.jpeg";
 import newsTraining from "@/assets/news-training.jpg";
 import newsLegal from "@/assets/news-legal.jpg";
 import newsRights from "@/assets/news-rights.jpg";
@@ -142,11 +143,11 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Image with overlapping stat card */}
             <div className="relative">
-              <div className="w-full aspect-[4/3] rounded-xl shadow-xl bg-primary flex items-center justify-center p-12">
+              <div className="w-full aspect-[4/3] rounded-xl shadow-xl overflow-hidden">
                 <img
-                  src={nbaLogo}
-                  alt="NBA Anaocha Branch crest"
-                  className="max-h-full max-w-[70%] object-contain"
+                  src={barCentre}
+                  alt="Chief Charles E. N. Obegolu Bar Centre, NBA Anaocha Branch"
+                  className="h-full w-full object-cover"
                   loading="lazy"
                 />
               </div>
@@ -256,7 +257,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Archival Resources / News */}
+      {/* Archival Resources / News — temporarily hidden */}
+      {/*
       <section id="resources" className="container py-16 md:py-24">
         <div className="flex items-end justify-between mb-10">
           <div>
@@ -300,6 +302,7 @@ const Index = () => {
           ))}
         </div>
       </section>
+      */}
 
       {/* Committee members dialog */}
       <Dialog open={!!openCommittee} onOpenChange={(open) => !open && setOpenCommittee(null)}>

@@ -34,6 +34,8 @@ const MyDues              = lazy(() => import("./pages/anaocha/MyDues.tsx"));
 const AboutBranch         = lazy(() => import("./pages/anaocha/AboutBranch.tsx"));
 const Blog                = lazy(() => import("./pages/Blog.tsx"));
 const Resources           = lazy(() => import("./pages/Resources.tsx"));
+const PrivacyPolicy       = lazy(() => import("./pages/PrivacyPolicy.tsx"));
+const TermsOfService      = lazy(() => import("./pages/TermsOfService.tsx"));
 
 // Lazy: admin
 const AdminDashboard    = lazy(() => import("./pages/admin/AdminDashboard.tsx"));
@@ -84,6 +86,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<DashboardRedirect />} />
               <Route path="/resources" element={<Resources />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
 
               {/* Auth routes */}
               <Route path="/signin" element={<SignIn />} />

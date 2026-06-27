@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Phone, Globe, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
+import { Phone, Globe, MapPin, Mail, Facebook, Instagram, Linkedin } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
 import { BRANCH_CONTACT } from "@/lib/constants";
 
@@ -90,6 +90,12 @@ const Footer = () => (
               </div>
             </li>
             <li className="flex items-start gap-3">
+              <Mail className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-primary-foreground/80">
+                <a href={`mailto:${BRANCH_CONTACT.email}`} className="hover:text-accent transition-colors">{BRANCH_CONTACT.email}</a>
+              </p>
+            </li>
+            <li className="flex items-start gap-3">
               <Globe className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
               <p className="text-sm text-primary-foreground/80">{BRANCH_CONTACT.website}</p>
             </li>
@@ -121,7 +127,10 @@ const Footer = () => (
 
       <div className="border-t border-primary-foreground/15 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/40">
         <p>© {new Date().getFullYear()} NBA Anaocha Branch. All Rights Reserved.</p>
-        <p>Promoting the Rule of Law since 2014.</p>
+        <div className="flex items-center gap-4">
+          <Link to="/privacy-policy" className="hover:text-primary-foreground transition-colors">Privacy Policy</Link>
+          <Link to="/terms-of-service" className="hover:text-primary-foreground transition-colors">Terms of Service</Link>
+        </div>
         <p>
           Built by{" "}
           <a

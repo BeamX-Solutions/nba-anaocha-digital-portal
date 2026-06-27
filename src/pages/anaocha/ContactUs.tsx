@@ -97,6 +97,12 @@ const ContactUs = () => {
                   ))}
                 </div>
                 <div>
+                  <p className="font-medium text-foreground">Email</p>
+                  <p>
+                    <a href={`mailto:${BRANCH_CONTACT.email}`} className="hover:text-foreground transition-colors">{BRANCH_CONTACT.email}</a>
+                  </p>
+                </div>
+                <div>
                   <p className="font-medium text-foreground">Website</p>
                   <p>{BRANCH_CONTACT.website}</p>
                 </div>

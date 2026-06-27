@@ -7,6 +7,7 @@ export const BRANCH_CONTACT = {
     "Anambra State, Nigeria",
   ],
   phones: ["08134012458", "07033482194"],
+  email: "secretariat@nbaanaocha.org.ng",
   website: "www.nbaanaocha.org.ng",
 } as const;
 
