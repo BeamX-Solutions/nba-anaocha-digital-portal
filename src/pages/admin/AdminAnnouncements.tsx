@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { getAdminRole } from "@/components/AdminRoute";
 
 const PORTAL_LABELS: Record<string, string> = {
   anaocha: "Anaocha",
@@ -25,8 +24,6 @@ const AdminAnnouncements = () => {
   const [editing, setEditing] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
-
-  const role = getAdminRole(user?.email?.toLowerCase() ?? "");
 
   useEffect(() => {
     load();
@@ -99,12 +96,7 @@ const AdminAnnouncements = () => {
     setForm({ ...emptyForm });
   };
 
-  const portalOptions = role === "anaocha"
-    ? [{ value: "anaocha", label: "Anaocha" }]
-    : [
-        { value: "anaocha", label: "Anaocha" },
-        { value: "both", label: "All Members" },
-      ];
+  const portalOptions = [{ value: "anaocha", label: "Anaocha" }];
 
   return (
     <AdminLayout>

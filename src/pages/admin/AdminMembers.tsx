@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Scale, ChevronDown, ChevronUp, Ban, CheckCircle, UserCheck, Shield, ShieldOff, Download } from "lucide-react";
+import { Scale, ChevronDown, ChevronUp, Ban, CheckCircle, UserCheck, Shield, Download } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -101,17 +101,6 @@ const AdminMembers = () => {
     toast({ title: newStatus === "suspended" ? "Member suspended" : "Member reinstated" });
   };
 
-  const toggleAdmin = async (m: any) => {
-    const newVal = !m.is_admin;
-    const { error } = await (supabase as any).from("profiles").update({ is_admin: newVal }).eq("id", m.id);
-    if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
-    const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || m.email || "Member";
-    if (user) logAudit(user.id, newVal ? "admin_granted" : "admin_revoked", "profile", m.id, { member_email: m.email, member_name: memberName });
-    const updated = members.map((mem) => mem.id === m.id ? { ...mem, is_admin: newVal } : mem);
-    setMembers(updated); setFiltered(updated);
-    toast({ title: newVal ? "Admin access granted" : "Admin access revoked" });
-  };
-
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -205,11 +194,6 @@ const AdminMembers = () => {
                                 : <><Ban className="h-4 w-4" /> Suspend</>}
                             </Button>
                           )}
-                          <Button size="sm" variant={m.is_admin ? "destructive" : "outline"} onClick={() => toggleAdmin(m)} className="gap-1">
-                            {m.is_admin
-                              ? <><ShieldOff className="h-3.5 w-3.5" /> Revoke Admin</>
-                              : <><Shield className="h-3.5 w-3.5" /> Grant Admin</>}
-                          </Button>
                         </div>
                       </div>
                     )}

@@ -8,11 +8,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
+import { PasswordRequirements } from "@/components/PasswordRequirements";
+import { isPasswordValid } from "@/lib/password";
 
 const SignUp = () => {
   const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +24,19 @@ const SignUp = () => {
 
   if (user) return <Navigate to="/dashboard" replace />;
 
+  const passwordOk = isPasswordValid(password);
+  const passwordsMatch = password === confirmPassword;
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!passwordOk) {
+      toast({ title: "Password too weak", description: "Please meet all the password requirements.", variant: "destructive" });
+      return;
+    }
+    if (!passwordsMatch) {
+      toast({ title: "Passwords don't match", description: "Please re-enter the same password.", variant: "destructive" });
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
@@ -90,8 +104,7 @@ const SignUp = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Min. 8 characters"
-                    minLength={8}
+                    placeholder="Create a strong password"
                     className="w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                   <button
@@ -103,8 +116,23 @@ const SignUp = () => {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                <PasswordRequirements password={password} />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <div>
+                <label className="text-sm font-medium text-foreground">Confirm Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter your password"
+                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                {confirmPassword.length > 0 && !passwordsMatch && (
+                  <p className="mt-1 text-xs text-destructive">Passwords don't match.</p>
+                )}
+              </div>
+              <Button type="submit" className="w-full" disabled={loading || !passwordOk || !passwordsMatch}>
                 {loading ? "Creating account..." : "Sign Up"}
               </Button>
             </form>

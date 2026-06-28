@@ -229,11 +229,9 @@ const ApplyForServices = () => {
     }
 
     // 4. Notify admins
-    const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "")
-      .split(",").map((e: string) => e.trim().toLowerCase()).filter(Boolean);
-    if (adminEmails.length > 0) {
+    {
       const { data: adminProfiles } = await supabase
-        .from("profiles").select("user_id").in("email", adminEmails);
+        .from("profiles").select("user_id").eq("is_admin", true);
       if (adminProfiles?.length) {
         const { data: me } = await supabase
           .from("profiles").select("first_name, surname").eq("user_id", user.id).maybeSingle();

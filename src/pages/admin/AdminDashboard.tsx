@@ -5,12 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { SERVICE_LABELS } from "@/lib/constants";
-import { useAuth } from "@/contexts/AuthContext";
-import { getAdminRole } from "@/components/AdminRoute";
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
-  const role = getAdminRole(user?.email?.toLowerCase() ?? "") ?? "super";
 
   const [stats, setStats] = useState<Record<string, number>>({});
   const [recentApplications, setRecentApplications] = useState<any[]>([]);
@@ -40,7 +36,7 @@ const AdminDashboard = () => {
       }
     };
     load();
-  }, [role]);
+  }, []);
 
   const statCards = [
     { label: "Anaocha Members", value: stats.anaochaMembers, icon: <Users className="h-6 w-6 text-primary" />, href: "/admin/members" },
@@ -56,7 +52,7 @@ const AdminDashboard = () => {
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground mt-1">
-            {role === "anaocha" ? "Overview of NBA Anaocha Branch activity." : "Overview of all portal activity."}
+            Overview of NBA Anaocha Branch activity.
           </p>
         </div>
 

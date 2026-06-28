@@ -10,8 +10,6 @@ import {
   AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "").split(",").map((e: string) => e.trim().toLowerCase());
-
 const PendingApproval = () => {
   const { signOut } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -124,7 +122,7 @@ const PendingApproval = () => {
 };
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading, profileComplete, profileStatus } = useAuth();
+  const { user, loading, profileComplete, profileStatus, isAdmin } = useAuth();
 
   if (loading || (user && profileComplete === null)) {
     return (
@@ -142,7 +140,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (profileComplete === false) return <Navigate to="/complete-profile" replace />;
 
   // Admins are always approved
-  const isAdmin = adminEmails.includes(user.email?.toLowerCase() ?? "");
   if (!isAdmin && profileStatus === "pending") return <PendingApproval />;
 
   return <>{children}</>;

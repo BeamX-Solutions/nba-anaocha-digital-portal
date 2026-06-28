@@ -5,7 +5,6 @@ import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Mail, Menu, Megaph
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { getAdminRole } from "@/components/AdminRoute";
 import nbaLogo from "@/assets/nba-logo.png";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -13,19 +12,19 @@ import {
   AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const allSidebarItems = [
-  { label: "Dashboard",         href: "/admin",                icon: <LayoutDashboard className="h-4 w-4" />, roles: ["super", "anaocha"] },
-  { label: "Anaocha Members",   href: "/admin/members",        icon: <Users className="h-4 w-4" />,          roles: ["super", "anaocha"] },
-  { label: "Applications",      href: "/admin/applications",   icon: <ClipboardList className="h-4 w-4" />,  roles: ["super", "anaocha"] },
-  { label: "Dues",              href: "/admin/dues",           icon: <Landmark className="h-4 w-4" />,       roles: ["super", "anaocha"] },
-  { label: "Contact Messages",  href: "/admin/contacts",       icon: <Mail className="h-4 w-4" />,           roles: ["super", "anaocha"] },
-  { label: "Announcements",     href: "/admin/announcements",  icon: <Megaphone className="h-4 w-4" />,      roles: ["super", "anaocha"] },
-  { label: "Resources",         href: "/admin/resources",      icon: <BookMarked className="h-4 w-4" />,     roles: ["super", "anaocha"] },
-  { label: "Leadership",        href: "/admin/leadership",     icon: <UserCircle className="h-4 w-4" />,     roles: ["super", "anaocha"] },
-  { label: "Send Notification", href: "/admin/notify",         icon: <Bell className="h-4 w-4" />,           roles: ["super", "anaocha"] },
-  { label: "Admin Roles",       href: "/admin/roles",          icon: <Shield className="h-4 w-4" />,         roles: ["super"] },
-  { label: "Reporting",         href: "/admin/reporting",      icon: <TrendingUp className="h-4 w-4" />,     roles: ["super"] },
-  { label: "Audit Logs",        href: "/admin/audit-logs",     icon: <ScrollText className="h-4 w-4" />,     roles: ["super"] },
+const sidebarItems = [
+  { label: "Dashboard",         href: "/admin",                icon: <LayoutDashboard className="h-4 w-4" /> },
+  { label: "Anaocha Members",   href: "/admin/members",        icon: <Users className="h-4 w-4" /> },
+  { label: "Applications",      href: "/admin/applications",   icon: <ClipboardList className="h-4 w-4" /> },
+  { label: "Dues",              href: "/admin/dues",           icon: <Landmark className="h-4 w-4" /> },
+  { label: "Contact Messages",  href: "/admin/contacts",       icon: <Mail className="h-4 w-4" /> },
+  { label: "Announcements",     href: "/admin/announcements",  icon: <Megaphone className="h-4 w-4" /> },
+  { label: "Resources",         href: "/admin/resources",      icon: <BookMarked className="h-4 w-4" /> },
+  { label: "Leadership",        href: "/admin/leadership",     icon: <UserCircle className="h-4 w-4" /> },
+  { label: "Send Notification", href: "/admin/notify",         icon: <Bell className="h-4 w-4" /> },
+  { label: "Admin Roles",       href: "/admin/roles",          icon: <Shield className="h-4 w-4" /> },
+  { label: "Reporting",         href: "/admin/reporting",      icon: <TrendingUp className="h-4 w-4" /> },
+  { label: "Audit Logs",        href: "/admin/audit-logs",     icon: <ScrollText className="h-4 w-4" /> },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
@@ -34,10 +33,6 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  const email = user?.email?.toLowerCase() ?? "";
-  const role = getAdminRole(email) ?? "anaocha";
-  const sidebarItems = allSidebarItems.filter((item) => item.roles.includes(role));
 
   const handleSignOutConfirm = async () => {
     await signOut();

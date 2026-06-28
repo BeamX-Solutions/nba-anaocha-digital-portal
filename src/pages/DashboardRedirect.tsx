@@ -1,9 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { getAdminRole } from "@/components/AdminRoute";
 
 const DashboardRedirect = () => {
-  const { user, loading, profileComplete } = useAuth();
+  const { user, loading, profileComplete, isAdmin } = useAuth();
 
   if (loading || (user && profileComplete === null)) {
     return (
@@ -16,8 +15,7 @@ const DashboardRedirect = () => {
   if (!user) return <Navigate to="/signin" replace />;
   if (profileComplete === false) return <Navigate to="/complete-profile" replace />;
 
-  const email = user.email?.toLowerCase() ?? "";
-  if (getAdminRole(email)) return <Navigate to="/admin" replace />;
+  if (isAdmin) return <Navigate to="/admin" replace />;
   return <Navigate to="/anaocha/dashboard" replace />;
 };
 
