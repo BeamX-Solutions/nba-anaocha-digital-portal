@@ -21,7 +21,7 @@ const FIELD_GROUPS = [
   {
     title: "Bar Details",
     fields: [
-      { key: "ban",          label: "Bar Admission Number (BAN)", verifiedLock: true },
+      { key: "scn",          label: "Supreme Court Number (SCN)", verifiedLock: true },
       { key: "year_of_call", label: "Year of Call" },
       { key: "branch",       label: "NBA Branch", locked: true },
     ],
@@ -52,7 +52,7 @@ const MyProfile = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("id, first_name, middle_name, surname, ban, year_of_call, branch, phone, office_address, avatar_url, status")
+      .select("id, first_name, middle_name, surname, scn, year_of_call, branch, phone, office_address, avatar_url, status")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
@@ -117,7 +117,7 @@ const MyProfile = () => {
     toast({ title: "Profile updated successfully." });
   };
 
-  const isBanLocked = approvalStatus === "active";
+  const isScnLocked = approvalStatus === "active";
   const initials = [profile.first_name, profile.surname]
     .filter(Boolean).map((n) => n[0]).join("").toUpperCase() || user?.email?.[0]?.toUpperCase() || "?";
 
@@ -204,7 +204,7 @@ const MyProfile = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {group.fields.map((field: any) => {
-                  const isLocked = field.verifiedLock && isBanLocked;
+                  const isLocked = field.verifiedLock && isScnLocked;
                   return (
                     <div key={field.key} className={field.multiline ? "md:col-span-2" : ""}>
                       <div className="flex items-center gap-2 mb-1.5">

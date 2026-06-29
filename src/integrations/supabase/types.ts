@@ -148,7 +148,7 @@ export type Database = {
           approved_at: string | null
           approved_by: string | null
           approver_comments: string | null
-          ban: string | null
+          scn: string | null
           content: string | null
           created_at: string
           document_type: string
@@ -170,7 +170,7 @@ export type Database = {
           approved_at?: string | null
           approved_by?: string | null
           approver_comments?: string | null
-          ban?: string | null
+          scn?: string | null
           content?: string | null
           created_at?: string
           document_type: string
@@ -192,7 +192,7 @@ export type Database = {
           approved_at?: string | null
           approved_by?: string | null
           approver_comments?: string | null
-          ban?: string | null
+          scn?: string | null
           content?: string | null
           created_at?: string
           document_type?: string

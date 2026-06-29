@@ -11,7 +11,7 @@ const profileFields = [
   { key: "surname", label: "Surname", required: true },
   { key: "first_name", label: "First Name", required: true },
   { key: "middle_name", label: "Middle Name", required: false },
-  { key: "ban", label: "BAN (Bar Admission Number)", required: true, placeholder: "e.g. 12345" },
+  { key: "scn", label: "SCN (Supreme Court Number)", required: true, placeholder: "e.g. SCN123456" },
   { key: "year_of_call", label: "Year of Call", required: false, placeholder: "e.g. 2018" },
   { key: "phone", label: "Phone Number", required: true },
   { key: "office_address", label: "Office Address", required: false, fullWidth: true },
@@ -24,7 +24,7 @@ const CompleteProfile = () => {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    surname: "", first_name: "", middle_name: "", ban: "",
+    surname: "", first_name: "", middle_name: "", scn: "",
     year_of_call: "", phone: "", office_address: "", branch: "Anaocha",
   });
 
@@ -57,7 +57,7 @@ const CompleteProfile = () => {
       surname: form.surname,
       first_name: form.first_name,
       middle_name: form.middle_name || null,
-      ban: form.ban || null,
+      scn: form.scn || null,
       year_of_call: form.year_of_call || null,
       phone: form.phone,
       office_address: form.office_address || null,
