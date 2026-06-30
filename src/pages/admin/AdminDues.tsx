@@ -14,6 +14,7 @@ type DuesItem = {
   year: number; deadline: string | null; is_tiered: boolean;
   amount_0_4: number | null; amount_5_9: number | null;
   amount_10_14: number | null; amount_15_plus: number | null;
+  amount_san: number | null;
   flat_amount: number | null; requires_upload: boolean;
   upload_label: string | null; is_active: boolean; created_at: string;
 };
@@ -23,6 +24,8 @@ type DuesPayment = {
   paid_at: string | null; receipt_url: string | null;
   profiles: { first_name: string | null; surname: string | null; email: string | null; year_of_call: string | null } | null;
 };
+
+type Member = { user_id: string; first_name: string | null; surname: string | null; email: string | null; year_of_call: string | null; rank: string | null };
 
 const formatWithCommas = (raw: string) => {
   const digits = raw.replace(/\D/g, "");
@@ -53,7 +56,7 @@ const CurrencyInput = ({ value, onChange, placeholder, className }: {
 const EMPTY_FORM = {
   title: "", description: "", category: "branch_dues", year: new Date().getFullYear(),
   deadline: "", is_tiered: true,
-  amount_0_4: "", amount_5_9: "", amount_10_14: "", amount_15_plus: "", flat_amount: "",
+  amount_0_4: "", amount_5_9: "", amount_10_14: "", amount_15_plus: "", amount_san: "", flat_amount: "",
   requires_upload: false, upload_label: "",
 };
 
@@ -67,7 +70,7 @@ const AdminDues = () => {
   const [form, setForm]           = useState({ ...EMPTY_FORM });
   const [expanded, setExpanded]   = useState<string | null>(null);
   const [compliance, setCompliance] = useState<Record<string, DuesPayment[]>>({});
-  const [members, setMembers]     = useState<{ user_id: string; first_name: string | null; surname: string | null; email: string | null; year_of_call: string | null }[]>([]);
+  const [members, setMembers]     = useState<Member[]>([]);
 
   useEffect(() => { load(); }, []);
 
@@ -75,7 +78,7 @@ const AdminDues = () => {
     setLoading(true);
     const [itemsRes, membersRes] = await Promise.all([
       supabase.from("dues_items").select("*").order("year", { ascending: false }).order("created_at"),
-      supabase.from("profiles").select("user_id, first_name, surname, email, year_of_call").eq("status", "approved"),
+      supabase.from("profiles").select("user_id, first_name, surname, email, year_of_call, rank").eq("status", "active"),
     ]);
     setItems((itemsRes.data as DuesItem[]) ?? []);
     setMembers((membersRes.data as any[]) ?? []);
@@ -117,10 +120,11 @@ const AdminDues = () => {
       payload.amount_5_9     = form.amount_5_9     ? Number(form.amount_5_9)     : null;
       payload.amount_10_14   = form.amount_10_14   ? Number(form.amount_10_14)   : null;
       payload.amount_15_plus = form.amount_15_plus ? Number(form.amount_15_plus) : null;
+      payload.amount_san     = form.amount_san     ? Number(form.amount_san)     : null;
       payload.flat_amount    = null;
     } else {
       payload.flat_amount    = form.flat_amount ? Number(form.flat_amount) : null;
-      payload.amount_0_4 = payload.amount_5_9 = payload.amount_10_14 = payload.amount_15_plus = null;
+      payload.amount_0_4 = payload.amount_5_9 = payload.amount_10_14 = payload.amount_15_plus = payload.amount_san = null;
     }
     const { error } = await supabase.from("dues_items").insert(payload);
     setSaving(false);
@@ -215,12 +219,13 @@ const AdminDues = () => {
 
               {!form.requires_upload && (
                 form.is_tiered ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     {[
                       { key: "amount_0_4",     label: "0–4 yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_0_4.toLocaleString("en-NG")}` },
                       { key: "amount_5_9",     label: "5–9 yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_5_9.toLocaleString("en-NG")}` },
                       { key: "amount_10_14",   label: "10–14 yrs (₦)", hint: `BPF: ₦${BPF_TIERS.amount_10_14.toLocaleString("en-NG")}` },
                       { key: "amount_15_plus", label: "15+ yrs (₦)",   hint: `BPF: ₦${BPF_TIERS.amount_15_plus.toLocaleString("en-NG")}` },
+                      { key: "amount_san",     label: "SAN / Bencher (₦)", hint: `BPF: ₦${BPF_TIERS.amount_san.toLocaleString("en-NG")}` },
                     ].map(({ key, label, hint }) => (
                       <div key={key}>
                         <label className="text-sm font-medium text-foreground">{label}</label>
@@ -351,7 +356,7 @@ const AdminDues = () => {
                             <tbody className="divide-y divide-border">
                               {members.map(member => {
                                 const p = (compliance[item.id] ?? []).find(cp => cp.user_id === member.user_id);
-                                const memberAmount = getDueAmount(item, member.year_of_call);
+                                const memberAmount = getDueAmount(item, member.year_of_call, member.rank);
                                 const status = p?.status ?? "pending";
                                 return (
                                   <tr key={member.user_id} className="hover:bg-muted/20">

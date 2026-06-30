@@ -85,11 +85,19 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground font-body;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+  }
+  /* Anchored sections stop below the sticky 4rem (h-16) header instead of
+     hiding their heading underneath it. */
+  section[id] {
+    scroll-margin-top: 4rem;
   }
 }
 
@@ -113,6 +121,21 @@
   }
   .card-hover:hover {
     @apply -translate-y-1 shadow-lg;
+  }
+  /* Animated underline that grows from the left on hover */
+  .nav-link {
+    @apply relative;
+  }
+  .nav-link::after {
+    content: "";
+    @apply absolute left-0 -bottom-1 h-0.5 w-0 rounded-full bg-current transition-all duration-300 ease-out;
+  }
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+  /* Subtle zoom for avatars / images (pair with `group-hover:scale-105`) */
+  .hover-zoom {
+    @apply transition-transform duration-300 ease-out;
   }
 }
 

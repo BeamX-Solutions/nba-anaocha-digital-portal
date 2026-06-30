@@ -33,12 +33,22 @@ export const DUES_CATEGORY_LABELS: Record<string, string> = {
   levy:           "Special Levy",
 };
 
-// BPF tiers by years of call (2026 NBA national rates)
+// Practice-fee (BPF) tiers — 2026 NBA national rates. SANs and Honourable
+// Benchers pay the top rate regardless of years of call.
 export const BPF_TIERS = {
   amount_0_4:     5000,
   amount_5_9:     10000,
   amount_10_14:   17500,
   amount_15_plus: 25000,
+  amount_san:     50000,
+};
+
+// Member seniority ranks. SAN / Bencher is admin-set and overrides the
+// year-of-call tier for tiered dues.
+export const RANK_LABELS: Record<string, string> = {
+  regular: "Regular",
+  san:     "Senior Advocate (SAN)",
+  bencher: "Honourable Bencher",
 };
 
 export function getYearsOfCall(yearOfCall: string | null | undefined): number {
@@ -49,10 +59,15 @@ export function getYearsOfCall(yearOfCall: string | null | undefined): number {
 }
 
 export function getDueAmount(
-  item: { is_tiered: boolean; amount_0_4: number | null; amount_5_9: number | null; amount_10_14: number | null; amount_15_plus: number | null; flat_amount: number | null },
-  yearOfCall: string | null | undefined
+  item: { is_tiered: boolean; amount_0_4: number | null; amount_5_9: number | null; amount_10_14: number | null; amount_15_plus: number | null; amount_san: number | null; flat_amount: number | null },
+  yearOfCall: string | null | undefined,
+  rank?: string | null
 ): number {
   if (!item.is_tiered) return Number(item.flat_amount ?? 0);
+  // SANs and Honourable Benchers pay the top tier when one is set on the item.
+  if ((rank === "san" || rank === "bencher") && item.amount_san != null) {
+    return Number(item.amount_san);
+  }
   const years = getYearsOfCall(yearOfCall);
   if (years < 5)  return Number(item.amount_0_4     ?? 0);
   if (years < 10) return Number(item.amount_5_9     ?? 0);
@@ -63,19 +78,11 @@ export function getDueAmount(
 export const SERVICE_LABELS: Record<string, string> = {
   nba_diary:                 "NBA Diary",
   nba_id_card:               "NBA ID Card",
-  apc:                       "Annual Practicing Certificate",
-  letter_of_good_standing:   "Letter of Good Standing",
-  stamp_seal:                "Stamp & Seal",
-  title_document_front_page: "Title Document Front Page",
   nba_vehicle_plate:         "NBA Vehicle Customized Plate Number",
 };
 
 export const SERVICE_FEES: Record<string, number> = {
-  nba_diary:                 5000,
-  nba_id_card:               3000,
-  apc:                       5000,
-  letter_of_good_standing:   3000,
-  stamp_seal:                10000,
-  title_document_front_page: 5000,
-  nba_vehicle_plate:         10000,
+  nba_diary:                 6000,
+  nba_id_card:               5000,
+  nba_vehicle_plate:         230000,
 };

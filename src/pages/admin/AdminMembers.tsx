@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAudit } from "@/lib/auditLog";
+import { RANK_LABELS } from "@/lib/constants";
 
 const AdminMembers = () => {
   const { user } = useAuth();
@@ -79,6 +80,16 @@ const AdminMembers = () => {
     const updated = members.map((mem) => mem.id === m.id ? { ...mem, status: "active" } : mem);
     setMembers(updated); setFiltered(updated);
     toast({ title: "Account approved", description: `${memberName} can now access the portal.` });
+  };
+
+  const setMemberRank = async (m: any, rank: string) => {
+    const { error } = await (supabase as any).from("profiles").update({ rank }).eq("id", m.id);
+    if (error) { toast({ title: "Failed to update seniority", description: error.message, variant: "destructive" }); return; }
+    const updated = members.map((mem) => mem.id === m.id ? { ...mem, rank } : mem);
+    setMembers(updated); setFiltered(updated);
+    const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
+    if (user) logAudit(user.id, "member_rank_updated", "profile", m.id, { rank, member_email: m.email });
+    toast({ title: "Seniority updated", description: `${memberName} set to ${RANK_LABELS[rank] ?? rank}.` });
   };
 
   const toggleSuspend = async (m: any) => {
@@ -164,6 +175,7 @@ const AdminMembers = () => {
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
                           {m.is_admin    && <Badge className="bg-accent/20 text-accent border border-accent/40 text-[10px]">Admin</Badge>}
+                          {m.rank && m.rank !== "regular" && <Badge className="bg-primary/10 text-primary border border-primary/30 text-[10px]">{m.rank === "san" ? "SAN" : "Bencher"}</Badge>}
                           {m.status === "pending"   && <Badge className="bg-amber-100 text-amber-700 border-amber-300">Pending</Badge>}
                           {m.status === "suspended" && <Badge variant="destructive">Suspended</Badge>}
                           <p className="text-xs text-muted-foreground ml-auto">
@@ -181,6 +193,17 @@ const AdminMembers = () => {
                           <div><span className="text-muted-foreground">SCN:</span> {m.scn || "-"}</div>
                           <div><span className="text-muted-foreground">Phone:</span> {m.phone || "-"}</div>
                           <div><span className="text-muted-foreground">Office:</span> {m.office_address || "-"}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">Seniority:</span>
+                          <select
+                            value={m.rank || "regular"}
+                            onChange={(e) => setMemberRank(m, e.target.value)}
+                            className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                          >
+                            {Object.entries(RANK_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                          </select>
+                          <span className="text-xs text-muted-foreground">Determines tiered dues (e.g. Welfare Levy).</span>
                         </div>
                         <div className="flex flex-wrap gap-2 pt-1">
                           {m.status === "pending" ? (

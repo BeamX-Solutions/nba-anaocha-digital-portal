@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Mail, Menu, Megaphone, BookMarked, Shield, ScrollText, TrendingUp, Landmark, UserCircle } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Mail, Menu, Megaphone, BookMarked, Shield, ScrollText, TrendingUp, Landmark, UserCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -68,7 +68,15 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-primary-foreground/20">
+      <div className="p-4 border-t border-primary-foreground/20 space-y-1">
+        <Link
+          to="/anaocha/dashboard"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Portal
+        </Link>
         <Button
           variant="ghost"
           size="sm"

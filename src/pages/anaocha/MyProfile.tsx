@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { RANK_LABELS } from "@/lib/constants";
 
 const FIELD_GROUPS = [
   {
@@ -47,12 +48,13 @@ const MyProfile = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [approvalStatus, setApprovalStatus] = useState<string>("");
+  const [rank, setRank] = useState<string>("regular");
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("id, first_name, middle_name, surname, scn, year_of_call, branch, phone, office_address, avatar_url, status")
+      .select("id, first_name, middle_name, surname, scn, year_of_call, branch, phone, office_address, avatar_url, status, rank")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
@@ -60,7 +62,10 @@ const MyProfile = () => {
           setProfileId(data.id);
           setApprovalStatus((data as any).status ?? "");
           setAvatarUrl((data as any).avatar_url ?? null);
-          const { id, avatar_url, status, ...rest } = data as any;
+          setRank((data as any).rank ?? "regular");
+          // `rank` is admin-managed — keep it out of the editable profile so a
+          // member's Save never tries to change it (the DB trigger would reject it).
+          const { id, avatar_url, status, rank, ...rest } = data as any;
           setProfile(Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, (v as any) ?? ""])));
         }
         setLoading(false);
@@ -242,6 +247,19 @@ const MyProfile = () => {
             </CardContent>
           </Card>
         ))}
+
+        {/* Seniority (read-only, admin-managed) — only shown for SAN / Benchers */}
+        {rank !== "regular" && (
+          <Card className="shadow-card">
+            <CardContent className="p-6 space-y-2">
+              <h3 className="text-sm font-semibold text-foreground pb-2 border-b border-border">Seniority</h3>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/10 text-primary border border-primary/30">{RANK_LABELS[rank] ?? rank}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">Set by the branch secretariat. Determines your tiered dues, such as the Welfare Levy.</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Email (read-only) */}
         <Card className="shadow-card">

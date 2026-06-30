@@ -28,6 +28,7 @@ type DuesItem = {
   year: number; deadline: string | null; is_tiered: boolean;
   amount_0_4: number | null; amount_5_9: number | null;
   amount_10_14: number | null; amount_15_plus: number | null;
+  amount_san: number | null;
   flat_amount: number | null; requires_upload: boolean; upload_label: string | null;
 };
 
@@ -47,7 +48,7 @@ const MyDues = () => {
   const { toast } = useToast();
   const [items, setItems]       = useState<DuesItem[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [profile, setProfile]   = useState<{ year_of_call: string | null } | null>(null);
+  const [profile, setProfile]   = useState<{ year_of_call: string | null; rank: string | null } | null>(null);
   const [loading, setLoading]   = useState(true);
   const [paying, setPaying]     = useState<string | null>(null); // dues_item_id being paid
   const [uploading, setUploading] = useState<string | null>(null);
@@ -61,7 +62,7 @@ const MyDues = () => {
     const [itemsRes, paymentsRes, profileRes] = await Promise.all([
       supabase.from("dues_items").select("*").eq("is_active", true).order("year", { ascending: false }).order("created_at"),
       supabase.from("dues_payments").select("dues_item_id, amount, status, reference, receipt_url, paid_at").eq("user_id", user.id),
-      supabase.from("profiles").select("year_of_call").eq("user_id", user.id).maybeSingle(),
+      supabase.from("profiles").select("year_of_call, rank").eq("user_id", user.id).maybeSingle(),
     ]);
     setItems((itemsRes.data as DuesItem[]) ?? []);
     setPayments((paymentsRes.data as Payment[]) ?? []);
@@ -73,7 +74,7 @@ const MyDues = () => {
 
   const handlePay = async (item: DuesItem) => {
     if (!user) return;
-    const amount = getDueAmount(item, profile?.year_of_call);
+    const amount = getDueAmount(item, profile?.year_of_call, profile?.rank);
     if (!amount) {
       toast({ title: "Amount unavailable", description: "Your year of call is not set. Please update your profile.", variant: "destructive" });
       return;
@@ -204,7 +205,7 @@ const MyDues = () => {
                     const status    = payment?.status ?? "pending";
                     const cfg       = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.pending;
                     const Icon      = cfg.icon;
-                    const amount    = getDueAmount(item, profile?.year_of_call);
+                    const amount    = getDueAmount(item, profile?.year_of_call, profile?.rank);
                     const isPaying  = paying === item.id;
                     const isUploading = uploading === item.id;
                     const done      = status === "paid" || status === "uploaded";

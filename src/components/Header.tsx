@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, ArrowLeft } from "lucide-react";
+import { Menu, X, ArrowLeft, Shield } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import NotificationBell from "@/components/NotificationBell";
@@ -9,6 +9,7 @@ import nbaLogo from "@/assets/nba-logo.png";
 
 const navLinks = [
   { label: "About", to: "/#about" },
+  { label: "Executives", to: "/#executives" },
   { label: "Committees", to: "/#committees" },
 ];
 
@@ -23,7 +24,7 @@ interface HeaderProps {
 
 const Header = ({ mobileMenuButton, mobileMenuPanel }: HeaderProps = {}) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthPage = authPaths.includes(location.pathname);
@@ -67,6 +68,16 @@ const Header = ({ mobileMenuButton, mobileMenuPanel }: HeaderProps = {}) => {
           {user ? (
             <>
               <HeaderSearch />
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary-foreground/10 px-2.5 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary-foreground/20 transition-colors"
+                  aria-label="Admin Dashboard"
+                >
+                  <Shield className="h-4 w-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Link>
+              )}
               <NotificationBell viewAllHref="/anaocha/notifications" />
               <ProfileDropdown />
             </>
@@ -77,7 +88,7 @@ const Header = ({ mobileMenuButton, mobileMenuPanel }: HeaderProps = {}) => {
                   <a
                     key={link.to}
                     href={link.to}
-                    className="text-xs font-semibold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+                    className="nav-link text-xs font-semibold tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </a>

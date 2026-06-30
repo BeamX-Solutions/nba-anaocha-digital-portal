@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 const DashboardRedirect = () => {
-  const { user, loading, profileComplete, isAdmin } = useAuth();
+  const { user, loading, profileComplete } = useAuth();
 
   if (loading || (user && profileComplete === null)) {
     return (
@@ -15,7 +15,8 @@ const DashboardRedirect = () => {
   if (!user) return <Navigate to="/signin" replace />;
   if (profileComplete === false) return <Navigate to="/complete-profile" replace />;
 
-  if (isAdmin) return <Navigate to="/admin" replace />;
+  // Everyone — admins included — lands on the member dashboard. Admins reach
+  // the admin panel via the header pill / profile-menu link.
   return <Navigate to="/anaocha/dashboard" replace />;
 };
 

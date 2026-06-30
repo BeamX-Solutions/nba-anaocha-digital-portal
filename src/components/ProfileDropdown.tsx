@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { User, Settings, LogOut, ChevronDown, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -14,7 +14,7 @@ const ProfileDropdown = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -88,6 +88,19 @@ const ProfileDropdown = () => {
               <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
           </div>
+
+          {isAdmin && (
+            <div className="py-1 border-b border-border">
+              <Link
+                to="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-accent hover:bg-accent/10 transition-colors"
+              >
+                <Shield className="h-4 w-4" />
+                Admin Dashboard
+              </Link>
+            </div>
+          )}
 
           <div className="py-1">
             <Link

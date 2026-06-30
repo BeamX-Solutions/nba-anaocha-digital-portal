@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, Loader2, FileText, BookOpen, CreditCard, Stamp, ScrollText, ChevronRight, CheckCircle2, BadgeCheck, Car } from "lucide-react";
+import { Upload, X, Loader2, FileText, BookOpen, CreditCard, ChevronRight, CheckCircle2, BadgeCheck, Car } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,56 +70,6 @@ const services: ServiceConfig[] = [
     ],
     action: "Apply Now",
     serviceType: "nba_id_card",
-  },
-  {
-    title: "Annual Practicing Certificate",
-    description: "Apply for your Annual Practicing Certificate (APC). Upload your Bar Practicing Fee and branch dues receipts to proceed.",
-    icon: <FileText className="h-6 w-6" />,
-    color: "text-amber-600 bg-amber-50 border-amber-100",
-    textFields: [
-      { key: "year", label: "Practicing Year", required: true },
-    ],
-    fileFields: [
-      { key: "bpf_receipt",         label: "Bar Practicing Fee (BPF) Receipt", accept: "image/*,.pdf" },
-      { key: "branch_dues_receipt", label: "Branch Dues Receipt",               accept: "image/*,.pdf" },
-    ],
-    action: "Apply Now",
-    serviceType: "apc",
-  },
-  {
-    title: "Letter of Good Standing",
-    description: "Request an official letter confirming your good standing as a member of the NBA Anaocha Branch.",
-    icon: <BadgeCheck className="h-6 w-6" />,
-    color: "text-green-600 bg-green-50 border-green-100",
-    textFields: [
-      { key: "purpose", label: "Purpose / Addressed To", required: true },
-    ],
-    fileFields: [],
-    action: "Apply Now",
-    serviceType: "letter_of_good_standing",
-  },
-  {
-    title: "Stamp & Seal",
-    description: "Request your official NBA Stamp & Seal. Upload your practicing fee and branch dues receipts to proceed.",
-    icon: <Stamp className="h-6 w-6" />,
-    color: "text-accent bg-accent/5 border-accent/10",
-    textFields: [],
-    fileFields: [
-      { key: "practicing_fee_receipt", label: "Practicing Fee Receipt", accept: "image/*,.pdf" },
-      { key: "branch_dues_receipt",    label: "Branch Dues Receipt",    accept: "image/*,.pdf" },
-    ],
-    action: "Apply Now",
-    serviceType: "stamp_seal",
-  },
-  {
-    title: "Title Document Front Page",
-    description: "Apply for the NBA-endorsed front page for your title documents.",
-    icon: <ScrollText className="h-6 w-6" />,
-    color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    textFields: [],
-    fileFields: [],
-    action: "Apply Now",
-    serviceType: "title_document_front_page",
   },
   {
     title: "NBA Vehicle Customized Plate Number",

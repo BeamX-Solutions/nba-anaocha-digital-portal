@@ -26,7 +26,7 @@ interface Person {
 }
 
 const PersonAvatar = ({ person, size }: { person: Person; size: string }) => (
-  <div className={`${size} mx-auto rounded-full overflow-hidden border-4 border-muted bg-muted flex items-center justify-center`}>
+  <div className={`${size} hover-zoom mx-auto rounded-full overflow-hidden border-4 border-muted bg-muted flex items-center justify-center group-hover:scale-105 group-hover:border-primary/40`}>
     {person.photo_url ? (
       <img src={person.photo_url} alt={person.name} className="h-full w-full object-cover" loading="lazy" />
     ) : (
@@ -123,13 +123,13 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               to="/signin"
-              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-md hover:bg-primary/90 transition-colors text-sm"
+              className="group inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-md hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 ease-out text-sm"
             >
-              Access Portal <ArrowRight className="h-4 w-4" />
+              Access Portal <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <a
               href="#about"
-              className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold px-6 py-3 rounded-md hover:bg-white/10 transition-colors text-sm"
+              className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold px-6 py-3 rounded-md hover:bg-white/10 hover:border-white/70 hover:-translate-y-0.5 transition-all duration-300 ease-out text-sm"
             >
               Learn More
             </a>
@@ -151,10 +151,10 @@ const Index = () => {
                   loading="lazy"
                 />
               </div>
-              <div className="absolute bottom-6 left-6 bg-background border border-border rounded-xl shadow-lg p-5 max-w-[180px]">
-                <p className="font-heading text-3xl font-bold text-primary">2014</p>
-                <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mt-1">Founded in Anaocha</p>
-                <p className="text-xs text-muted-foreground mt-2 leading-snug">Established with a vision for legal excellence and professional camaraderie.</p>
+              <div className="absolute bottom-3 left-3 md:bottom-6 md:left-6 bg-background border border-border rounded-xl shadow-lg p-3 md:p-5 max-w-[120px] md:max-w-[180px]">
+                <p className="font-heading text-xl md:text-3xl font-bold text-primary">2014</p>
+                <p className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-muted-foreground mt-0.5 md:mt-1">Founded in Anaocha</p>
+                <p className="hidden md:block text-xs text-muted-foreground mt-2 leading-snug">Established with a vision for legal excellence and professional camaraderie.</p>
               </div>
             </div>
 
@@ -202,9 +202,9 @@ const Index = () => {
               <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-background to-transparent" />
               <div className="flex w-max gap-8 animate-marquee group-hover:[animation-play-state:paused] px-4">
                 {[...executives, ...executives].map((p, i) => (
-                  <div key={`${p.id}-${i}`} className="shrink-0 w-44 text-center">
+                  <div key={`${p.id}-${i}`} className="group shrink-0 w-44 text-center">
                     <PersonAvatar person={p} size="h-40 w-40" />
-                    <p className="font-heading font-semibold text-sm text-foreground mt-4">{p.name}</p>
+                    <p className="font-heading font-semibold text-sm text-foreground mt-4 transition-colors group-hover:text-primary">{p.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>
                   </div>
                 ))}
@@ -215,9 +215,9 @@ const Index = () => {
             <div className="container">
               <div className="flex flex-wrap justify-center gap-x-12 gap-y-10">
                 {executives.map((p) => (
-                  <div key={p.id} className="w-44 text-center">
+                  <div key={p.id} className="group w-44 text-center">
                     <PersonAvatar person={p} size="h-40 w-40" />
-                    <p className="font-heading font-semibold text-sm text-foreground mt-4">{p.name}</p>
+                    <p className="font-heading font-semibold text-sm text-foreground mt-4 transition-colors group-hover:text-primary">{p.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>
                   </div>
                 ))}
@@ -242,13 +242,14 @@ const Index = () => {
                   type="button"
                   key={c.name}
                   onClick={() => setOpenCommittee(c.name)}
-                  className="text-left rounded-xl p-5 border bg-background border-border hover:border-primary/30 hover:shadow-md transition-all"
+                  className="group text-left rounded-xl p-5 border bg-background border-border hover:border-primary/30 hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-out"
                 >
-                  <div className="mb-3 text-muted-foreground">{c.icon}</div>
+                  <div className="mb-3 text-muted-foreground transition-colors duration-300 group-hover:text-primary">{c.icon}</div>
                   <p className="font-heading font-semibold text-sm mb-1.5 text-foreground">{c.name}</p>
                   <p className="text-xs leading-relaxed text-muted-foreground">{c.desc}</p>
-                  <p className="mt-3 text-[11px] font-semibold text-primary">
+                  <p className="mt-3 text-[11px] font-semibold text-primary inline-flex items-center gap-1">
                     {count > 0 ? `View ${count} member${count > 1 ? "s" : ""}` : "View committee"}
+                    <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </p>
                 </button>
               );
@@ -324,9 +325,9 @@ const Index = () => {
             return (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 py-2">
                 {members.map((m) => (
-                  <div key={m.id} className="text-center">
+                  <div key={m.id} className="group text-center">
                     <PersonAvatar person={m} size="h-28 w-28" />
-                    <p className="font-heading font-semibold text-sm text-foreground mt-3">{m.name}</p>
+                    <p className="font-heading font-semibold text-sm text-foreground mt-3 transition-colors group-hover:text-primary">{m.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{m.position}</p>
                   </div>
                 ))}
