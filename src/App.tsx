@@ -32,7 +32,6 @@ const Notifications       = lazy(() => import("./pages/anaocha/Notifications.tsx
 const AnaochaPayments     = lazy(() => import("./pages/anaocha/AnaochaPayments.tsx"));
 const MyDues              = lazy(() => import("./pages/anaocha/MyDues.tsx"));
 const AboutBranch         = lazy(() => import("./pages/anaocha/AboutBranch.tsx"));
-const Blog                = lazy(() => import("./pages/Blog.tsx"));
 const Resources           = lazy(() => import("./pages/Resources.tsx"));
 const PrivacyPolicy       = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsOfService      = lazy(() => import("./pages/TermsOfService.tsx"));
@@ -48,7 +47,6 @@ const AdminResources    = lazy(() => import("./pages/admin/AdminResources.tsx"))
 const AdminLeadership   = lazy(() => import("./pages/admin/AdminLeadership.tsx"));
 const AdminAuditLogs    = lazy(() => import("./pages/admin/AdminAuditLogs.tsx"));
 const AdminDues         = lazy(() => import("./pages/admin/AdminDues.tsx"));
-const AdminRoles        = lazy(() => import("./pages/admin/AdminRoles.tsx"));
 const AdminReporting    = lazy(() => import("./pages/admin/AdminReporting.tsx"));
 
 const ScrollToTop = () => {
@@ -108,7 +106,6 @@ const App = () => (
               <Route path="/anaocha/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
               <Route path="/anaocha/contact" element={<ContactUs />} />
               <Route path="/anaocha/about" element={<ProtectedRoute><AboutBranch /></ProtectedRoute>} />
-              <Route path="/blog" element={<Blog />} />
 
               {/* Admin Module */}
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -121,7 +118,6 @@ const App = () => (
               <Route path="/admin/leadership" element={<AdminRoute><AdminLeadership /></AdminRoute>} />
               <Route path="/admin/dues"       element={<AdminRoute><AdminDues /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
-              <Route path="/admin/roles" element={<AdminRoute><AdminRoles /></AdminRoute>} />
               <Route path="/admin/reporting" element={<AdminRoute><AdminReporting /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />

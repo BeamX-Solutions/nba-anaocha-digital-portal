@@ -1,4 +1,4 @@
-import { FileText, BookOpen, CreditCard, Users, Phone, Home, BookMarked, Scale, Newspaper, Landmark } from "lucide-react";
+import { FileText, BookOpen, CreditCard, Users, Phone, Home, BookMarked, Scale, Landmark } from "lucide-react";
 
 export const anaochaSidebarItems = [
   { label: "Dashboard",             href: "/anaocha/dashboard",    icon: <Home className="h-4 w-4" /> },
@@ -7,7 +7,6 @@ export const anaochaSidebarItems = [
   { label: "My Dues",              href: "/anaocha/dues",         icon: <Landmark className="h-4 w-4" /> },
   { label: "Payment History",      href: "/anaocha/payments",     icon: <CreditCard className="h-4 w-4" /> },
   { label: "Find a Member",        href: "/anaocha/members",      icon: <Users className="h-4 w-4" /> },
-  { label: "Blog",                 href: "/blog",                 icon: <Newspaper className="h-4 w-4" /> },
   { label: "Resources",            href: "/resources",            icon: <BookMarked className="h-4 w-4" /> },
   { label: "Contact Us",           href: "/anaocha/contact",      icon: <Phone className="h-4 w-4" /> },
   {

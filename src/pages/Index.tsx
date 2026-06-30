@@ -198,7 +198,6 @@ const Index = () => {
               <div>
                 <p className="text-xs font-bold tracking-[0.25em] uppercase text-accent mb-2">Grand Patron &amp; Founder</p>
                 <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground">{patron.name}</h2>
-                <p className="text-muted-foreground mt-1">{patron.position}</p>
                 <p className="text-sm text-muted-foreground mt-4 leading-relaxed max-w-xl">
                   The visionary whose dedication founded the NBA Anaocha Branch and whose legacy continues to guide the Family Bar.
                 </p>

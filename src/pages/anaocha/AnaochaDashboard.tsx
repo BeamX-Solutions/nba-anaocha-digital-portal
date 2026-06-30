@@ -21,7 +21,7 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> = 
 };
 
 const quickActions = [
-  { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-5 w-5" />, desc: "APC, Good Standing, ID Card, Stamp & Seal" },
+  { label: "Apply for Services", href: "/anaocha/apply", icon: <FileText className="h-5 w-5" />, desc: "Diary, ID Card & Plate Number" },
   { label: "Find a Member", href: "/anaocha/members", icon: <Users className="h-5 w-5" />, desc: "Search the member directory" },
   { label: "Notifications", href: "/anaocha/notifications", icon: <Bell className="h-5 w-5" />, desc: "View all your alerts" },
   { label: "Contact Us", href: "/anaocha/contact", icon: <Phone className="h-5 w-5" />, desc: "Reach the secretariat" },
