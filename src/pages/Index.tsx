@@ -20,7 +20,7 @@ interface Person {
   id: string;
   name: string;
   position: string;
-  category: "executive" | "committee";
+  category: "executive" | "committee" | "patron";
   committee: string | null;
   photo_url: string | null;
 }
@@ -88,6 +88,7 @@ const Index = () => {
       .then(({ data }: { data: Person[] | null }) => setPeople(data || []));
   }, []);
 
+  const patron = people.find((p) => p.category === "patron");
   const executives = people.filter((p) => p.category === "executive");
   const membersFor = (committee: string) =>
     people.filter((p) => p.category === "committee" && p.committee === committee);
@@ -185,6 +186,27 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Grand Patron / Founder */}
+      {patron && (
+        <section className="py-12 md:py-16 bg-muted/30 border-y border-border">
+          <div className="container">
+            <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-4xl mx-auto text-center md:text-left">
+              <div className="group shrink-0">
+                <PersonAvatar person={patron} size="h-48 w-48 md:h-56 md:w-56" />
+              </div>
+              <div>
+                <p className="text-xs font-bold tracking-[0.25em] uppercase text-accent mb-2">Grand Patron &amp; Founder</p>
+                <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground">{patron.name}</h2>
+                <p className="text-muted-foreground mt-1">{patron.position}</p>
+                <p className="text-sm text-muted-foreground mt-4 leading-relaxed max-w-xl">
+                  The visionary whose dedication founded the NBA Anaocha Branch and whose legacy continues to guide the Family Bar.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Branch Executives */}
       {executives.length > 0 && (

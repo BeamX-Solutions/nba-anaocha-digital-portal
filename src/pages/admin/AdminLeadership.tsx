@@ -14,6 +14,7 @@ const db = supabase as any;
 const CATEGORIES = [
   { value: "executive", label: "Branch Executive" },
   { value: "committee", label: "Committee Member" },
+  { value: "patron",    label: "Grand Patron / Founder" },
 ];
 
 const emptyForm = {
@@ -207,8 +208,8 @@ const AdminLeadership = () => {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-semibold text-sm text-card-foreground truncate">{p.name}</p>
-                        <Badge variant={p.category === "executive" ? "default" : "secondary"}>
-                          {p.category === "executive" ? "Executive" : (p.committee || "Committee")}
+                        <Badge variant={p.category === "committee" ? "secondary" : "default"}>
+                          {p.category === "executive" ? "Executive" : p.category === "patron" ? "Grand Patron" : (p.committee || "Committee")}
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, X, Loader2, FileText, BookOpen, CreditCard, ChevronRight, CheckCircle2, BadgeCheck, Car } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -98,7 +98,14 @@ const ApplyForServices = () => {
   const [submitting, setSubmitting]   = useState(false);
   const [submitted, setSubmitted]     = useState(false);
   const [paying, setPaying]           = useState(false);
+  const [lbian, setLbian]             = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("lbian").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => setLbian((data as any)?.lbian ?? null));
+  }, [user]);
 
   const openModal = (service: ServiceConfig) => {
     setOpenService(service);
@@ -149,7 +156,7 @@ const ApplyForServices = () => {
       .insert({
         user_id:           user.id,
         service_type:      openService.serviceType,
-        form_data:         formData as any,
+        form_data:         (openService.serviceType === "nba_vehicle_plate" ? { ...formData, lbian } : formData) as any,
         file_urls:         fileUrls,
         payment_reference: reference,
         payment_status:    reference ? "paid" : "not_required",
@@ -337,6 +344,17 @@ const ApplyForServices = () => {
 
               {openService && (
                 <div className="space-y-5 mt-2">
+                  {/* LBIAN reference (plate service only) */}
+                  {openService.serviceType === "nba_vehicle_plate" && (
+                    <div>
+                      <label className="text-sm font-medium text-foreground">Your LBIAN (for reference)</label>
+                      <div className="mt-1.5 w-full rounded-md border border-border/40 bg-muted/40 px-3 py-2 text-sm font-semibold tracking-wide text-foreground">
+                        {lbian || <span className="italic font-normal text-muted-foreground">Issued once your membership is approved</span>}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">The branch number your customized plate will be tied to.</p>
+                    </div>
+                  )}
+
                   {/* Text fields */}
                   {openService.textFields.map((field) => (
                     <div key={field.key}>

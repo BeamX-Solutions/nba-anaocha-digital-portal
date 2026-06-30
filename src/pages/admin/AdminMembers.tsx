@@ -49,9 +49,10 @@ const AdminMembers = () => {
 
   const handleExportCSV = () => {
     const rows = [
-      ["Name", "Email", "SCN", "Year of Call", "Phone", "Status", "Joined"],
+      ["Name", "LBIAN", "Email", "SCN", "Year of Call", "Phone", "Status", "Joined"],
       ...members.map((m) => [
         [m.surname, m.first_name, m.middle_name].filter(Boolean).join(" ") || "-",
+        m.lbian || "-",
         m.email || "-", m.scn || "-",
         m.year_of_call || "-", m.phone || "-", m.status || "-",
         new Date(m.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }),
@@ -66,7 +67,8 @@ const AdminMembers = () => {
   };
 
   const approveAccount = async (m: any) => {
-    const { error } = await supabase.from("profiles").update({ status: "active" }).eq("id", m.id);
+    // The DB trigger assigns the LBIAN on this status change; read it back.
+    const { data, error } = await supabase.from("profiles").update({ status: "active" }).eq("id", m.id).select("lbian").single();
     if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
     const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
     await supabase.from("notifications").insert({
@@ -76,10 +78,10 @@ const AdminMembers = () => {
       type: "account",
     });
     if (m.email) await supabase.functions.invoke("send-email", { body: { type: "account_approved", to: m.email, name: memberName } });
-    if (user) logAudit(user.id, "member_approved", "profile", m.id, { member_email: m.email, member_name: memberName });
-    const updated = members.map((mem) => mem.id === m.id ? { ...mem, status: "active" } : mem);
+    if (user) logAudit(user.id, "member_approved", "profile", m.id, { member_email: m.email, member_name: memberName, lbian: data?.lbian });
+    const updated = members.map((mem) => mem.id === m.id ? { ...mem, status: "active", lbian: data?.lbian ?? mem.lbian } : mem);
     setMembers(updated); setFiltered(updated);
-    toast({ title: "Account approved", description: `${memberName} can now access the portal.` });
+    toast({ title: "Account approved", description: data?.lbian ? `${memberName} approved · LBIAN ${data.lbian}` : `${memberName} can now access the portal.` });
   };
 
   const setMemberRank = async (m: any, rank: string) => {
@@ -189,6 +191,7 @@ const AdminMembers = () => {
                     {isExpanded && (
                       <div className="mt-4 border-t pt-4 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                          <div><span className="text-muted-foreground">LBIAN:</span> {m.lbian || <span className="italic text-muted-foreground/70">issued on approval</span>}</div>
                           <div><span className="text-muted-foreground">Year of Call:</span> {m.year_of_call || "-"}</div>
                           <div><span className="text-muted-foreground">SCN:</span> {m.scn || "-"}</div>
                           <div><span className="text-muted-foreground">Phone:</span> {m.phone || "-"}</div>

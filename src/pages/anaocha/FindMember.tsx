@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Scale, Users, MapPin, Calendar, Phone, X } from "lucide-react";
+import { Search, Scale, Users, MapPin, Calendar, Phone, X, Hash } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,8 @@ interface MemberResult {
   phone: string | null;
   email: string | null;
   avatar_url: string | null;
+  lbian: string | null;
+  lbian_public: boolean | null;
   show_phone: boolean | null;
   show_email: boolean | null;
   show_office_address: boolean | null;
@@ -44,7 +46,7 @@ const FindMember = () => {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, first_name, surname, middle_name, year_of_call, office_address, branch, phone, email, avatar_url, show_phone, show_email, show_office_address")
+      .select("id, first_name, surname, middle_name, year_of_call, office_address, branch, phone, email, avatar_url, lbian, lbian_public, show_phone, show_email, show_office_address")
       .or(`first_name.ilike.${term},surname.ilike.${term},middle_name.ilike.${term},year_of_call.ilike.${term}`)
       .limit(20);
 
@@ -118,6 +120,7 @@ const FindMember = () => {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-card-foreground">{fullName(member)}</h4>
                       <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-0.5 text-xs text-muted-foreground">
+                        {member.lbian_public && member.lbian && <span className="font-semibold text-primary">{member.lbian}</span>}
                         {member.year_of_call && <span>Called: {member.year_of_call}</span>}
                         {member.branch && <span>{member.branch} Branch</span>}
                       </div>
@@ -155,6 +158,15 @@ const FindMember = () => {
 
               {/* Details */}
               <div className="space-y-3 border-t pt-4">
+                {selected.lbian_public && selected.lbian && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Hash className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">LBIAN</p>
+                      <p className="font-medium text-foreground">{selected.lbian}</p>
+                    </div>
+                  </div>
+                )}
                 {selected.year_of_call && (
                   <div className="flex items-center gap-3 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />

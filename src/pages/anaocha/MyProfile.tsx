@@ -49,12 +49,14 @@ const MyProfile = () => {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [approvalStatus, setApprovalStatus] = useState<string>("");
   const [rank, setRank] = useState<string>("regular");
+  const [lbian, setLbian] = useState<string | null>(null);
+  const [lbianPublic, setLbianPublic] = useState<boolean>(true);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("id, first_name, middle_name, surname, scn, year_of_call, branch, phone, office_address, avatar_url, status, rank")
+      .select("id, first_name, middle_name, surname, scn, year_of_call, branch, phone, office_address, avatar_url, status, rank, lbian, lbian_public")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
@@ -63,9 +65,12 @@ const MyProfile = () => {
           setApprovalStatus((data as any).status ?? "");
           setAvatarUrl((data as any).avatar_url ?? null);
           setRank((data as any).rank ?? "regular");
-          // `rank` is admin-managed — keep it out of the editable profile so a
-          // member's Save never tries to change it (the DB trigger would reject it).
-          const { id, avatar_url, status, rank, ...rest } = data as any;
+          setLbian((data as any).lbian ?? null);
+          setLbianPublic((data as any).lbian_public ?? true);
+          // rank/lbian are system/admin-managed and lbian_public is saved via its
+          // own toggle — keep all three out of the editable profile so a member's
+          // Save never tries to change them (the DB trigger would reject lbian/rank).
+          const { id, avatar_url, status, rank, lbian, lbian_public, ...rest } = data as any;
           setProfile(Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, (v as any) ?? ""])));
         }
         setLoading(false);
@@ -104,6 +109,16 @@ const MyProfile = () => {
     setAvatarUrl(cacheBusted);
     toast({ title: "Profile photo updated." });
     e.target.value = "";
+  };
+
+  const updateLbianPublic = async (value: boolean) => {
+    if (!profileId) return;
+    setLbianPublic(value);
+    const { error } = await (supabase as any).from("profiles").update({ lbian_public: value }).eq("id", profileId);
+    if (error) {
+      setLbianPublic(!value);
+      toast({ title: "Couldn't update", description: error.message, variant: "destructive" });
+    }
   };
 
   const handleSave = async () => {
@@ -247,6 +262,26 @@ const MyProfile = () => {
             </CardContent>
           </Card>
         ))}
+
+        {/* LBIAN — Lawyer Bar Identification Number */}
+        <Card className="shadow-card">
+          <CardContent className="p-6 space-y-3">
+            <h3 className="text-sm font-semibold text-foreground pb-2 border-b border-border">Bar Identification</h3>
+            <div>
+              <label className="text-sm font-medium text-foreground">LBIAN (Lawyer Bar Identification Number)</label>
+              <div className="mt-1.5 w-full rounded-md border border-border/40 bg-muted/40 px-3 py-2 text-sm font-semibold tracking-wide text-foreground">
+                {lbian || <span className="italic font-normal text-muted-foreground">Issued once your membership is approved</span>}
+              </div>
+            </div>
+            {lbian && (
+              <label className="flex items-center gap-2.5 cursor-pointer pt-1">
+                <input type="checkbox" checked={lbianPublic} onChange={(e) => updateLbianPublic(e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <span className="text-sm text-foreground">Show my LBIAN in the member directory</span>
+              </label>
+            )}
+            <p className="text-xs text-muted-foreground">Issued by the branch and used for services such as the customized plate number.</p>
+          </CardContent>
+        </Card>
 
         {/* Seniority (read-only, admin-managed) — only shown for SAN / Benchers */}
         {rank !== "regular" && (

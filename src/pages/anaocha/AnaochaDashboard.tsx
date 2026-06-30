@@ -41,7 +41,7 @@ const AnaochaDashboard = () => {
 
     const load = async () => {
       const [profileRes, appsRes, notifsRes, announcementsRes, duesItemsRes, duesPaymentsRes] = await Promise.all([
-        supabase.from("profiles").select("first_name, surname, year_of_call, branch").eq("user_id", user.id).single(),
+        supabase.from("profiles").select("first_name, surname, year_of_call, branch, lbian").eq("user_id", user.id).single(),
         supabase.from("service_applications").select("id, service_type, status, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("notifications").select("id, title, message, read, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(4),
         supabase.from("announcements").select("id, title, content, created_at").or("portal.eq.anaocha,portal.eq.both").eq("published", true).order("created_at", { ascending: false }).limit(3),
@@ -86,6 +86,7 @@ const AnaochaDashboard = () => {
               {[
                 profile?.branch && `${profile.branch} Branch`,
                 profile?.year_of_call && `Called ${profile.year_of_call}`,
+                profile?.lbian && profile.lbian,
               ].filter(Boolean).join(" · ") || "NBA Anaocha Member Portal"}
             </p>
           </div>
