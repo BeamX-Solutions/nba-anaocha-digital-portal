@@ -11,7 +11,7 @@ const profileFields = [
   { key: "surname", label: "Surname", required: true },
   { key: "first_name", label: "First Name", required: true },
   { key: "middle_name", label: "Middle Name", required: false },
-  { key: "scn", label: "SCN (Supreme Court Number)", required: true, placeholder: "e.g. SCN123456" },
+  { key: "scn", label: "Supreme Court Number (SCN)", required: true, placeholder: "e.g. SCN123456" },
   { key: "year_of_call", label: "Year of Call", required: true, placeholder: "e.g. 2018" },
   { key: "phone", label: "Phone Number", required: true },
   { key: "office_address", label: "Office Address", required: false, fullWidth: true },
