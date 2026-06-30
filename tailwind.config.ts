@@ -17,6 +17,18 @@ export default {
         heading: ["var(--font-heading)", "serif"],
         body: ["var(--font-body)", "sans-serif"],
       },
+      // Bumped from Tailwind's defaults for readability. Spacing/layout are
+      // unchanged — only the type scale grows. Display sizes (4xl+) keep their
+      // defaults so the hero and large headings don't overflow.
+      fontSize: {
+        xs:   ["0.8125rem", { lineHeight: "1.1rem" }],   // 13px  (was 12)
+        sm:   ["0.9375rem", { lineHeight: "1.4rem" }],   // 15px  (was 14)
+        base: ["1.0625rem", { lineHeight: "1.65rem" }],  // 17px  (was 16)
+        lg:   ["1.1875rem", { lineHeight: "1.8rem" }],   // 19px  (was 18)
+        xl:   ["1.3125rem", { lineHeight: "1.85rem" }],  // 21px  (was 20)
+        "2xl": ["1.625rem", { lineHeight: "2.1rem" }],   // 26px  (was 24)
+        "3xl": ["1.9375rem", { lineHeight: "2.35rem" }], // 31px  (was 30)
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

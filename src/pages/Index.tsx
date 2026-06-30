@@ -109,7 +109,7 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative container py-20 md:py-32">
-          <p className="text-white/60 text-[10px] font-bold tracking-[0.3em] uppercase mb-5">
+          <p className="text-white/60 text-xs font-bold tracking-[0.3em] uppercase mb-5">
             Institutional Excellence
           </p>
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.08] mb-4 max-w-3xl">
@@ -153,7 +153,7 @@ const Index = () => {
               </div>
               <div className="absolute bottom-3 left-3 md:bottom-6 md:left-6 bg-background border border-border rounded-xl shadow-lg p-3 md:p-5 max-w-[120px] md:max-w-[180px]">
                 <p className="font-heading text-xl md:text-3xl font-bold text-primary">2014</p>
-                <p className="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-muted-foreground mt-0.5 md:mt-1">Founded in Anaocha</p>
+                <p className="text-[11px] md:text-xs font-bold tracking-widest uppercase text-muted-foreground mt-0.5 md:mt-1">Founded in Anaocha</p>
                 <p className="hidden md:block text-xs text-muted-foreground mt-2 leading-snug">Established with a vision for legal excellence and professional camaraderie.</p>
               </div>
             </div>
@@ -192,7 +192,7 @@ const Index = () => {
           <div className="container">
             <div className="text-center mb-12">
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2">Branch Executives</h2>
-              <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">Meet the Leadership of the Family Bar</p>
+              <p className="text-xs font-bold tracking-[0.25em] uppercase text-muted-foreground">Meet the Leadership of the Family Bar</p>
             </div>
           </div>
           {executives.length > 5 ? (
@@ -202,10 +202,10 @@ const Index = () => {
               <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-background to-transparent" />
               <div className="flex w-max gap-8 animate-marquee group-hover:[animation-play-state:paused] px-4">
                 {[...executives, ...executives].map((p, i) => (
-                  <div key={`${p.id}-${i}`} className="group shrink-0 w-44 text-center">
-                    <PersonAvatar person={p} size="h-40 w-40" />
+                  <div key={`${p.id}-${i}`} className="group shrink-0 w-52 text-center">
+                    <PersonAvatar person={p} size="h-48 w-48" />
                     <p className="font-heading font-semibold text-sm text-foreground mt-4 transition-colors group-hover:text-primary">{p.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{p.position}</p>
                   </div>
                 ))}
               </div>
@@ -215,10 +215,10 @@ const Index = () => {
             <div className="container">
               <div className="flex flex-wrap justify-center gap-x-12 gap-y-10">
                 {executives.map((p) => (
-                  <div key={p.id} className="group w-44 text-center">
-                    <PersonAvatar person={p} size="h-40 w-40" />
+                  <div key={p.id} className="group w-52 text-center">
+                    <PersonAvatar person={p} size="h-48 w-48" />
                     <p className="font-heading font-semibold text-sm text-foreground mt-4 transition-colors group-hover:text-primary">{p.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{p.position}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{p.position}</p>
                   </div>
                 ))}
               </div>
@@ -232,7 +232,7 @@ const Index = () => {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2">Branch Committees</h2>
-            <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">Specialized Divisions Driving Our Mission</p>
+            <p className="text-xs font-bold tracking-[0.25em] uppercase text-muted-foreground">Specialized Divisions Driving Our Mission</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {committees.map((c) => {
@@ -246,8 +246,8 @@ const Index = () => {
                 >
                   <div className="mb-3 text-muted-foreground transition-colors duration-300 group-hover:text-primary">{c.icon}</div>
                   <p className="font-heading font-semibold text-sm mb-1.5 text-foreground">{c.name}</p>
-                  <p className="text-xs leading-relaxed text-muted-foreground">{c.desc}</p>
-                  <p className="mt-3 text-[11px] font-semibold text-primary inline-flex items-center gap-1">
+                  <p className="text-sm leading-relaxed text-muted-foreground">{c.desc}</p>
+                  <p className="mt-3 text-xs font-semibold text-primary inline-flex items-center gap-1">
                     {count > 0 ? `View ${count} member${count > 1 ? "s" : ""}` : "View committee"}
                     <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </p>
@@ -328,7 +328,7 @@ const Index = () => {
                   <div key={m.id} className="group text-center">
                     <PersonAvatar person={m} size="h-28 w-28" />
                     <p className="font-heading font-semibold text-sm text-foreground mt-3 transition-colors group-hover:text-primary">{m.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{m.position}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{m.position}</p>
                   </div>
                 ))}
               </div>
