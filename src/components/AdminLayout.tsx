@@ -41,22 +41,22 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   const SidebarContent = () => (
     <>
-      <div className="p-6 border-b border-primary-foreground/20">
-        <div className="flex items-center gap-2 mb-1">
-          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-8 w-8 rounded-md" />
-          <h2 className="font-heading text-lg font-bold text-accent">Admin Panel</h2>
+      <div className="px-5 py-4 border-b border-primary-foreground/20">
+        <div className="flex items-center gap-2 mb-0.5">
+          <img src={nbaLogo} alt="NBA Anaocha Logo" className="h-7 w-7 rounded-md" />
+          <h2 className="font-heading text-base font-bold text-accent">Admin Panel</h2>
         </div>
-        <p className="text-xs text-primary-foreground/60 truncate">{user?.email}</p>
+        <p className="text-[11px] text-primary-foreground/60 truncate">{user?.email}</p>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-3 space-y-0.5">
         {sidebarItems.map((item) => (
           <Link
             key={item.href}
             to={item.href}
             onClick={() => setMobileOpen(false)}
             className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+              "flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors",
               location.pathname === item.href
                 ? "bg-accent text-primary font-semibold"
                 : "text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground"
@@ -68,11 +68,11 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-primary-foreground/20 space-y-1">
+      <div className="p-3 border-t border-primary-foreground/20 space-y-0.5">
         <Link
           to="/anaocha/dashboard"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors"
+          className="flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[13px] font-medium text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Portal
@@ -80,7 +80,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-primary-foreground/75 hover:text-primary-foreground hover:bg-primary-foreground/10"
+          className="w-full justify-start h-8 text-[13px] text-primary-foreground/75 hover:text-primary-foreground hover:bg-primary-foreground/10"
           onClick={() => setConfirmOpen(true)}
         >
           <LogOut className="h-4 w-4 mr-2" />
