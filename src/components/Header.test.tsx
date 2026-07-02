@@ -64,13 +64,13 @@ describe("Header", () => {
   it("renders navigation links for unauthenticated users", () => {
     renderHeader();
     expect(screen.getByText("About")).toBeInTheDocument();
+    expect(screen.getByText("Executives")).toBeInTheDocument();
     expect(screen.getByText("Committees")).toBeInTheDocument();
-    expect(screen.getByText("Resources")).toBeInTheDocument();
   });
 
-  it("renders Portal Access button for unauthenticated users", () => {
+  it("renders Log In button for unauthenticated users", () => {
     renderHeader();
-    expect(screen.getByText("Portal Access")).toBeInTheDocument();
+    expect(screen.getByText("Log In")).toBeInTheDocument();
   });
 
   it("has mobile menu button for unauthenticated users", () => {
@@ -90,6 +90,6 @@ describe("Header", () => {
     renderHeader({ id: "1", email: "test@example.com" });
 
     expect(screen.queryByText("About")).not.toBeInTheDocument();
-    expect(screen.queryByText("Portal Access")).not.toBeInTheDocument();
+    expect(screen.queryByText("Log In")).not.toBeInTheDocument();
   });
 });
