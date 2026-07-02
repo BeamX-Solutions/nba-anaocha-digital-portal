@@ -438,7 +438,24 @@ const AdminDues = () => {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
-                              {members.map(member => {
+                              {[
+                                ...members.map(member => ({ member, extra: false })),
+                                // Payment records from accounts no longer active (suspended,
+                                // pending, denied) — must stay reviewable, not invisible.
+                                ...(compliance[item.id] ?? [])
+                                  .filter(cp => !members.some(m => m.user_id === cp.user_id))
+                                  .map(cp => ({
+                                    member: {
+                                      user_id: cp.user_id,
+                                      first_name: cp.profiles?.first_name ?? null,
+                                      surname: cp.profiles?.surname ?? null,
+                                      email: cp.profiles?.email ?? null,
+                                      year_of_call: cp.profiles?.year_of_call ?? null,
+                                      rank: null,
+                                    } as Member,
+                                    extra: true,
+                                  })),
+                              ].map(({ member, extra }) => {
                                 const p = (compliance[item.id] ?? []).find(cp => cp.user_id === member.user_id);
                                 const memberAmount = getDueAmount(item, member.year_of_call, member.rank);
                                 const status = p?.status ?? "pending";
@@ -446,7 +463,8 @@ const AdminDues = () => {
                                   <tr key={member.user_id} className="hover:bg-muted/20">
                                     <td className="py-2.5 px-3">
                                       <p className="font-medium text-foreground">
-                                        {[member.surname, member.first_name].filter(Boolean).join(", ") || member.email}
+                                        {[member.surname, member.first_name].filter(Boolean).join(", ") || member.email || "Unknown member"}
+                                        {extra && <Badge variant="secondary" className="ml-2 text-[10px]">Account not active</Badge>}
                                       </p>
                                       {member.email && <p className="text-xs text-muted-foreground">{member.email}</p>}
                                     </td>
