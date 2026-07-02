@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { Scale, ChevronDown, ChevronUp, Ban, CheckCircle, UserCheck, Shield, Download } from "lucide-react";
+import { Scale, ChevronDown, ChevronUp, Ban, CheckCircle, UserCheck, UserX, Shield, Download, Trash2, Loader2 } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +21,16 @@ const AdminMembers = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Deny registration dialog
+  const [denyTarget, setDenyTarget] = useState<any | null>(null);
+  const [denyReason, setDenyReason] = useState("");
+  const [denying, setDenying] = useState(false);
+
+  // Delete account dialog
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     supabase
@@ -92,6 +103,57 @@ const AdminMembers = () => {
     const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
     if (user) logAudit(user.id, "member_rank_updated", "profile", m.id, { rank, member_email: m.email });
     toast({ title: "Seniority updated", description: `${memberName} set to ${RANK_LABELS[rank] ?? rank}.` });
+  };
+
+  const confirmDeny = async () => {
+    if (!denyTarget) return;
+    const m = denyTarget;
+    setDenying(true);
+    const { error } = await (supabase as any).from("profiles").update({ status: "denied" }).eq("id", m.id);
+    if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); setDenying(false); return; }
+    const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
+    const reason = denyReason.trim();
+    await supabase.from("notifications").insert({
+      user_id: m.user_id,
+      title: "Registration Not Approved",
+      message: `Your NBA Anaocha portal registration could not be approved.${reason ? ` Reason: ${reason}.` : ""} Please contact the branch secretariat for assistance.`,
+      type: "account",
+    });
+    let emailFailed = false;
+    if (m.email) {
+      const { error: emailError } = await supabase.functions.invoke("send-email", {
+        body: { type: "account_denied", to: m.email, name: memberName, reason: reason || undefined },
+      });
+      if (emailError) emailFailed = true;
+    }
+    if (user) logAudit(user.id, "member_denied", "profile", m.id, { member_email: m.email, member_name: memberName, reason: reason || null });
+    const updated = members.map((mem) => mem.id === m.id ? { ...mem, status: "denied" } : mem);
+    setMembers(updated); setFiltered(updated);
+    setDenying(false); setDenyTarget(null); setDenyReason("");
+    toast({
+      title: "Registration denied",
+      description: emailFailed ? "Denied. In-app notification sent but email failed." : `${memberName} has been notified by email.`,
+      variant: emailFailed ? "destructive" : "default",
+    });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const m = deleteTarget;
+    setDeleting(true);
+    const { data, error } = await supabase.functions.invoke("admin-delete-user", {
+      body: { user_id: m.user_id },
+    });
+    setDeleting(false);
+    if (error || data?.error) {
+      toast({ title: "Delete failed", description: data?.error || error?.message, variant: "destructive" });
+      return;
+    }
+    const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
+    setMembers((prev) => prev.filter((mem) => mem.id !== m.id));
+    setFiltered((prev) => prev.filter((mem) => mem.id !== m.id));
+    setDeleteTarget(null); setDeleteConfirm("");
+    toast({ title: "Account deleted", description: `${memberName}'s account and records have been permanently removed.` });
   };
 
   const toggleSuspend = async (m: any) => {
@@ -179,6 +241,7 @@ const AdminMembers = () => {
                           {m.is_admin    && <Badge className="bg-accent/20 text-accent border border-accent/40 text-[10px]">Admin</Badge>}
                           {m.rank && m.rank !== "regular" && <Badge className="bg-primary/10 text-primary border border-primary/30 text-[10px]">{m.rank === "san" ? "SAN" : "Bencher"}</Badge>}
                           {m.status === "pending"   && <Badge className="bg-amber-100 text-amber-700 border-amber-300">Pending</Badge>}
+                          {m.status === "denied"    && <Badge className="bg-red-100 text-red-700 border-red-300">Denied</Badge>}
                           {m.status === "suspended" && <Badge variant="destructive">Suspended</Badge>}
                           <p className="text-xs text-muted-foreground ml-auto">
                             {new Date(m.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
@@ -209,15 +272,31 @@ const AdminMembers = () => {
                           <span className="text-xs text-muted-foreground">Determines tiered dues (e.g. Welfare Levy).</span>
                         </div>
                         <div className="flex flex-wrap gap-2 pt-1">
-                          {m.status === "pending" ? (
-                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1" onClick={() => approveAccount(m)}>
-                              <UserCheck className="h-4 w-4" /> Approve Account
-                            </Button>
+                          {(m.status === "pending" || m.status === "denied") ? (
+                            <>
+                              <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1" onClick={() => approveAccount(m)}>
+                                <UserCheck className="h-4 w-4" /> Approve Account
+                              </Button>
+                              {m.status === "pending" && (
+                                <Button size="sm" variant="destructive" className="gap-1" onClick={() => { setDenyTarget(m); setDenyReason(""); }}>
+                                  <UserX className="h-4 w-4" /> Deny
+                                </Button>
+                              )}
+                            </>
                           ) : (
                             <Button size="sm" variant={m.status === "suspended" ? "default" : "destructive"} onClick={() => toggleSuspend(m)} className="gap-1">
                               {m.status === "suspended"
                                 ? <><CheckCircle className="h-4 w-4" /> Reinstate</>
                                 : <><Ban className="h-4 w-4" /> Suspend</>}
+                            </Button>
+                          )}
+                          {!m.is_admin && m.user_id !== user?.id && (
+                            <Button
+                              size="sm" variant="outline"
+                              className="gap-1 border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800 ml-auto"
+                              onClick={() => { setDeleteTarget(m); setDeleteConfirm(""); }}
+                            >
+                              <Trash2 className="h-4 w-4" /> Delete Account
                             </Button>
                           )}
                         </div>
@@ -230,6 +309,74 @@ const AdminMembers = () => {
           </div>
         )}
       </div>
+
+      {/* Deny registration dialog */}
+      <Dialog open={!!denyTarget} onOpenChange={(open) => { if (!open) setDenyTarget(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Deny Registration</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              Denying the registration of{" "}
+              <span className="font-semibold text-foreground">
+                {[denyTarget?.surname, denyTarget?.first_name].filter(Boolean).join(" ") || denyTarget?.email}
+              </span>. They will be notified by email and in-app. You can still approve the account later.
+            </p>
+            <textarea
+              value={denyReason}
+              onChange={(e) => setDenyReason(e.target.value)}
+              rows={3}
+              placeholder="e.g. We could not verify your Supreme Court Number. Please contact the secretariat."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            />
+            <p className="text-xs text-muted-foreground">Optional, but strongly recommended.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDenyTarget(null)} disabled={denying}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDeny} disabled={denying}>
+              {denying ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <UserX className="h-4 w-4 mr-1" />}
+              Confirm Denial
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete account dialog */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) { setDeleteTarget(null); setDeleteConfirm(""); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Permanently Delete Account</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              This permanently deletes{" "}
+              <span className="font-semibold text-foreground">
+                {[deleteTarget?.surname, deleteTarget?.first_name].filter(Boolean).join(" ") || deleteTarget?.email}
+              </span>
+              's login, profile, applications, notifications, payment records and uploaded files.{" "}
+              <span className="font-semibold text-destructive">This cannot be undone.</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Type <span className="font-mono font-semibold text-foreground">DELETE</span> to confirm.
+            </p>
+            <input
+              type="text"
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder="DELETE"
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setDeleteTarget(null); setDeleteConfirm(""); }} disabled={deleting}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={deleting || deleteConfirm !== "DELETE"}>
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Trash2 className="h-4 w-4 mr-1" />}
+              Delete Permanently
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };

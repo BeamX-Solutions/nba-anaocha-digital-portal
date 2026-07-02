@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Save, Camera, Loader2 } from "lucide-react";
+import { Save, Camera, Loader2, Clock, X, Mail } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,16 +14,16 @@ const FIELD_GROUPS = [
   {
     title: "Personal Information",
     fields: [
-      { key: "first_name",  label: "First Name",  required: true },
-      { key: "surname",     label: "Surname",      required: true },
-      { key: "middle_name", label: "Middle Name" },
+      { key: "first_name",  label: "First Name",  required: true, sensitive: true },
+      { key: "surname",     label: "Surname",      required: true, sensitive: true },
+      { key: "middle_name", label: "Middle Name", sensitive: true },
     ],
   },
   {
     title: "Bar Details",
     fields: [
-      { key: "scn",          label: "Supreme Court Number (SCN)", verifiedLock: true },
-      { key: "year_of_call", label: "Year of Call" },
+      { key: "scn",          label: "Supreme Court Number (SCN)", sensitive: true },
+      { key: "year_of_call", label: "Year of Call", sensitive: true },
       { key: "branch",       label: "NBA Branch", locked: true },
     ],
   },
@@ -36,12 +36,19 @@ const FIELD_GROUPS = [
   },
 ];
 
+// Identity fields: for approved members these save into a change request that
+// the secretariat reviews, instead of applying immediately (enforced in the DB).
+const ALL_FIELDS: any[] = FIELD_GROUPS.flatMap((g) => g.fields as any[]);
+const SENSITIVE_KEYS: string[] = ALL_FIELDS.filter((f) => f.sensitive).map((f) => f.key);
+const FIELD_LABELS: Record<string, string> = Object.fromEntries(ALL_FIELDS.map((f) => [f.key, f.label]));
+
 const MyProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<Record<string, string>>({});
+  const [original, setOriginal] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -51,6 +58,11 @@ const MyProfile = () => {
   const [rank, setRank] = useState<string>("regular");
   const [lbian, setLbian] = useState<string | null>(null);
   const [lbianPublic, setLbianPublic] = useState<boolean>(true);
+  const [pendingRequest, setPendingRequest] = useState<any | null>(null);
+  const [cancellingRequest, setCancellingRequest] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [changingEmail, setChangingEmail] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -71,11 +83,63 @@ const MyProfile = () => {
           // own toggle — keep all three out of the editable profile so a member's
           // Save never tries to change them (the DB trigger would reject lbian/rank).
           const { id, avatar_url, status, rank, lbian, lbian_public, ...rest } = data as any;
-          setProfile(Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, (v as any) ?? ""])));
+          const values = Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, (v as any) ?? ""]));
+          setProfile(values);
+          setOriginal(values);
         }
         setLoading(false);
       });
+
+    // Any change request still awaiting secretariat review?
+    (supabase as any)
+      .from("profile_change_requests")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "pending")
+      .maybeSingle()
+      .then(({ data }: any) => { if (data) setPendingRequest(data); });
   }, [user]);
+
+  const cancelPendingRequest = async () => {
+    if (!pendingRequest) return;
+    setCancellingRequest(true);
+    const { error } = await (supabase as any)
+      .from("profile_change_requests")
+      .delete()
+      .eq("id", pendingRequest.id);
+    setCancellingRequest(false);
+    if (error) {
+      toast({ title: "Couldn't withdraw request", description: error.message, variant: "destructive" });
+      return;
+    }
+    setPendingRequest(null);
+    toast({ title: "Change request withdrawn." });
+  };
+
+  const handleChangeEmail = async () => {
+    const email = newEmail.trim().toLowerCase();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      toast({ title: "Enter a valid email address.", variant: "destructive" });
+      return;
+    }
+    if (email === user?.email?.toLowerCase()) {
+      toast({ title: "That is already your current email.", variant: "destructive" });
+      return;
+    }
+    setChangingEmail(true);
+    const { error } = await supabase.auth.updateUser({ email });
+    setChangingEmail(false);
+    if (error) {
+      toast({ title: "Couldn't change email", description: error.message, variant: "destructive" });
+      return;
+    }
+    setShowEmailForm(false);
+    setNewEmail("");
+    toast({
+      title: "Confirmation link sent",
+      description: `Check ${email} (and your current inbox) and click the link to complete the change.`,
+    });
+  };
 
   const handleChange = (key: string, value: string) =>
     setProfile((prev) => ({ ...prev, [key]: value }));
@@ -128,16 +192,82 @@ const MyProfile = () => {
       return;
     }
     setSaving(true);
+
+    // Approved members: identity fields go through secretariat review.
+    if (approvalStatus === "active") {
+      const sensitiveChanges: Record<string, string> = {};
+      const previous: Record<string, string> = {};
+      for (const key of SENSITIVE_KEYS) {
+        if ((profile[key] ?? "") !== (original[key] ?? "")) {
+          sensitiveChanges[key] = profile[key] ?? "";
+          previous[key] = original[key] ?? "";
+        }
+      }
+      const directUpdate: Record<string, string> = {};
+      for (const [key, value] of Object.entries(profile)) {
+        if (!SENSITIVE_KEYS.includes(key) && value !== (original[key] ?? "")) {
+          directUpdate[key] = value;
+        }
+      }
+
+      if (Object.keys(sensitiveChanges).length > 0 && pendingRequest) {
+        setSaving(false);
+        toast({
+          title: "A change request is already pending",
+          description: "Withdraw the pending request before submitting new identity changes.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (Object.keys(directUpdate).length > 0) {
+        const { error } = await supabase.from("profiles").update(directUpdate).eq("id", profileId);
+        if (error) {
+          setSaving(false);
+          toast({ title: "Failed to save", description: error.message, variant: "destructive" });
+          return;
+        }
+        setOriginal((prev) => ({ ...prev, ...directUpdate }));
+      }
+
+      if (Object.keys(sensitiveChanges).length > 0) {
+        const { data, error } = await (supabase as any)
+          .from("profile_change_requests")
+          .insert({ user_id: user.id, changes: sensitiveChanges, previous })
+          .select()
+          .single();
+        setSaving(false);
+        if (error) {
+          toast({ title: "Couldn't submit change request", description: error.message, variant: "destructive" });
+          return;
+        }
+        setPendingRequest(data);
+        // Inputs show the on-record values; the banner shows what was requested.
+        setProfile((prev) => ({ ...prev, ...previous }));
+        toast({
+          title: "Sent for approval",
+          description: "Your identity changes were submitted to the secretariat for review. Other changes were saved.",
+        });
+        return;
+      }
+
+      setSaving(false);
+      toast({ title: "Profile updated successfully." });
+      return;
+    }
+
+    // Pending accounts still complete their profile directly.
     const { error } = await supabase.from("profiles").update(profile).eq("id", profileId);
     setSaving(false);
     if (error) {
       toast({ title: "Failed to save", description: error.message, variant: "destructive" });
       return;
     }
+    setOriginal({ ...profile });
     toast({ title: "Profile updated successfully." });
   };
 
-  const isScnLocked = approvalStatus === "active";
+  const isActiveMember = approvalStatus === "active";
   const initials = [profile.first_name, profile.surname]
     .filter(Boolean).map((n) => n[0]).join("").toUpperCase() || user?.email?.[0]?.toUpperCase() || "?";
 
@@ -215,6 +345,36 @@ const MyProfile = () => {
           </CardContent>
         </Card>
 
+        {/* Pending identity change request */}
+        {pendingRequest && (
+          <Card className="shadow-card border-amber-300 bg-amber-50/60">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-amber-600" />
+                <h3 className="text-sm font-semibold text-amber-900">Changes awaiting secretariat approval</h3>
+              </div>
+              <div className="space-y-1.5">
+                {Object.entries(pendingRequest.changes || {}).map(([key, value]) => (
+                  <p key={key} className="text-sm text-amber-900">
+                    <span className="font-medium">{FIELD_LABELS[key] || key}:</span>{" "}
+                    <span className="line-through opacity-60">{(pendingRequest.previous?.[key] as string) || "—"}</span>
+                    {" → "}
+                    <span className="font-semibold">{(value as string) || "—"}</span>
+                  </p>
+                ))}
+              </div>
+              <p className="text-xs text-amber-800/80">
+                Submitted {new Date(pendingRequest.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}.
+                You'll be notified once the secretariat reviews it.
+              </p>
+              <Button size="sm" variant="outline" className="gap-1 border-amber-400 text-amber-900 hover:bg-amber-100" onClick={cancelPendingRequest} disabled={cancellingRequest}>
+                {cancellingRequest ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />}
+                Withdraw Request
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Field groups */}
         {FIELD_GROUPS.map((group) => (
           <Card key={group.title} className="shadow-card">
@@ -224,7 +384,6 @@ const MyProfile = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {group.fields.map((field: any) => {
-                  const isLocked = field.verifiedLock && isScnLocked;
                   return (
                     <div key={field.key} className={field.multiline ? "md:col-span-2" : ""}>
                       <div className="flex items-center gap-2 mb-1.5">
@@ -232,11 +391,11 @@ const MyProfile = () => {
                           {field.label}
                           {field.required && <span className="text-destructive ml-1">*</span>}
                         </label>
-                        {isLocked && (
-                          <Badge variant="secondary" className="text-xs">Verified</Badge>
+                        {field.sensitive && isActiveMember && (
+                          <Badge variant="secondary" className="text-xs">Approval required</Badge>
                         )}
                       </div>
-                      {(isLocked || (field as any).locked) ? (
+                      {(field as any).locked ? (
                         <div className="w-full rounded-md border border-border/40 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
                           {(field as any).locked ? "Anaocha" : (profile[field.key] || <span className="italic opacity-50">Not set</span>)}
                         </div>
@@ -296,7 +455,7 @@ const MyProfile = () => {
           </Card>
         )}
 
-        {/* Email (read-only) */}
+        {/* Account email */}
         <Card className="shadow-card">
           <CardContent className="p-6 space-y-3">
             <h3 className="text-sm font-semibold text-foreground pb-2 border-b border-border">Account</h3>
@@ -305,7 +464,38 @@ const MyProfile = () => {
               <div className="mt-1.5 w-full rounded-md border border-border/40 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
                 {user?.email}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Email cannot be changed. Contact the secretariat if needed.</p>
+              {!showEmailForm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowEmailForm(true)}
+                  className="text-xs text-primary hover:text-accent transition-colors mt-2 font-medium"
+                >
+                  Change email address
+                </button>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  <label className="text-sm font-medium text-foreground">New Email Address</label>
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="new.address@example.com"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={handleChangeEmail} disabled={changingEmail} className="gap-1.5">
+                      {changingEmail ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mail className="h-3.5 w-3.5" />}
+                      Send Confirmation Link
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => { setShowEmailForm(false); setNewEmail(""); }} disabled={changingEmail}>
+                      Cancel
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    A confirmation link will be sent to the new address. Your login email changes only after you click it.
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

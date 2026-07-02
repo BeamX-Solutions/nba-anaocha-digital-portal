@@ -40,6 +40,7 @@ const TermsOfService      = lazy(() => import("./pages/TermsOfService.tsx"));
 const AdminDashboard    = lazy(() => import("./pages/admin/AdminDashboard.tsx"));
 const AdminApplications = lazy(() => import("./pages/admin/AdminApplications.tsx"));
 const AdminMembers      = lazy(() => import("./pages/admin/AdminMembers.tsx"));
+const AdminProfileChanges = lazy(() => import("./pages/admin/AdminProfileChanges.tsx"));
 const AdminNotify       = lazy(() => import("./pages/admin/AdminNotify.tsx"));
 const AdminContacts     = lazy(() => import("./pages/admin/AdminContacts.tsx"));
 const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements.tsx"));
@@ -111,6 +112,7 @@ const App = () => (
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
               <Route path="/admin/applications" element={<AdminRoute><AdminApplications /></AdminRoute>} />
               <Route path="/admin/members" element={<AdminRoute><AdminMembers /></AdminRoute>} />
+              <Route path="/admin/profile-changes" element={<AdminRoute><AdminProfileChanges /></AdminRoute>} />
               <Route path="/admin/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
               <Route path="/admin/notify" element={<AdminRoute><AdminNotify /></AdminRoute>} />
               <Route path="/admin/announcements" element={<AdminRoute><AdminAnnouncements /></AdminRoute>} />

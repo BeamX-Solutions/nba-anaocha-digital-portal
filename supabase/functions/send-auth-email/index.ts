@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const FROM = "NBA Anaocha <noreply@beamxsolutions.com>";
+const FROM = Deno.env.get("RESEND_FROM") || "NBA Anaocha <noreply@beamxsolutions.com>";
 
 const headerHtml = `
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1a3a5c;padding:32px 40px;text-align:center;">

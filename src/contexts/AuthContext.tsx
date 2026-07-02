@@ -57,12 +57,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         if (session?.user) {
           checkProfile(session.user.id);
+          // After a confirmed login-email change, mirror it onto the profile so
+          // admin lists and outgoing emails use the new address.
+          if (event === "USER_UPDATED" && session.user.email) {
+            supabase
+              .from("profiles")
+              .update({ email: session.user.email })
+              .eq("user_id", session.user.id)
+              .neq("email", session.user.email)
+              .then(({ error }) => {
+                if (error) console.error("profile email sync failed:", error.message);
+              });
+          }
         } else {
           setProfileComplete(null);
         }

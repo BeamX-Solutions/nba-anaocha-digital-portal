@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Mail, Menu, Megaphone, BookMarked, ScrollText, TrendingUp, Landmark, UserCircle, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Users, Bell, LogOut, Mail, Menu, Megaphone, BookMarked, ScrollText, TrendingUp, Landmark, UserCircle, UserCog, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -16,6 +16,7 @@ const sidebarItems = [
   { label: "Dashboard",         href: "/admin",                icon: <LayoutDashboard className="h-4 w-4" /> },
   { label: "Anaocha Members",   href: "/admin/members",        icon: <Users className="h-4 w-4" /> },
   { label: "Applications",      href: "/admin/applications",   icon: <ClipboardList className="h-4 w-4" /> },
+  { label: "Profile Changes",   href: "/admin/profile-changes", icon: <UserCog className="h-4 w-4" /> },
   { label: "Dues",              href: "/admin/dues",           icon: <Landmark className="h-4 w-4" /> },
   { label: "Contact Messages",  href: "/admin/contacts",       icon: <Mail className="h-4 w-4" /> },
   { label: "Announcements",     href: "/admin/announcements",  icon: <Megaphone className="h-4 w-4" /> },

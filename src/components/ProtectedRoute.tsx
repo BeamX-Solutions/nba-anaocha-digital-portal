@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clock, LogOut } from "lucide-react";
+import { Clock, LogOut, XCircle } from "lucide-react";
 import nbaLogo from "@/assets/nba-logo.png";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +9,73 @@ import {
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
   AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+const RegistrationDenied = () => {
+  const { signOut } = useAuth();
+  return (
+    <div className="min-h-screen bg-muted/30 flex flex-col">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-2">
+          <img src={nbaLogo} alt="NBA Anaocha" className="h-8 w-8" />
+          <span className="font-heading font-bold text-foreground text-sm">NBA Anaocha</span>
+        </div>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="bg-card border border-border rounded-2xl shadow-card w-full max-w-lg overflow-hidden">
+          <div className="h-1 w-full bg-destructive" />
+          <div className="px-10 py-12 text-center space-y-6">
+            <img src={nbaLogo} alt="NBA Anaocha" className="h-14 w-14 mx-auto opacity-80" />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground">
+                Nigerian Bar Association
+              </p>
+              <p className="text-sm italic text-muted-foreground">Anaocha Branch</p>
+            </div>
+            <div className="space-y-3">
+              <h1 className="font-heading text-4xl font-bold text-foreground leading-tight">
+                Registration<br />Not Approved
+              </h1>
+              <div className="w-10 h-px bg-accent mx-auto" />
+            </div>
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mx-auto">
+              The Branch Secretariat was unable to approve your registration. If you believe this is an error, or you can provide additional verification, please contact the secretariat.
+            </p>
+            <div className="bg-muted rounded-lg px-5 py-4 text-left flex items-start gap-3">
+              <XCircle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-foreground mb-1">Verification Status</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Your registration was reviewed and could not be approved. Details of the decision were sent to your email address.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-left pt-2">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Support Desk</p>
+                <a href="mailto:support@nbaanaocha.org.ng" className="text-sm text-foreground hover:text-primary transition-colors">
+                  support@nbaanaocha.org.ng
+                </a>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Inquiry Line</p>
+                <p className="text-sm text-foreground">secretariat@nbaanaocha.org.ng</p>
+              </div>
+            </div>
+            <Button onClick={signOut} className="w-full mt-2">
+              <LogOut className="h-4 w-4 mr-2" /> Sign Out
+            </Button>
+          </div>
+          <div className="border-t border-border px-10 py-4 text-center">
+            <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground">
+              Institutional Integrity &bull; Legal Excellence &bull; Legacy
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PendingApproval = () => {
   const { signOut } = useAuth();
@@ -141,6 +208,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   // Admins are always approved
   if (!isAdmin && profileStatus === "pending") return <PendingApproval />;
+  if (!isAdmin && profileStatus === "denied") return <RegistrationDenied />;
 
   return <>{children}</>;
 };

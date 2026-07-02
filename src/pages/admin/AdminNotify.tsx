@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Send, CheckCircle, Users, User } from "lucide-react";
+import { Send, CheckCircle, Users, User, Mail } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ const AdminNotify = () => {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [sentCount, setSentCount] = useState(0);
+  const [alsoEmail, setAlsoEmail] = useState(false);
+  const [emailResult, setEmailResult] = useState<string | null>(null);
 
   useEffect(() => {
     supabase
@@ -50,13 +52,28 @@ const AdminNotify = () => {
     }));
 
     const { error } = await supabase.from("notifications").insert(notifications);
-    setSending(false);
 
     if (error) {
+      setSending(false);
       toast({ title: "Error", description: error.message, variant: "destructive" });
       return;
     }
 
+    let emailSummary: string | null = null;
+    if (alsoEmail) {
+      const { data, error: emailError } = await supabase.functions.invoke("broadcast-email", {
+        body: { title: title.trim(), message: message.trim(), user_ids: targets },
+      });
+      if (emailError || data?.error) {
+        emailSummary = "In-app notifications sent, but the email broadcast failed.";
+        toast({ title: "Email broadcast failed", description: data?.error || emailError?.message, variant: "destructive" });
+      } else {
+        emailSummary = `Also emailed to ${data.sent} member${data.sent !== 1 ? "s" : ""}${data.failed ? ` (${data.failed} failed)` : ""}.`;
+      }
+    }
+
+    setSending(false);
+    setEmailResult(emailSummary);
     setSentCount(targets.length);
     setSent(true);
     toast({ title: "Notifications sent!", description: `Sent to ${targets.length} member${targets.length !== 1 ? "s" : ""}.` });
@@ -69,6 +86,8 @@ const AdminNotify = () => {
     setRecipient("all");
     setSent(false);
     setSentCount(0);
+    setAlsoEmail(false);
+    setEmailResult(null);
   };
 
   return (
@@ -87,6 +106,7 @@ const AdminNotify = () => {
                 <h3 className="font-heading text-xl font-semibold text-foreground">Notification Sent</h3>
                 <p className="text-muted-foreground text-sm">
                   "{title}" was delivered to {sentCount} member{sentCount !== 1 ? "s" : ""}.
+                  {emailResult && <><br />{emailResult}</>}
                 </p>
                 <Button variant="outline" onClick={reset}>Send Another</Button>
               </div>
@@ -171,6 +191,24 @@ const AdminNotify = () => {
                     className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
+
+                {/* Also send by email */}
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={alsoEmail}
+                    onChange={(e) => setAlsoEmail(e.target.checked)}
+                    className="h-4 w-4 rounded border-input mt-0.5"
+                  />
+                  <span>
+                    <span className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                      <Mail className="h-3.5 w-3.5" /> Also send by email
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      Delivers this message to the recipient{recipient === "all" ? "s'" : "'s"} email inbox in addition to the in-app notification.
+                    </span>
+                  </span>
+                </label>
 
                 <Button type="submit" disabled={sending} className="w-full">
                   {sending

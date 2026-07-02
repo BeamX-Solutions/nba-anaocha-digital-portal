@@ -13,7 +13,7 @@ const PORTAL_LABELS: Record<string, string> = {
   both: "All Members",
 };
 
-const emptyForm = { title: "", content: "", portal: "anaocha", published: true };
+const emptyForm = { title: "", content: "", portal: "anaocha", published: true, emailMembers: false };
 
 const AdminAnnouncements = () => {
   const { user } = useAuth();
@@ -62,6 +62,17 @@ const AdminAnnouncements = () => {
         created_by: user?.id,
       });
       if (error) { toast({ title: "Failed to save", description: error.message, variant: "destructive" }); setSaving(false); return; }
+
+      if (form.published && form.emailMembers) {
+        const { data, error: emailError } = await supabase.functions.invoke("broadcast-email", {
+          body: { title: form.title.trim(), message: form.content.trim() },
+        });
+        if (emailError || data?.error) {
+          toast({ title: "Announcement saved, but email broadcast failed", description: data?.error || emailError?.message, variant: "destructive" });
+        } else {
+          toast({ title: "Emailed to members", description: `Announcement emailed to ${data.sent} member${data.sent !== 1 ? "s" : ""}.` });
+        }
+      }
     }
     setSaving(false);
     setShowForm(false);
@@ -72,7 +83,7 @@ const AdminAnnouncements = () => {
   };
 
   const startEdit = (a: any) => {
-    setForm({ title: a.title, content: a.content, portal: a.portal, published: a.published });
+    setForm({ title: a.title, content: a.content, portal: a.portal, published: a.published, emailMembers: false });
     setEditing(a.id);
     setShowForm(true);
   };
@@ -160,6 +171,21 @@ const AdminAnnouncements = () => {
                   </label>
                 </div>
               </div>
+              {!editing && (
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.emailMembers}
+                    disabled={!form.published}
+                    onChange={(e) => setForm((p) => ({ ...p, emailMembers: e.target.checked }))}
+                    className="h-4 w-4 rounded border-input"
+                  />
+                  <span className="text-sm font-medium text-foreground">
+                    Also email this announcement to all members
+                    {!form.published && <span className="text-xs text-muted-foreground font-normal ml-1">(requires publish)</span>}
+                  </span>
+                </label>
+              )}
               <div className="flex gap-2">
                 <Button onClick={handleSave} disabled={saving}>
                   <Check className="h-4 w-4 mr-1" />{saving ? "Saving..." : editing ? "Update" : "Publish"}
