@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { logAudit } from "@/lib/auditLog";
+import { csvCell } from "@/lib/utils";
 import { RANK_LABELS } from "@/lib/constants";
 
 const AdminMembers = () => {
@@ -69,7 +70,7 @@ const AdminMembers = () => {
         new Date(m.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }),
       ]),
     ];
-    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const csv = rows.map((r) => r.map(csvCell).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

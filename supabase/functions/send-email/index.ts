@@ -1,9 +1,16 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SECRETARIAT_EMAIL = Deno.env.get("SECRETARIAT_EMAIL") || "";
 const FROM = Deno.env.get("RESEND_FROM") || "NBA Anaocha <noreply@beamxsolutions.com>";
 const SITE_URL = Deno.env.get("SITE_URL") || "https://nba-anaocha-digital-portal.vercel.app";
+
+// Neutralise HTML in interpolated values (names, messages, reasons are user
+// or admin input) so a crafted value cannot inject markup into branch emails.
+const esc = (v: string) =>
+  v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+   .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 const brandHeader = (color = "#1a5c38") => `
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
@@ -201,7 +208,41 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
         <p style="margin-top:32px;color:#666;font-size:13px">NBA Anaocha Branch Portal</p>
       </div>`,
   }),
+
+  contact_reply: ({ name, reply_message, original_message }) => ({
+    subject: "Re: Your Message to NBA Anaocha Branch",
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+        ${brandHeader()}
+        <p>Dear ${name},</p>
+        <p>Thank you for contacting the NBA Anaocha Branch Secretariat. Here is our response to your message:</p>
+        <div style="background:#f0fdf4;border-left:4px solid #1a5c38;padding:16px;border-radius:4px;white-space:pre-wrap;margin:16px 0">${reply_message}</div>
+        ${original_message ? `
+        <p style="font-size:13px;color:#666;margin-bottom:4px">Your original message:</p>
+        <div style="background:#f5f5f5;border-left:4px solid #ccc;padding:12px 16px;border-radius:4px;white-space:pre-wrap;font-size:13px;color:#555">${original_message}</div>` : ""}
+        <p style="margin-top:16px">If you have further questions, simply reply to this email.</p>
+        <p style="margin-top:32px;color:#666;font-size:13px">NBA Anaocha Branch Secretariat<br/>Nnewi, Anambra State, Nigeria</p>
+      </div>`,
+  }),
 };
+
+// Templates the public contact page may trigger; everything else requires an
+// admin session or the service role (used by other Edge Functions), so members
+// cannot send official-looking branch emails to arbitrary addresses.
+const PUBLIC_TYPES = new Set(["contact_message"]);
+
+async function callerIsAuthorized(req: Request): Promise<boolean> {
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+  if (!token) return false;
+  if (serviceKey && token === serviceKey) return true;
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, serviceKey!);
+  const { data: { user } } = await admin.auth.getUser(token);
+  if (!user) return false;
+  const { data: profile } = await admin
+    .from("profiles").select("is_admin").eq("user_id", user.id).maybeSingle();
+  return !!profile?.is_admin;
+}
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -223,7 +264,16 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: `Unknown email type: ${type}` }), { status: 400, headers: cors });
     }
 
-    const { subject, html } = template(data);
+    if (!PUBLIC_TYPES.has(type) && !(await callerIsAuthorized(req))) {
+      return new Response(JSON.stringify({ error: "Not authorized to send this email type" }), { status: 403, headers: cors });
+    }
+
+    // Escape only the HTML body — subjects are plain text and never rendered.
+    const safeData = Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [k, typeof v === "string" ? esc(v) : v])
+    );
+    const { subject } = template(data);
+    const { html } = template(safeData);
 
     // For contact messages, send to secretariat; otherwise send to member
     const recipient = type === "contact_message" ? SECRETARIAT_EMAIL : to;

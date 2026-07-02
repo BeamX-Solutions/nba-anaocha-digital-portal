@@ -13,6 +13,10 @@ const cors = {
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
+const esc = (v: string) =>
+  v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+   .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
 function buildHtml(title: string, message: string): string {
   return `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
@@ -60,7 +64,7 @@ Deno.serve(async (req) => {
     const emails = [...new Set((rows || []).map((r) => r.email).filter(Boolean))] as string[];
     if (emails.length === 0) return json({ error: "No recipients with an email address" }, 400);
 
-    const html = buildHtml(title.trim(), message.trim());
+    const html = buildHtml(esc(title.trim()), esc(message.trim()));
     const subject = title.trim();
 
     // Resend batch endpoint accepts up to 100 messages per call.

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { anaochaSidebarItems } from "@/lib/sidebarItems";
+import { csvCell } from "@/lib/utils";
 import { SERVICE_LABELS } from "@/lib/constants";
 
 const CHANNEL_LABELS: Record<string, string> = {
@@ -121,7 +122,7 @@ const AnaochaPayments = () => {
         new Date(p.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }),
       ]),
     ];
-    const csv  = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+    const csv  = rows.map((r) => r.map(csvCell).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement("a");

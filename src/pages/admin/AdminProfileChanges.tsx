@@ -69,9 +69,18 @@ const AdminProfileChanges = () => {
     const profile = profiles[req.user_id];
     const memberName = [profile?.surname, profile?.first_name].filter(Boolean).join(" ") || "Member";
 
-    // Apply the requested values to the profile, then close out the request.
+    // Apply only whitelisted identity fields — never other profile columns,
+    // even if a crafted request smuggled them in.
+    const changes = Object.fromEntries(
+      Object.entries(req.changes || {}).filter(([k]) => k in FIELD_LABELS)
+    );
+    if (Object.keys(changes).length === 0) {
+      toast({ title: "Nothing to apply", description: "This request contains no recognised identity fields.", variant: "destructive" });
+      setUpdating(null);
+      return;
+    }
     const { error: applyErr } = await supabase
-      .from("profiles").update(req.changes).eq("user_id", req.user_id);
+      .from("profiles").update(changes).eq("user_id", req.user_id);
     if (applyErr) {
       toast({ title: "Failed to apply changes", description: applyErr.message, variant: "destructive" });
       setUpdating(null);

@@ -112,6 +112,16 @@ const AdminApplications = () => {
     setRejectReason("");
   };
 
+  // 'uploads' is a private bucket — public URLs 404, so mint a signed link.
+  const openFile = async (path: string) => {
+    const { data, error } = await supabase.storage.from("uploads").createSignedUrl(path, 3600);
+    if (error || !data?.signedUrl) {
+      toast({ title: "Couldn't open file", description: error?.message, variant: "destructive" });
+      return;
+    }
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
+
   const confirmReject = async () => {
     if (!rejectTarget) return;
     setRejecting(true);
@@ -304,14 +314,14 @@ const AdminApplications = () => {
                             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Uploaded Files</p>
                             <div className="flex flex-wrap gap-2">
                               {app.file_urls.map((url: string, i: number) => (
-                                <a
+                                <button
                                   key={i}
-                                  href={`${supabase.storage.from("uploads").getPublicUrl(url).data.publicUrl}`}
-                                  target="_blank" rel="noopener noreferrer"
+                                  type="button"
+                                  onClick={() => openFile(url)}
                                   className="flex items-center gap-1.5 text-xs bg-accent/10 text-primary border border-accent/30 px-3 py-1.5 rounded hover:bg-accent/20 transition-colors"
                                 >
                                   <FileText className="h-3 w-3" /> File {i + 1}
-                                </a>
+                                </button>
                               ))}
                             </div>
                           </div>
