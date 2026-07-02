@@ -70,7 +70,7 @@ const AdminDashboard = () => {
                   <Card className="shadow-card hover:shadow-lg transition-shadow cursor-pointer">
                     <CardContent className="p-5 flex flex-col items-center text-center gap-2">
                       {s.icon}
-                      <p className="font-heading text-2xl font-bold text-foreground">{s.value ?? 0}</p>
+                      <p className="text-2xl font-bold text-foreground">{s.value ?? 0}</p>
                       <p className="text-xs text-muted-foreground">{s.label}</p>
                     </CardContent>
                   </Card>
