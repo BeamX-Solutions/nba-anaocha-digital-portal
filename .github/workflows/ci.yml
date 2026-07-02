@@ -9,12 +9,19 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      # Placeholders for the whole job (tests import the Supabase client,
+      # which requires a URL at module load). Real values live in Vercel;
+      # CI only proves the code compiles and the logic passes.
+      VITE_SUPABASE_URL: https://placeholder.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: placeholder
+      VITE_PAYSTACK_PUBLIC_KEY: pk_test_placeholder
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -25,9 +32,3 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          # Build-time placeholders — the real values live in Vercel; this
-          # only proves the bundle compiles.
-          VITE_SUPABASE_URL: https://placeholder.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: placeholder
-          VITE_PAYSTACK_PUBLIC_KEY: pk_test_placeholder
