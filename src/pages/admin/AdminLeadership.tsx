@@ -21,7 +21,7 @@ const emptyForm = {
   name: "",
   position: "",
   category: "executive",
-  committee: COMMITTEE_NAMES[0],
+  committee: COMMITTEE_NAMES[0] as string,
   photo_url: "",
   display_order: 0,
 };

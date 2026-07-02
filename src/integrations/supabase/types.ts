@@ -14,202 +14,217 @@ export type Database = {
   }
   public: {
     Tables: {
-      dues_items: {
+      announcements: {
         Row: {
-          id: string
-          title: string
-          description: string | null
-          category: string
-          year: number
-          deadline: string | null
-          is_tiered: boolean
-          amount_0_4: number | null
-          amount_5_9: number | null
-          amount_10_14: number | null
-          amount_15_plus: number | null
-          flat_amount: number | null
-          requires_upload: boolean
-          upload_label: string | null
-          is_active: boolean
-          created_at: string
+          content: string
+          created_at: string | null
           created_by: string | null
+          id: string
+          portal: string
+          published: boolean | null
+          title: string
         }
         Insert: {
-          id?: string
-          title: string
-          description?: string | null
-          category?: string
-          year: number
-          deadline?: string | null
-          is_tiered?: boolean
-          amount_0_4?: number | null
-          amount_5_9?: number | null
-          amount_10_14?: number | null
-          amount_15_plus?: number | null
-          flat_amount?: number | null
-          requires_upload?: boolean
-          upload_label?: string | null
-          is_active?: boolean
-          created_at?: string
+          content: string
+          created_at?: string | null
           created_by?: string | null
+          id?: string
+          portal?: string
+          published?: boolean | null
+          title: string
         }
         Update: {
-          id?: string
-          title?: string
-          description?: string | null
-          category?: string
-          year?: number
-          deadline?: string | null
-          is_tiered?: boolean
-          amount_0_4?: number | null
-          amount_5_9?: number | null
-          amount_10_14?: number | null
-          amount_15_plus?: number | null
-          flat_amount?: number | null
-          requires_upload?: boolean
-          upload_label?: string | null
-          is_active?: boolean
-          created_at?: string
+          content?: string
+          created_at?: string | null
           created_by?: string | null
+          id?: string
+          portal?: string
+          published?: boolean | null
+          title?: string
         }
         Relationships: []
       }
-      dues_payments: {
+      audit_logs: {
         Row: {
-          id: string
-          user_id: string
-          dues_item_id: string
-          amount: number | null
-          reference: string | null
-          receipt_url: string | null
-          status: string
-          paid_at: string | null
+          action: string
+          admin_id: string | null
           created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          dues_item_id: string
-          amount?: number | null
-          reference?: string | null
-          receipt_url?: string | null
-          status?: string
-          paid_at?: string | null
+          action: string
+          admin_id?: string | null
           created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          dues_item_id?: string
-          amount?: number | null
-          reference?: string | null
-          receipt_url?: string | null
-          status?: string
-          paid_at?: string | null
+          action?: string
+          admin_id?: string | null
           created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
         }
-        Relationships: [
-          { foreignKeyName: "dues_payments_dues_item_id_fkey"; columns: ["dues_item_id"]; referencedRelation: "dues_items"; referencedColumns: ["id"] }
-        ]
+        Relationships: []
       }
       contact_messages: {
         Row: {
+          admin_reply: string | null
           created_at: string
           email: string
           full_name: string
           id: string
           message: string
           read: boolean
+          replied_at: string | null
           user_id: string | null
         }
         Insert: {
+          admin_reply?: string | null
           created_at?: string
           email: string
           full_name: string
           id?: string
           message: string
           read?: boolean
+          replied_at?: string | null
           user_id?: string | null
         }
         Update: {
+          admin_reply?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
           message?: string
           read?: boolean
+          replied_at?: string | null
           user_id?: string | null
         }
         Relationships: []
       }
-      documents: {
+      dues_items: {
         Row: {
-          approval_status: string | null
-          approved_at: string | null
-          approved_by: string | null
-          approver_comments: string | null
-          scn: string | null
-          content: string | null
+          amount_0_4: number | null
+          amount_10_14: number | null
+          amount_15_plus: number | null
+          amount_5_9: number | null
+          amount_san: number | null
+          category: string
           created_at: string
-          document_type: string
-          form_data: Json | null
+          created_by: string | null
+          deadline: string | null
+          description: string | null
+          flat_amount: number | null
           id: string
-          reference_number: string | null
-          rejected_at: string | null
-          rejected_by: string | null
-          rejection_reason: string | null
-          status: string
-          submitted_at: string | null
-          submitted_by: string | null
+          is_active: boolean
+          is_tiered: boolean
+          requires_upload: boolean
           title: string
-          updated_at: string
+          upload_label: string | null
+          year: number
+        }
+        Insert: {
+          amount_0_4?: number | null
+          amount_10_14?: number | null
+          amount_15_plus?: number | null
+          amount_5_9?: number | null
+          amount_san?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          description?: string | null
+          flat_amount?: number | null
+          id?: string
+          is_active?: boolean
+          is_tiered?: boolean
+          requires_upload?: boolean
+          title: string
+          upload_label?: string | null
+          year: number
+        }
+        Update: {
+          amount_0_4?: number | null
+          amount_10_14?: number | null
+          amount_15_plus?: number | null
+          amount_5_9?: number | null
+          amount_san?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          description?: string | null
+          flat_amount?: number | null
+          id?: string
+          is_active?: boolean
+          is_tiered?: boolean
+          requires_upload?: boolean
+          title?: string
+          upload_label?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
+      dues_payments: {
+        Row: {
+          amount: number | null
+          created_at: string
+          dues_item_id: string
+          id: string
+          paid_at: string | null
+          receipt_url: string | null
+          reference: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
           user_id: string
         }
         Insert: {
-          approval_status?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
-          approver_comments?: string | null
-          scn?: string | null
-          content?: string | null
+          amount?: number | null
           created_at?: string
-          document_type: string
-          form_data?: Json | null
+          dues_item_id: string
           id?: string
-          reference_number?: string | null
-          rejected_at?: string | null
-          rejected_by?: string | null
+          paid_at?: string | null
+          receipt_url?: string | null
+          reference?: string | null
           rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
-          submitted_at?: string | null
-          submitted_by?: string | null
-          title: string
-          updated_at?: string
           user_id: string
         }
         Update: {
-          approval_status?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
-          approver_comments?: string | null
-          scn?: string | null
-          content?: string | null
+          amount?: number | null
           created_at?: string
-          document_type?: string
-          form_data?: Json | null
+          dues_item_id?: string
           id?: string
-          reference_number?: string | null
-          rejected_at?: string | null
-          rejected_by?: string | null
+          paid_at?: string | null
+          receipt_url?: string | null
+          reference?: string | null
           rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
-          submitted_at?: string | null
-          submitted_by?: string | null
-          title?: string
-          updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "dues_payments_dues_item_id_fkey"
+            columns: ["dues_item_id"]
+            isOneToOne: false
+            referencedRelation: "dues_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -241,6 +256,114 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          channel: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          reference: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          channel?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          reference: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          channel?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          reference?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      people: {
+        Row: {
+          category: string
+          committee: string | null
+          created_at: string
+          display_order: number
+          id: string
+          name: string
+          photo_url: string | null
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          committee?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          name: string
+          photo_url?: string | null
+          position: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          committee?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          name?: string
+          photo_url?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profile_change_requests: {
+        Row: {
+          changes: Json
+          created_at: string
+          id: string
+          previous: Json
+          reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          changes: Json
+          created_at?: string
+          id?: string
+          previous?: Json
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          changes?: Json
+          created_at?: string
+          id?: string
+          previous?: Json
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -249,9 +372,19 @@ export type Database = {
           email: string | null
           first_name: string | null
           id: string
+          is_admin: boolean
+          lbian: string | null
+          lbian_public: boolean
           middle_name: string | null
           office_address: string | null
           phone: string | null
+          portal_access: string
+          rank: string
+          scn: string | null
+          show_email: boolean | null
+          show_office_address: boolean | null
+          show_phone: boolean | null
+          status: string
           surname: string | null
           updated_at: string
           user_id: string
@@ -264,9 +397,19 @@ export type Database = {
           email?: string | null
           first_name?: string | null
           id?: string
+          is_admin?: boolean
+          lbian?: string | null
+          lbian_public?: boolean
           middle_name?: string | null
           office_address?: string | null
           phone?: string | null
+          portal_access?: string
+          rank?: string
+          scn?: string | null
+          show_email?: boolean | null
+          show_office_address?: boolean | null
+          show_phone?: boolean | null
+          status?: string
           surname?: string | null
           updated_at?: string
           user_id: string
@@ -279,13 +422,56 @@ export type Database = {
           email?: string | null
           first_name?: string | null
           id?: string
+          is_admin?: boolean
+          lbian?: string | null
+          lbian_public?: boolean
           middle_name?: string | null
           office_address?: string | null
           phone?: string | null
+          portal_access?: string
+          rank?: string
+          scn?: string | null
+          show_email?: boolean | null
+          show_office_address?: boolean | null
+          show_phone?: boolean | null
+          status?: string
           surname?: string | null
           updated_at?: string
           user_id?: string
           year_of_call?: string | null
+        }
+        Relationships: []
+      }
+      resources: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          file_url: string | null
+          id: string
+          portal: string
+          title: string
+          type: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          portal?: string
+          title: string
+          type?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          portal?: string
+          title?: string
+          type?: string
         }
         Relationships: []
       }
@@ -295,6 +481,9 @@ export type Database = {
           file_urls: string[] | null
           form_data: Json
           id: string
+          payment_reference: string | null
+          payment_status: string
+          rejection_reason: string | null
           service_type: string
           status: string
           updated_at: string
@@ -305,6 +494,9 @@ export type Database = {
           file_urls?: string[] | null
           form_data?: Json
           id?: string
+          payment_reference?: string | null
+          payment_status?: string
+          rejection_reason?: string | null
           service_type: string
           status?: string
           updated_at?: string
@@ -315,6 +507,9 @@ export type Database = {
           file_urls?: string[] | null
           form_data?: Json
           id?: string
+          payment_reference?: string | null
+          payment_status?: string
+          rejection_reason?: string | null
           service_type?: string
           status?: string
           updated_at?: string
@@ -322,57 +517,12 @@ export type Database = {
         }
         Relationships: []
       }
-      document_versions: {
-        Row: {
-          content: string | null
-          created_at: string
-          created_by: string
-          document_id: string
-          form_data: Json | null
-          id: string
-          version_number: number
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          created_by: string
-          document_id: string
-          form_data?: Json | null
-          id?: string
-          version_number?: number
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          created_by?: string
-          document_id?: string
-          form_data?: Json | null
-          id?: string
-          version_number?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "document_versions_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "document_versions_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "documents"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
