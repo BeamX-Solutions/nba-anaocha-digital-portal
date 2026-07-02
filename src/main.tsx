@@ -1,6 +1,9 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import { initMonitoring, reportError } from "./lib/monitoring";
 import "./index.css";
+
+initMonitoring();
 
 const REQUIRED_ENV_VARS = [
   'VITE_SUPABASE_URL',
@@ -24,6 +27,7 @@ if (missing.length > 0) {
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('[Unhandled Promise Rejection]', event.reason);
+  reportError(event.reason, { source: 'unhandledrejection' });
 });
 
 createRoot(document.getElementById("root")!).render(<App />);
