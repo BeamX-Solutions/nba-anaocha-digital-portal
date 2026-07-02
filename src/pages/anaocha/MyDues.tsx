@@ -64,7 +64,7 @@ const MyDues = () => {
     setLoading(true);
     const [itemsRes, paymentsRes, profileRes] = await Promise.all([
       supabase.from("dues_items").select("*").eq("is_active", true).order("year", { ascending: false }).order("created_at"),
-      (supabase as any).from("dues_payments").select("dues_item_id, amount, status, reference, receipt_url, paid_at, rejection_reason").eq("user_id", user.id),
+      supabase.from("dues_payments").select("dues_item_id, amount, status, reference, receipt_url, paid_at, rejection_reason").eq("user_id", user.id),
       supabase.from("profiles").select("year_of_call, rank").eq("user_id", user.id).maybeSingle(),
     ]);
     setItems((itemsRes.data as DuesItem[]) ?? []);

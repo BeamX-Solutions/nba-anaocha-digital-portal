@@ -89,7 +89,7 @@ const AdminDues = () => {
 
   const loadCompliance = async (itemId: string, force = false) => {
     if (compliance[itemId] && !force) return;
-    const { data } = await (supabase as any)
+    const { data } = await supabase
       .from("dues_payments")
       .select("user_id, status, amount, paid_at, receipt_url, rejection_reason, profiles(first_name, surname, email, year_of_call)")
       .eq("dues_item_id", itemId);
@@ -191,7 +191,7 @@ const AdminDues = () => {
   const verifyReceipt = async (item: DuesItem, member: Member) => {
     if (!user) return;
     setReviewing(member.user_id);
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("dues_payments")
       .update({ status: "verified", reviewed_by: user.id, reviewed_at: new Date().toISOString() })
       .eq("dues_item_id", item.id)
@@ -213,7 +213,7 @@ const AdminDues = () => {
     const { item, member } = rejectTarget;
     const reason = rejectReason.trim();
     setRejecting(true);
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("dues_payments")
       .update({ status: "rejected", rejection_reason: reason || null, reviewed_by: user.id, reviewed_at: new Date().toISOString() })
       .eq("dues_item_id", item.id)

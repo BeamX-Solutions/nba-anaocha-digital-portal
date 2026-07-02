@@ -21,6 +21,10 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      // Correctness is enforced by tsc (0 errors since the Supabase types
+      // regen); remaining `any`s are legacy style debt to burn down gradually,
+      // and must not drown out real lint errors.
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
 );

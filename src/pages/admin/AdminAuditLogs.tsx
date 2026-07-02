@@ -28,7 +28,7 @@ const AdminAuditLogs = () => {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await (supabase as any)
+    const { data } = await supabase
       .from("audit_logs")
       .select("*")
       .order("created_at", { ascending: false })

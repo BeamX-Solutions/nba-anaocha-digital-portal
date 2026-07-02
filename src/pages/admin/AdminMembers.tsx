@@ -97,7 +97,7 @@ const AdminMembers = () => {
   };
 
   const setMemberRank = async (m: any, rank: string) => {
-    const { error } = await (supabase as any).from("profiles").update({ rank }).eq("id", m.id);
+    const { error } = await supabase.from("profiles").update({ rank }).eq("id", m.id);
     if (error) { toast({ title: "Failed to update seniority", description: error.message, variant: "destructive" }); return; }
     const updated = members.map((mem) => mem.id === m.id ? { ...mem, rank } : mem);
     setMembers(updated); setFiltered(updated);
@@ -110,7 +110,7 @@ const AdminMembers = () => {
     if (!denyTarget) return;
     const m = denyTarget;
     setDenying(true);
-    const { error } = await (supabase as any).from("profiles").update({ status: "denied" }).eq("id", m.id);
+    const { error } = await supabase.from("profiles").update({ status: "denied" }).eq("id", m.id);
     if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); setDenying(false); return; }
     const memberName = [m.surname, m.first_name].filter(Boolean).join(" ") || "Member";
     const reason = denyReason.trim();

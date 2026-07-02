@@ -45,7 +45,7 @@ const AnaochaPayments = () => {
     setLoading(true);
 
     const [serviceRes, duesRes] = await Promise.all([
-      (supabase as any)
+      supabase
         .from("payments")
         .select("id, amount, reference, channel, status, created_at, entity_id")
         .eq("user_id", user.id),
@@ -66,7 +66,7 @@ const AnaochaPayments = () => {
     // Resolve service_type labels for service payments
     const serviceRows: any[] = serviceRes.data || [];
     const appIds = serviceRows.map((r: any) => r.entity_id).filter(Boolean);
-    let appMap: Record<string, string> = {};
+    const appMap: Record<string, string> = {};
     if (appIds.length > 0) {
       const { data: apps } = await supabase
         .from("service_applications")

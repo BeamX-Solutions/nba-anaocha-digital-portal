@@ -91,7 +91,7 @@ const MyProfile = () => {
       });
 
     // Any change request still awaiting secretariat review?
-    (supabase as any)
+    supabase
       .from("profile_change_requests")
       .select("*")
       .eq("user_id", user.id)
@@ -103,7 +103,7 @@ const MyProfile = () => {
   const cancelPendingRequest = async () => {
     if (!pendingRequest) return;
     setCancellingRequest(true);
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("profile_change_requests")
       .delete()
       .eq("id", pendingRequest.id);
@@ -178,7 +178,7 @@ const MyProfile = () => {
   const updateLbianPublic = async (value: boolean) => {
     if (!profileId) return;
     setLbianPublic(value);
-    const { error } = await (supabase as any).from("profiles").update({ lbian_public: value }).eq("id", profileId);
+    const { error } = await supabase.from("profiles").update({ lbian_public: value }).eq("id", profileId);
     if (error) {
       setLbianPublic(!value);
       toast({ title: "Couldn't update", description: error.message, variant: "destructive" });
@@ -231,7 +231,7 @@ const MyProfile = () => {
       }
 
       if (Object.keys(sensitiveChanges).length > 0) {
-        const { data, error } = await (supabase as any)
+        const { data, error } = await supabase
           .from("profile_change_requests")
           .insert({ user_id: user.id, changes: sensitiveChanges, previous })
           .select()

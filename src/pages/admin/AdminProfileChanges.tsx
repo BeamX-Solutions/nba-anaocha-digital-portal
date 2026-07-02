@@ -36,7 +36,7 @@ const AdminProfileChanges = () => {
 
   useEffect(() => {
     const load = async () => {
-      const { data: reqs } = await (supabase as any)
+      const { data: reqs } = await supabase
         .from("profile_change_requests")
         .select("*")
         .order("created_at", { ascending: false });
@@ -46,7 +46,7 @@ const AdminProfileChanges = () => {
 
       const userIds = [...new Set(list.map((r: any) => r.user_id))];
       if (userIds.length > 0) {
-        const { data: profileData } = await (supabase as any)
+        const { data: profileData } = await supabase
           .from("profiles")
           .select("user_id, first_name, surname, email, lbian")
           .in("user_id", userIds as string[]);
@@ -87,7 +87,7 @@ const AdminProfileChanges = () => {
       return;
     }
 
-    const { error: reqErr } = await (supabase as any)
+    const { error: reqErr } = await supabase
       .from("profile_change_requests")
       .update({ status: "approved", reviewed_by: user?.id, reviewed_at: new Date().toISOString() })
       .eq("id", req.id);
@@ -133,7 +133,7 @@ const AdminProfileChanges = () => {
     setRejecting(true);
     const reason = rejectReason.trim();
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("profile_change_requests")
       .update({ status: "rejected", reason: reason || null, reviewed_by: user?.id, reviewed_at: new Date().toISOString() })
       .eq("id", rejectTarget.id);
