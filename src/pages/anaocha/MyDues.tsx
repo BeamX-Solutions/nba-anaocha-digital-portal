@@ -91,6 +91,11 @@ const MyDues = () => {
       currency: "NGN",
       ref:      makeRef(),
       metadata: {
+        // Lets the server-side webhook record this payment even if the
+        // browser never comes back from the checkout.
+        user_id: user.id,
+        entity_type: "dues",
+        entity_id: item.id,
         custom_fields: [
           { display_name: "Due",    variable_name: "dues_title",    value: item.title },
           { display_name: "Portal", variable_name: "portal",        value: "NBA Anaocha" },

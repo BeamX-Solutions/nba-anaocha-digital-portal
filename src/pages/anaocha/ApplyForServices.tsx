@@ -228,6 +228,10 @@ const ApplyForServices = () => {
       currency: "NGN",
       ref:      makeRef(),
       metadata: {
+        // The application row is only created after payment, so the webhook
+        // can't stamp it — but with these it can still bank the money record.
+        user_id: user.id,
+        entity_type: "service_application",
         custom_fields: [
           { display_name: "Service", variable_name: "service_type", value: openService.serviceType },
           { display_name: "Portal",  variable_name: "portal",       value: "NBA Anaocha" },

@@ -114,12 +114,21 @@ serve(async (req) => {
       return fail("Payment does not belong to this member account");
     }
 
-    // A reference can be redeemed once, across both payment tables.
+    // A reference can be redeemed once, across both payment tables. If this
+    // member's payment was already recorded (webhook and client callback can
+    // race), report success idempotently instead of alarming the member.
     const [{ data: refInPayments }, { data: refInDues }] = await Promise.all([
-      supabase.from("payments").select("id").eq("reference", reference).limit(1),
-      supabase.from("dues_payments").select("id").eq("reference", reference).limit(1),
+      supabase.from("payments").select("user_id").eq("reference", reference).limit(1),
+      supabase.from("dues_payments").select("user_id").eq("reference", reference).limit(1),
     ]);
-    if (refInPayments?.length || refInDues?.length) {
+    const existing = refInPayments?.[0] ?? refInDues?.[0];
+    if (existing) {
+      if (existing.user_id === user_id) {
+        return new Response(
+          JSON.stringify({ success: true, amount: amountNaira, channel, already_recorded: true }),
+          { headers: { ...cors, "Content-Type": "application/json" } }
+        );
+      }
       return fail("This payment reference has already been used");
     }
 
