@@ -59,7 +59,7 @@ const RegistrationDenied = () => {
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Inquiry Line</p>
-                <p className="text-sm text-foreground">secretariat@nbaanaocha.org.ng</p>
+                <p className="text-sm text-foreground">0813 401 2458</p>
               </div>
             </div>
             <Button onClick={signOut} className="w-full mt-2">
@@ -143,7 +143,7 @@ const PendingApproval = () => {
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Inquiry Line</p>
-                <p className="text-sm text-foreground">secretariat@nbaanaocha.org.ng</p>
+                <p className="text-sm text-foreground">0813 401 2458</p>
               </div>
             </div>
 

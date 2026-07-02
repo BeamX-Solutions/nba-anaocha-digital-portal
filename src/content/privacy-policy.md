@@ -9,7 +9,7 @@ The Nigerian Bar Association, Anaocha Branch ("the Branch", "we", "us", "our") i
 
 **Nigerian Bar Association, Anaocha Branch**
 Chief Charles Obegolu Bar Centre, Obeledu, Anaocha LGA, Anambra State, Nigeria
-Email: secretariat@nbaanaocha.org.ng
+Email: support@nbaanaocha.org.ng
 
 ### 3. Data We Collect
 
@@ -83,7 +83,7 @@ In the event of a breach likely to affect your rights, we will notify you and th
 
 Under the NDPA 2023, you have the right to: access your data; request correction of inaccurate data; request erasure (subject to our legal retention obligations); object to processing; restrict processing; and receive your data in a portable format.
 
-To exercise any of these rights, contact us at secretariat@nbaanaocha.org.ng. We will respond within 30 days. If you are unsatisfied, you may lodge a complaint with the **Nigeria Data Protection Commission (NDPC)** at www.ndpc.gov.ng.
+To exercise any of these rights, contact us at support@nbaanaocha.org.ng. We will respond within 30 days. If you are unsatisfied, you may lodge a complaint with the **Nigeria Data Protection Commission (NDPC)** at www.ndpc.gov.ng.
 
 ### 10. Cookies and Local Storage
 
@@ -91,7 +91,7 @@ The Portal uses browser local storage and session cookies solely for authenticat
 
 ### 11. Children's Data
 
-The Portal is not intended for persons under 18. If you believe a minor's data has been submitted, contact us at secretariat@nbaanaocha.org.ng.
+The Portal is not intended for persons under 18. If you believe a minor's data has been submitted, contact us at support@nbaanaocha.org.ng.
 
 ### 12. Changes to This Policy
 
@@ -103,7 +103,7 @@ For privacy enquiries or to exercise your data rights:
 
 **NBA Anaocha Branch Secretariat**
 Chief Charles Obegolu Bar Centre, Obeledu, Anaocha LGA, Anambra State, Nigeria
-Email: secretariat@nbaanaocha.org.ng
+Email: support@nbaanaocha.org.ng
 Phone: 08134012458; 07033482194
 
 If you are not satisfied with our response, you have the right to lodge a complaint with the **Nigeria Data Protection Commission (NDPC)** at www.ndpc.gov.ng.

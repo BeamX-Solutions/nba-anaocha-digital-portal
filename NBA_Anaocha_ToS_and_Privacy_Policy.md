@@ -8,7 +8,7 @@
 >
 > | # | Placeholder | Where it appears | Value |
 > |---|---|---|---|
-> | 1 | Official Secretariat contact email address | Terms §3.3, §13 · Privacy §9, §11, §13 | ✅ secretariat@nbaanaocha.org.ng |
+> | 1 | Official Secretariat contact email address | Terms §3.3, §13 · Privacy §9, §11, §13 | ✅ support@nbaanaocha.org.ng |
 > | 2 | Secretariat phone number | Terms §13 · Privacy §13 | ✅ 08134012458; 07033482194 |
 > | 3 | Live portal URL | Terms §1 · Privacy §1 | ✅ www.nbaanaocha.org.ng |
 > | 4 | Co-contact confirmation | Terms §13 · Privacy §13 | ✅ Branch Secretariat only |
@@ -50,7 +50,7 @@ By registering, you represent and warrant that you are a qualified legal practit
 
 **3.2** All new accounts are subject to approval by a Branch Administrator before full access is granted.
 
-**3.3** You are responsible for maintaining the confidentiality of your account credentials. You must notify the Branch Secretariat immediately upon becoming aware of any unauthorised use of your account at secretariat@nbaanaocha.org.ng.
+**3.3** You are responsible for maintaining the confidentiality of your account credentials. You must notify the Branch Secretariat immediately upon becoming aware of any unauthorised use of your account at support@nbaanaocha.org.ng.
 
 **3.4** You may not share your credentials with any other person or use another person's account.
 
@@ -159,7 +159,7 @@ For queries regarding these Terms, contact:
 
 **NBA Anaocha Branch Secretariat**
 Chief Charles Obegolu Bar Centre, Obeledu, Anaocha LGA, Anambra State, Nigeria
-Email: secretariat@nbaanaocha.org.ng
+Email: support@nbaanaocha.org.ng
 Phone: 08134012458; 07033482194
 
 ---
@@ -182,7 +182,7 @@ The Nigerian Bar Association, Anaocha Branch ("the Branch", "we", "us", "our") i
 
 **Nigerian Bar Association, Anaocha Branch**
 Chief Charles Obegolu Bar Centre, Obeledu, Anaocha LGA, Anambra State, Nigeria
-Email: secretariat@nbaanaocha.org.ng
+Email: support@nbaanaocha.org.ng
 
 ---
 
@@ -270,7 +270,7 @@ In the event of a breach likely to affect your rights, we will notify you and th
 
 Under the NDPA 2023, you have the right to: access your data; request correction of inaccurate data; request erasure (subject to our legal retention obligations); object to processing; restrict processing; and receive your data in a portable format.
 
-To exercise any of these rights, contact us at secretariat@nbaanaocha.org.ng. We will respond within 30 days. If you are unsatisfied, you may lodge a complaint with the **Nigeria Data Protection Commission (NDPC)** at www.ndpc.gov.ng.
+To exercise any of these rights, contact us at support@nbaanaocha.org.ng. We will respond within 30 days. If you are unsatisfied, you may lodge a complaint with the **Nigeria Data Protection Commission (NDPC)** at www.ndpc.gov.ng.
 
 ---
 
@@ -282,7 +282,7 @@ The Portal uses browser local storage and session cookies solely for authenticat
 
 ### 11. Children's Data
 
-The Portal is not intended for persons under 18. If you believe a minor's data has been submitted, contact us at secretariat@nbaanaocha.org.ng.
+The Portal is not intended for persons under 18. If you believe a minor's data has been submitted, contact us at support@nbaanaocha.org.ng.
 
 ---
 
@@ -298,7 +298,7 @@ For privacy enquiries or to exercise your data rights:
 
 **NBA Anaocha Branch Secretariat**
 Chief Charles Obegolu Bar Centre, Obeledu, Anaocha LGA, Anambra State, Nigeria
-Email: secretariat@nbaanaocha.org.ng
+Email: support@nbaanaocha.org.ng
 Phone: 08134012458; 07033482194
 
 If you are not satisfied with our response, you have the right to lodge a complaint with the **Nigeria Data Protection Commission (NDPC)** at www.ndpc.gov.ng.

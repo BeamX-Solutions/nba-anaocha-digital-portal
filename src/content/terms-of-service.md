@@ -23,7 +23,7 @@ By registering, you represent and warrant that you are a qualified legal practit
 
 **3.2** All new accounts are subject to approval by a Branch Administrator before full access is granted.
 
-**3.3** You are responsible for maintaining the confidentiality of your account credentials. You must notify the Branch Secretariat immediately upon becoming aware of any unauthorised use of your account at secretariat@nbaanaocha.org.ng.
+**3.3** You are responsible for maintaining the confidentiality of your account credentials. You must notify the Branch Secretariat immediately upon becoming aware of any unauthorised use of your account at support@nbaanaocha.org.ng.
 
 **3.4** You may not share your credentials with any other person or use another person's account.
 
@@ -112,5 +112,5 @@ For queries regarding these Terms, contact:
 
 **NBA Anaocha Branch Secretariat**
 Chief Charles Obegolu Bar Centre, Obeledu, Anaocha LGA, Anambra State, Nigeria
-Email: secretariat@nbaanaocha.org.ng
+Email: support@nbaanaocha.org.ng
 Phone: 08134012458; 07033482194
