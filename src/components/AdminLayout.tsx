@@ -56,7 +56,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
             to={item.href}
             onClick={() => setMobileOpen(false)}
             className={cn(
-              "flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors",
+              "flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[14px] font-medium transition-colors",
               location.pathname === item.href
                 ? "bg-accent text-primary font-semibold"
                 : "text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground"
@@ -72,7 +72,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         <Link
           to="/anaocha/dashboard"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[13px] font-medium text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors"
+          className="flex items-center gap-2.5 px-3 py-[7px] rounded-md text-[14px] font-medium text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Portal
@@ -80,7 +80,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start h-8 text-[13px] text-primary-foreground/75 hover:text-primary-foreground hover:bg-primary-foreground/10"
+          className="w-full justify-start h-8 text-[14px] text-primary-foreground/75 hover:text-primary-foreground hover:bg-primary-foreground/10"
           onClick={() => setConfirmOpen(true)}
         >
           <LogOut className="h-4 w-4 mr-2" />
