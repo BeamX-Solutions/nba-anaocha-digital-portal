@@ -17,4 +17,18 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split the largest stable vendors out of the main chunk so members
+        // on slow connections download app code separately from libraries
+        // (and vendor chunks stay browser-cached across app releases).
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-sentry": ["@sentry/react"],
+        },
+      },
+    },
+  },
 }));
