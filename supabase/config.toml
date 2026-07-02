@@ -4,3 +4,7 @@ project_id = "pwxahgqhtyciemqozgml"
 # enforced by the x-paystack-signature HMAC check inside the function.
 [functions.paystack-webhook]
 verify_jwt = false
+
+# Invoked by pg_cron (no JWT); callers authenticate with x-cron-secret.
+[functions.dues-reminders]
+verify_jwt = false
