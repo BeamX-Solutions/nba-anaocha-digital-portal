@@ -2,11 +2,13 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const FROM = Deno.env.get("RESEND_FROM") || "NBA Anaocha <noreply@beamxsolutions.com>";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://nba-anaocha-digital-portal.vercel.app";
 
 const headerHtml = `
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1a3a5c;padding:32px 40px;text-align:center;">
     <tr>
       <td>
+        <img src="${SITE_URL}/nba-logo.png" alt="NBA Anaocha" width="56" height="56" style="display:block;margin:0 auto 12px;border-radius:8px;" />
         <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.6);font-weight:600;">Nigerian Bar Association</p>
         <h1 style="margin:8px 0 0;font-size:22px;font-weight:700;color:#ffffff;">NBA Anaocha Branch</h1>
         <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.5);">Digital Portal</p>

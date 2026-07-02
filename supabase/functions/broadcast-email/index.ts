@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const FROM = Deno.env.get("RESEND_FROM") || "NBA Anaocha <noreply@beamxsolutions.com>";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://nba-anaocha-digital-portal.vercel.app";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -15,7 +16,10 @@ const json = (body: unknown, status = 200) =>
 function buildHtml(title: string, message: string): string {
   return `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
-      <h2 style="color:#1a5c38">NBA Anaocha Branch Portal</h2>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <img src="${SITE_URL}/nba-logo.png" alt="NBA Anaocha" width="44" height="44" style="display:block;border-radius:6px" />
+        <h2 style="color:#1a5c38;margin:0">NBA Anaocha Branch Portal</h2>
+      </div>
       <h3 style="color:#1a1a2e;margin-bottom:8px">${title}</h3>
       <div style="background:#f9f9f9;border-left:4px solid #1a5c38;padding:16px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#333;line-height:1.6">${message}</div>
       <p style="margin-top:16px;font-size:13px;color:#666">Log in to the portal for more details.</p>
