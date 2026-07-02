@@ -52,7 +52,8 @@ const AnaochaPayments = () => {
         .from("dues_payments")
         .select("id, amount, reference, status, paid_at, dues_items(title)")
         .eq("user_id", user.id)
-        .not("paid_at", "is", null),
+        .not("paid_at", "is", null)
+        .neq("status", "rejected"),
     ]);
 
     if (serviceRes.error && !duesRes.error) {

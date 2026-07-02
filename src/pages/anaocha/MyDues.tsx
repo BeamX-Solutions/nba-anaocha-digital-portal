@@ -35,12 +35,15 @@ type DuesItem = {
 type Payment = {
   dues_item_id: string; amount: number | null; status: string;
   reference: string | null; receipt_url: string | null; paid_at: string | null;
+  rejection_reason: string | null;
 };
 
 const STATUS_CONFIG = {
-  paid:     { label: "Paid",      icon: CheckCircle, color: "text-green-600",  bg: "bg-green-50 border-green-100"  },
-  uploaded: { label: "Submitted", icon: CheckCircle, color: "text-blue-600",   bg: "bg-blue-50 border-blue-100"    },
-  pending:  { label: "Outstanding", icon: Clock,     color: "text-amber-600",  bg: "bg-amber-50 border-amber-100"  },
+  paid:     { label: "Paid",            icon: CheckCircle, color: "text-green-600", bg: "bg-green-50 border-green-100" },
+  verified: { label: "Verified",        icon: CheckCircle, color: "text-green-600", bg: "bg-green-50 border-green-100" },
+  uploaded: { label: "Awaiting Review", icon: Clock,       color: "text-blue-600",  bg: "bg-blue-50 border-blue-100"   },
+  rejected: { label: "Not Accepted",    icon: X,           color: "text-red-600",   bg: "bg-red-50 border-red-100"     },
+  pending:  { label: "Outstanding",     icon: Clock,       color: "text-amber-600", bg: "bg-amber-50 border-amber-100" },
 };
 
 const MyDues = () => {
@@ -61,7 +64,7 @@ const MyDues = () => {
     setLoading(true);
     const [itemsRes, paymentsRes, profileRes] = await Promise.all([
       supabase.from("dues_items").select("*").eq("is_active", true).order("year", { ascending: false }).order("created_at"),
-      supabase.from("dues_payments").select("dues_item_id, amount, status, reference, receipt_url, paid_at").eq("user_id", user.id),
+      (supabase as any).from("dues_payments").select("dues_item_id, amount, status, reference, receipt_url, paid_at, rejection_reason").eq("user_id", user.id),
       supabase.from("profiles").select("year_of_call, rank").eq("user_id", user.id).maybeSingle(),
     ]);
     setItems((itemsRes.data as DuesItem[]) ?? []);
@@ -134,7 +137,7 @@ const MyDues = () => {
     if (error) {
       toast({ title: "Record failed", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Receipt submitted", description: `Your ${item.title} receipt has been recorded.` });
+      toast({ title: "Receipt submitted", description: `Your ${item.title} receipt is awaiting secretariat review.` });
       load();
     }
   };
@@ -145,7 +148,7 @@ const MyDues = () => {
 
   const outstanding = items.filter(i => {
     const p = paymentFor(i.id);
-    return !p || p.status === "pending";
+    return !p || p.status === "pending" || p.status === "rejected";
   }).length;
 
   return (
@@ -208,7 +211,7 @@ const MyDues = () => {
                     const amount    = getDueAmount(item, profile?.year_of_call, profile?.rank);
                     const isPaying  = paying === item.id;
                     const isUploading = uploading === item.id;
-                    const done      = status === "paid" || status === "uploaded";
+                    const done      = status === "paid" || status === "uploaded" || status === "verified";
 
                     return (
                       <Card key={item.id} className={`shadow-card border ${done ? cfg.bg : "border-border"}`}>
@@ -238,12 +241,19 @@ const MyDues = () => {
                                     Due: {new Date(item.deadline).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                                   </span>
                                 )}
-                                {payment?.paid_at && (
+                                {payment?.paid_at && status !== "rejected" && (
                                   <span className="text-xs text-muted-foreground">
-                                    {status === "uploaded" ? "Submitted" : "Paid"}: {new Date(payment.paid_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                                    {status === "uploaded" ? "Submitted" : status === "verified" ? "Verified" : "Paid"}: {new Date(payment.paid_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                                   </span>
                                 )}
                               </div>
+                              {status === "rejected" && (
+                                <div className="mt-2 bg-red-50 border border-red-100 rounded px-3 py-2">
+                                  <p className="text-xs font-semibold text-red-700 mb-0.5">Receipt not accepted{payment?.rejection_reason ? ":" : "."}</p>
+                                  {payment?.rejection_reason && <p className="text-xs text-red-800">{payment.rejection_reason}</p>}
+                                  <p className="text-xs text-red-700/80 mt-1">Please upload a corrected receipt.</p>
+                                </div>
+                              )}
                             </div>
 
                             <div className="flex items-center gap-3 shrink-0">

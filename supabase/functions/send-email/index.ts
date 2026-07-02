@@ -94,6 +94,31 @@ const templates: Record<string, (data: any) => { subject: string; html: string }
       </div>`,
   }),
 
+  dues_receipt_verified: ({ name, item_title }) => ({
+    subject: `Receipt Verified — ${item_title}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+        ${brandHeader()}
+        <p>Dear ${name},</p>
+        <p>The receipt you submitted for <strong>${item_title}</strong> has been reviewed and <strong style="color:#1a5c38">verified</strong> by the branch secretariat. You are marked as compliant for this item.</p>
+        <p>No further action is needed. Thank you.</p>
+        <p style="margin-top:32px;color:#666;font-size:13px">NBA Anaocha Branch Secretariat<br/>Nnewi, Anambra State, Nigeria</p>
+      </div>`,
+  }),
+
+  dues_receipt_rejected: ({ name, item_title, reason }) => ({
+    subject: `Receipt Not Accepted — ${item_title}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px">
+        ${brandHeader()}
+        <p>Dear ${name},</p>
+        <p>The receipt you submitted for <strong>${item_title}</strong> could <strong style="color:#dc2626">not be accepted</strong> by the branch secretariat.</p>
+        ${reason ? `<div style="background:#fef2f2;border-left:4px solid #dc2626;padding:12px 16px;border-radius:4px;margin:16px 0"><p style="margin:0;font-size:13px;color:#991b1b"><strong>Reason:</strong> ${reason}</p></div>` : ""}
+        <p>Please log in to the portal and upload a corrected receipt, or contact the branch secretariat for assistance.</p>
+        <p style="margin-top:32px;color:#666;font-size:13px">NBA Anaocha Branch Secretariat<br/>Nnewi, Anambra State, Nigeria</p>
+      </div>`,
+  }),
+
   account_deleted: ({ name }) => ({
     subject: "Your NBA Anaocha Portal Account Has Been Removed",
     html: `

@@ -53,8 +53,10 @@ const AnaochaDashboard = () => {
       setAnnouncements(announcementsRes.data || []);
       const apps = appsRes.data || [];
       const allDuesIds = (duesItemsRes.data || []).map((d: any) => d.id);
+      // uploaded = awaiting secretariat review (not nagged as outstanding);
+      // rejected/pending count as outstanding.
       const paidIds = (duesPaymentsRes.data || [])
-        .filter((p: any) => p.status === "paid" || p.status === "uploaded")
+        .filter((p: any) => ["paid", "verified", "uploaded"].includes(p.status))
         .map((p: any) => p.dues_item_id);
       const outstandingDues = allDuesIds.filter((id: string) => !paidIds.includes(id)).length;
       setStats({

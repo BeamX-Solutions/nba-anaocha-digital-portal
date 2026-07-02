@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Plus, ChevronDown, ChevronUp, Users, CheckCircle, Clock, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Plus, ChevronDown, ChevronUp, Users, CheckCircle, Clock, Trash2, ToggleLeft, ToggleRight, FileText, XCircle, Loader2 } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { logAudit } from "@/lib/auditLog";
 import { DUES_CATEGORY_LABELS, BPF_TIERS, getDueAmount } from "@/lib/constants";
 
 type DuesItem = {
@@ -21,7 +23,7 @@ type DuesItem = {
 
 type DuesPayment = {
   user_id: string; status: string; amount: number | null;
-  paid_at: string | null; receipt_url: string | null;
+  paid_at: string | null; receipt_url: string | null; rejection_reason: string | null;
   profiles: { first_name: string | null; surname: string | null; email: string | null; year_of_call: string | null } | null;
 };
 
@@ -85,11 +87,11 @@ const AdminDues = () => {
     setLoading(false);
   };
 
-  const loadCompliance = async (itemId: string) => {
-    if (compliance[itemId]) return;
-    const { data } = await supabase
+  const loadCompliance = async (itemId: string, force = false) => {
+    if (compliance[itemId] && !force) return;
+    const { data } = await (supabase as any)
       .from("dues_payments")
-      .select("user_id, status, amount, paid_at, receipt_url, profiles(first_name, surname, email, year_of_call)")
+      .select("user_id, status, amount, paid_at, receipt_url, rejection_reason, profiles(first_name, surname, email, year_of_call)")
       .eq("dues_item_id", itemId);
     setCompliance(prev => ({ ...prev, [itemId]: (data as any) ?? [] }));
   };
@@ -148,8 +150,87 @@ const AdminDues = () => {
 
   const f = (key: string, val: any) => setForm(p => ({ ...p, [key]: val }));
 
-  const paidCount    = (itemId: string) => (compliance[itemId] ?? []).filter(p => p.status === "paid" || p.status === "uploaded").length;
+  // 'uploaded' means awaiting review — only Paystack-paid and admin-verified count.
+  const paidCount    = (itemId: string) => (compliance[itemId] ?? []).filter(p => p.status === "paid" || p.status === "verified").length;
   const outstanding  = (item: DuesItem) => members.length - paidCount(item.id);
+
+  // ── Receipt review ──────────────────────────────────────────────────────
+  const [reviewing, setReviewing] = useState<string | null>(null); // user_id being reviewed
+  const [rejectTarget, setRejectTarget] = useState<{ item: DuesItem; member: Member } | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejecting, setRejecting] = useState(false);
+
+  const viewReceipt = async (path: string) => {
+    const { data, error } = await supabase.storage.from("dues-receipts").createSignedUrl(path, 3600);
+    if (error || !data?.signedUrl) {
+      toast({ title: "Couldn't open receipt", description: error?.message, variant: "destructive" });
+      return;
+    }
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
+
+  const notifyReviewOutcome = async (item: DuesItem, member: Member, verified: boolean, reason?: string) => {
+    const memberName = [member.surname, member.first_name].filter(Boolean).join(" ") || "Member";
+    await supabase.from("notifications").insert({
+      user_id: member.user_id,
+      title: verified ? `Receipt Verified: ${item.title}` : `Receipt Not Accepted: ${item.title}`,
+      message: verified
+        ? `Your receipt for ${item.title} has been verified by the secretariat. You are marked as compliant.`
+        : `Your receipt for ${item.title} was not accepted.${reason ? ` Reason: ${reason}.` : ""} Please upload a corrected receipt.`,
+      type: "dues",
+    });
+    if (member.email) {
+      await supabase.functions.invoke("send-email", {
+        body: verified
+          ? { type: "dues_receipt_verified", to: member.email, name: memberName, item_title: item.title }
+          : { type: "dues_receipt_rejected", to: member.email, name: memberName, item_title: item.title, reason: reason || undefined },
+      });
+    }
+  };
+
+  const verifyReceipt = async (item: DuesItem, member: Member) => {
+    if (!user) return;
+    setReviewing(member.user_id);
+    const { error } = await (supabase as any)
+      .from("dues_payments")
+      .update({ status: "verified", reviewed_by: user.id, reviewed_at: new Date().toISOString() })
+      .eq("dues_item_id", item.id)
+      .eq("user_id", member.user_id);
+    if (error) {
+      toast({ title: "Failed to verify", description: error.message, variant: "destructive" });
+      setReviewing(null);
+      return;
+    }
+    await notifyReviewOutcome(item, member, true);
+    logAudit(user.id, "dues_receipt_verified", "dues_payment", item.id, { member_email: member.email, item_title: item.title });
+    await loadCompliance(item.id, true);
+    setReviewing(null);
+    toast({ title: "Receipt verified", description: "The member has been notified." });
+  };
+
+  const confirmRejectReceipt = async () => {
+    if (!rejectTarget || !user) return;
+    const { item, member } = rejectTarget;
+    const reason = rejectReason.trim();
+    setRejecting(true);
+    const { error } = await (supabase as any)
+      .from("dues_payments")
+      .update({ status: "rejected", rejection_reason: reason || null, reviewed_by: user.id, reviewed_at: new Date().toISOString() })
+      .eq("dues_item_id", item.id)
+      .eq("user_id", member.user_id);
+    if (error) {
+      toast({ title: "Failed to reject", description: error.message, variant: "destructive" });
+      setRejecting(false);
+      return;
+    }
+    await notifyReviewOutcome(item, member, false, reason);
+    logAudit(user.id, "dues_receipt_rejected", "dues_payment", item.id, { member_email: member.email, item_title: item.title, reason: reason || null });
+    await loadCompliance(item.id, true);
+    setRejecting(false);
+    setRejectTarget(null);
+    setRejectReason("");
+    toast({ title: "Receipt rejected", description: "The member has been notified and can re-upload." });
+  };
 
   return (
     <AdminLayout>
@@ -340,7 +421,7 @@ const AdminDues = () => {
                     {isExpanded && (
                       <div className="mt-4 border-t border-border pt-4">
                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                          Member Compliance: {paid} of {total} paid
+                          Member Compliance: {paid} of {total} compliant
                         </p>
                         <div className="overflow-x-auto">
                           <table className="w-full text-sm min-w-[500px]">
@@ -351,6 +432,9 @@ const AdminDues = () => {
                                 <th className="text-left py-2 px-3 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Amount</th>
                                 <th className="text-left py-2 px-3 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Status</th>
                                 <th className="text-left py-2 px-3 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Date</th>
+                                {item.requires_upload && (
+                                  <th className="text-left py-2 px-3 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Receipt</th>
+                                )}
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
@@ -371,10 +455,18 @@ const AdminDues = () => {
                                       {item.requires_upload ? "-" : memberAmount > 0 ? `₦${memberAmount.toLocaleString("en-NG")}` : "-"}
                                     </td>
                                     <td className="py-2.5 px-3">
-                                      {status === "paid" || status === "uploaded" ? (
+                                      {status === "paid" || status === "verified" ? (
                                         <span className="inline-flex items-center gap-1 text-green-700 text-xs font-semibold">
                                           <CheckCircle className="h-3.5 w-3.5" />
-                                          {status === "uploaded" ? "Submitted" : "Paid"}
+                                          {status === "verified" ? "Verified" : "Paid"}
+                                        </span>
+                                      ) : status === "uploaded" ? (
+                                        <span className="inline-flex items-center gap-1 text-blue-700 text-xs font-semibold">
+                                          <Clock className="h-3.5 w-3.5" />Awaiting review
+                                        </span>
+                                      ) : status === "rejected" ? (
+                                        <span className="inline-flex items-center gap-1 text-red-700 text-xs font-semibold" title={p?.rejection_reason || undefined}>
+                                          <XCircle className="h-3.5 w-3.5" />Rejected
                                         </span>
                                       ) : (
                                         <span className="inline-flex items-center gap-1 text-amber-700 text-xs font-semibold">
@@ -385,6 +477,42 @@ const AdminDues = () => {
                                     <td className="py-2.5 px-3 text-muted-foreground text-xs">
                                       {p?.paid_at ? new Date(p.paid_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "-"}
                                     </td>
+                                    {item.requires_upload && (
+                                      <td className="py-2.5 px-3">
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                          {p?.receipt_url && (
+                                            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1" onClick={() => viewReceipt(p.receipt_url!)}>
+                                              <FileText className="h-3.5 w-3.5" />View
+                                            </Button>
+                                          )}
+                                          {status === "uploaded" && (
+                                            <>
+                                              <Button
+                                                size="sm"
+                                                className="h-7 px-2 text-xs gap-1 bg-green-600 hover:bg-green-700 text-white"
+                                                disabled={reviewing === member.user_id}
+                                                onClick={() => verifyReceipt(item, member)}
+                                              >
+                                                {reviewing === member.user_id
+                                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                  : <CheckCircle className="h-3.5 w-3.5" />}
+                                                Verify
+                                              </Button>
+                                              <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                className="h-7 px-2 text-xs gap-1"
+                                                disabled={reviewing === member.user_id}
+                                                onClick={() => { setRejectTarget({ item, member }); setRejectReason(""); }}
+                                              >
+                                                <XCircle className="h-3.5 w-3.5" />Reject
+                                              </Button>
+                                            </>
+                                          )}
+                                          {!p?.receipt_url && status !== "uploaded" && <span className="text-xs text-muted-foreground">-</span>}
+                                        </div>
+                                      </td>
+                                    )}
                                   </tr>
                                 );
                               })}
@@ -400,6 +528,38 @@ const AdminDues = () => {
           </div>
         )}
       </div>
+
+      {/* Reject receipt dialog */}
+      <Dialog open={!!rejectTarget} onOpenChange={(open) => { if (!open) setRejectTarget(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reject Receipt</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              Rejecting the <span className="font-semibold text-foreground">{rejectTarget?.item.title}</span> receipt from{" "}
+              <span className="font-semibold text-foreground">
+                {[rejectTarget?.member.surname, rejectTarget?.member.first_name].filter(Boolean).join(" ") || rejectTarget?.member.email}
+              </span>. They will be marked outstanding again and asked to re-upload.
+            </p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={3}
+              placeholder="e.g. The uploaded document is not a BPF payment receipt."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            />
+            <p className="text-xs text-muted-foreground">Optional, but strongly recommended.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectTarget(null)} disabled={rejecting}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmRejectReceipt} disabled={rejecting}>
+              {rejecting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
+              Confirm Rejection
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };
